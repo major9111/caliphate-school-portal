@@ -1,0 +1,92 @@
+"""Class management service."""
+from typing import Optional, List, Dict, Any
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from app.models.part2a.academic_structure import ClassManagement
+from app.models.academic import ClassLevel, Section
+from app.models.student import Student, Enrollment
+
+
+class ClassManagementService:
+    def __init__(self, db: Session):
+        self.db = db
+
+    def create(self, class_level_id: int, session_id: int, **kwargs) -> ClassManagement:
+        mgmt = ClassManagement(
+            class_level_id=class_level_id,
+            session_id=session_id,
+            **kwargs,
+        )
+        self.db.add(mgmt)
+        self.db.commit()
+        self.db.refresh(mgmt)
+        return mgmt
+
+    def list_for_session(self, session_id: int) -> List[ClassManagement]:
+        return self.db.query(ClassManagement).filter(
+            ClassManagement.session_id == session_id,
+            ClassManagement.is_active == True,
+        ).all()
+
+    def update_enrollment(self, class_management_id: int) -> None:
+        """Recalculate enrollment count."""
+        mgmt = self.db.query(ClassManagement).filter(
+            ClassManagement.id == class_management_id
+        ).first()
+        if not mgmt:
+            return
+        count = self.db.query(func.count(Student.id)).filter(
+            Student.entry_class_id == mgmt.class_level_id,
+            Student.is_active == 1,
+        ).scalar() or 0
+        mgmt.current_enrollment = count
+        self.db.commit()
+
+    def get_statistics(self, class_management_id: int) -> Dict[str, Any]:
+        mgmt = self.db.query(ClassManagement).filter(
+            ClassManagement.id == class_management_id
+        ).first()
+        if not mgmt:
+            raise ValueError("Class not found")
+
+        students = self.db.query(Student).filter(
+            Student.entry_class_id == mgmt.class_level_id,
+            Student.is_active == 1,
+        ).all()
+
+        male_count = sum(1 for s in students if s.gender == "male")
+        female_count = sum(1 for s in students if s.gender == "female")
+
+        return {
+            "class_management": mgmt,
+            "total_students": len(students),
+            "male_count": male_count,
+            "female_count": female_count,
+            "capacity": mgmt.capacity,
+            "utilization": round((len(students) / mgmt.capacity * 100), 1) if mgmt.capacity else 0,
+        }
+
+    def assign_class_teacher(self, class_management_id: int, teacher_id: int) -> ClassManagement:
+        mgmt = self.db.query(ClassManagement).filter(
+            ClassManagement.id == class_management_id
+        ).first()
+        if not mgmt:
+            raise ValueError("Class not found")
+        mgmt.class_teacher_id = teacher_id
+        self.db.commit()
+        self.db.refresh(mgmt)
+        return mgmt
+
+    def assign_student_to_class(self, student_id: int, class_management_id: int) -> None:
+        """Assign student to a class for current session/term."""
+        mgmt = self.db.query(ClassManagement).filter(
+            ClassManagement.id == class_management_id
+        ).first()
+        if not mgmt:
+            raise ValueError("Class not found")
+        student = self.db.query(Student).filter(Student.id == student_id).first()
+        if not student:
+            raise ValueError("Student not found")
+        student.entry_class_id = mgmt.class_level_id
+        self.db.commit()
+        self.update_enrollment(class_management_id)

@@ -1,0 +1,70 @@
+"""Uniform management endpoints."""
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from sqlalchemy.orm import Session, joinedload
+from app.core.database import get_db
+from app.core.dependencies import require_admin_or_above
+from app.models.uniform import Uniform, UniformImage
+from app.schemas.uniform import UniformCreate, UniformUpdate, UniformOut, UniformImageOut
+from app.services.storage_service import StorageService
+from app.models.user import User
+
+router = APIRouter()
+
+
+@router.get("", response_model=List[UniformOut])
+def list_uniforms(category: str = None, db: Session = Depends(get_db)):
+    q = db.query(Uniform).options(joinedload(Uniform.images)).filter(Uniform.is_active == 1)
+    if category:
+        q = q.filter(Uniform.category == category)
+    return q.all()
+
+
+@router.post("", response_model=UniformOut, status_code=201)
+def create_uniform(payload: UniformCreate, db: Session = Depends(get_db), _: User = Depends(require_admin_or_above)):
+    uniform = Uniform(**payload.model_dump())
+    db.add(uniform)
+    db.commit()
+    db.refresh(uniform)
+    return uniform
+
+
+@router.patch("/{uniform_id}", response_model=UniformOut)
+def update_uniform(uniform_id: int, payload: UniformUpdate, db: Session = Depends(get_db), _: User = Depends(require_admin_or_above)):
+    uniform = db.query(Uniform).filter(Uniform.id == uniform_id).first()
+    if not uniform:
+        raise HTTPException(404, "Uniform not found")
+    for k, v in payload.model_dump(exclude_unset=True).items():
+        setattr(uniform, k, v)
+    db.commit()
+    db.refresh(uniform)
+    return uniform
+
+
+@router.delete("/{uniform_id}")
+def delete_uniform(uniform_id: int, db: Session = Depends(get_db), _: User = Depends(require_admin_or_above)):
+    uniform = db.query(Uniform).filter(Uniform.id == uniform_id).first()
+    if not uniform:
+        raise HTTPException(404, "Uniform not found")
+    db.delete(uniform)
+    db.commit()
+    return {"message": "Deleted"}
+
+
+@router.post("/{uniform_id}/images", response_model=UniformImageOut, status_code=201)
+async def upload_uniform_image(
+    uniform_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin_or_above),
+):
+    uniform = db.query(Uniform).filter(Uniform.id == uniform_id).first()
+    if not uniform:
+        raise HTTPException(404, "Uniform not found")
+    storage = StorageService()
+    url = await storage.upload(file, folder="uniforms")
+    img = UniformImage(uniform_id=uniform_id, image_url=url)
+    db.add(img)
+    db.commit()
+    db.refresh(img)
+    return img

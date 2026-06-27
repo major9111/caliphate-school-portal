@@ -1,0 +1,121 @@
+"""Seed data service."""
+from sqlalchemy.orm import Session
+from app.models.academic_v2.subject import SubjectV2, SubjectCategory
+from app.models.finance_v2.fee import FeeCategory
+from app.models.finance_v2.payment import PaymentMethod
+from app.models.finance_v2.expense import ExpenseCategory
+from app.models.finance_v2.income import IncomeSource
+from app.models.v2.academic import GradingSystem
+
+
+class SeedService:
+    def __init__(self, db: Session):
+        self.db = db
+
+    def seed_all(self) -> dict:
+        return {
+            "subjects": self.seed_subjects(),
+            "fee_categories": self.seed_fee_categories(),
+            "payment_methods": self.seed_payment_methods(),
+            "expense_categories": self.seed_expense_categories(),
+            "income_sources": self.seed_income_sources(),
+            "grading_systems": self.seed_grading_systems(),
+        }
+
+    def seed_subjects(self) -> int:
+        # Categories
+        cats = [("Core", "core"), ("Science", "science"), ("Arts", "arts"), ("Commercial", "commercial")]
+        cat_map = {}
+        for name, code in cats:
+            if not self.db.query(SubjectCategory).filter(SubjectCategory.code == code).first():
+                cat = SubjectCategory(name=name, code=code)
+                self.db.add(cat)
+                self.db.flush()
+                cat_map[code] = cat.id
+
+        # Subjects
+        subjects = [
+            ("English Language", "ENG", "core", "nursery"),
+            ("Mathematics", "MTH", "core", "nursery"),
+            ("Basic Science", "BSC", "science", "nursery"),
+            ("Islamic Studies", "ISL", "core", "nursery"),
+            ("English Language", "ENG", "core", "junior_secondary"),
+            ("Mathematics", "MTH", "core", "junior_secondary"),
+            ("Physics", "PHY", "science", "junior_secondary"),
+            ("Chemistry", "CHM", "science", "junior_secondary"),
+            ("Biology", "BIO", "science", "junior_secondary"),
+            ("English Language", "ENG", "core", "senior_secondary"),
+            ("Mathematics", "MTH", "core", "senior_secondary"),
+            ("Physics", "PHY", "science", "senior_secondary"),
+            ("Chemistry", "CHM", "science", "senior_secondary"),
+            ("Biology", "BIO", "science", "senior_secondary"),
+            ("Economics", "ECO", "commercial", "senior_secondary"),
+        ]
+
+        count = 0
+        for name, code, cat_code, section in subjects:
+            if not self.db.query(SubjectV2).filter(SubjectV2.code == f"{code}-{section[:3].upper()}").first():
+                subj = SubjectV2(
+                    name=name,
+                    code=f"{code}-{section[:3].upper()}",
+                    category_id=cat_map.get(cat_code),
+                    section=section,
+                    is_compulsory=True,
+                )
+                self.db.add(subj)
+                count += 1
+
+        self.db.commit()
+        return count
+
+    def seed_fee_categories(self) -> int:
+        categories = [("Tuition", "TUITION"), ("Admission", "ADMISSION"), ("Exam", "EXAM"), ("ICT", "ICT")]
+        count = 0
+        for name, code in categories:
+            if not self.db.query(FeeCategory).filter(FeeCategory.code == code).first():
+                self.db.add(FeeCategory(name=name, code=code, is_compulsory=True))
+                count += 1
+        self.db.commit()
+        return count
+
+    def seed_payment_methods(self) -> int:
+        methods = [("Cash", "CASH"), ("Bank Transfer", "TRANSFER"), ("POS", "POS")]
+        count = 0
+        for name, code in methods:
+            if not self.db.query(PaymentMethod).filter(PaymentMethod.code == code).first():
+                self.db.add(PaymentMethod(name=name, code=code))
+                count += 1
+        self.db.commit()
+        return count
+
+    def seed_expense_categories(self) -> int:
+        categories = [("Salary", "SALARY"), ("Utilities", "UTIL"), ("Maintenance", "MAINT")]
+        count = 0
+        for name, code in categories:
+            if not self.db.query(ExpenseCategory).filter(ExpenseCategory.code == code).first():
+                self.db.add(ExpenseCategory(name=name, code=code))
+                count += 1
+        self.db.commit()
+        return count
+
+    def seed_income_sources(self) -> int:
+        sources = [("School Fees", "FEES"), ("Admission Fees", "ADMISSION"), ("Donations", "DONATION")]
+        count = 0
+        for name, code in sources:
+            if not self.db.query(IncomeSource).filter(IncomeSource.code == code).first():
+                self.db.add(IncomeSource(name=name, code=code))
+                count += 1
+        self.db.commit()
+        return count
+
+    def seed_grading_systems(self) -> int:
+        sections = ["nursery", "primary", "jss", "sss"]
+        grading = [(70, 100, "A", "Excellent"), (60, 69, "B", "Very Good"), (50, 59, "C", "Good"), (40, 49, "D", "Pass"), (0, 39, "F", "Fail")]
+        count = 0
+        for section in sections:
+            for min_s, max_s, grade, remark in grading:
+                if not self.db.query(GradingSystem).filter(GradingSystem.section == section, GradingSystem.min_score == min_s).first():
+                    self.db.add(GradingSystem(name=f"{section.upper()} {grade}", section=section, min_score=min_s, max_score=max_s, grade=grade, remark=remark, is_active=True))
+                    count += 1
+        self.db.commit()
+        return count

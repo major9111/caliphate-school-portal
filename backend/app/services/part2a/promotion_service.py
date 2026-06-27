@@ -1,0 +1,172 @@
+"""Student promotion service with automatic and manual support."""
+from datetime import datetime, timezone, date
+from typing import List, Dict, Any, Optional
+from sqlalchemy.orm import Session
+from app.models.part2a.student_extended import StudentPromotion
+from app.models.v2.academic import PromotionRule, GradingSystem
+from app.models.student import Student
+from app.models.academic import ClassLevel
+
+
+class PromotionService:
+    def __init__(self, db: Session):
+        self.db = db
+
+    def check_eligibility(self, student_id: int, to_class_id: int, average_score: Optional[int] = None) -> Dict[str, Any]:
+        """Check if a student is eligible for promotion to a class."""
+        student = self.db.query(Student).filter(Student.id == student_id).first()
+        if not student:
+            raise ValueError("Student not found")
+
+        to_class = self.db.query(ClassLevel).filter(ClassLevel.id == to_class_id).first()
+        if not to_class:
+            raise ValueError("Target class not found")
+
+        # Find promotion rules
+        rules = self.db.query(PromotionRule).filter(
+            PromotionRule.from_class_id == student.entry_class_id,
+            PromotionRule.to_class_id == to_class_id,
+            PromotionRule.is_active == True,
+        ).first()
+
+        if not rules:
+            return {
+                "eligible": True,
+                "notes": "No specific promotion rules defined; manual review required",
+                "rules_applied": False,
+            }
+
+        issues = []
+        if average_score is not None and average_score < rules.min_average_score:
+            issues.append(f"Average score {average_score} below minimum {rules.min_average_score}")
+
+        return {
+            "eligible": len(issues) == 0,
+            "notes": "; ".join(issues) if issues else "Eligible",
+            "rules_applied": True,
+            "min_average_score": rules.min_average_score,
+        }
+
+    def promote(
+        self,
+        student_id: int,
+        from_class_id: int,
+        to_class_id: int,
+        session_id: int,
+        promotion_type: str,
+        user_id: int,
+        term_id: Optional[int] = None,
+        average_score: Optional[int] = None,
+        reason: Optional[str] = None,
+        auto_approve: bool = True,
+    ) -> StudentPromotion:
+        """Promote a student."""
+        student = self.db.query(Student).filter(Student.id == student_id).first()
+        if not student:
+            raise ValueError("Student not found")
+
+        promotion = StudentPromotion(
+            student_id=student_id,
+            session_id=session_id,
+            term_id=term_id,
+            from_class_id=from_class_id,
+            to_class_id=to_class_id,
+            promotion_type=promotion_type,
+            average_score=average_score,
+            reason=reason,
+            status="approved" if auto_approve else "pending",
+            approved_by_id=user_id if auto_approve else None,
+            approved_at=datetime.now(timezone.utc) if auto_approve else None,
+        )
+        self.db.add(promotion)
+
+        if auto_approve:
+            student.entry_class_id = to_class_id
+            if promotion_type == "graduate":
+                student.admission_status = "graduated"
+
+        self.db.commit()
+        self.db.refresh(promotion)
+        return promotion
+
+    def repeat_class(
+        self,
+        student_id: int,
+        session_id: int,
+        user_id: int,
+        reason: Optional[str] = None,
+    ) -> StudentPromotion:
+        """Student repeats the current class."""
+        student = self.db.query(Student).filter(Student.id == student_id).first()
+        if not student:
+            raise ValueError("Student not found")
+        return self.promote(
+            student_id=student_id,
+            from_class_id=student.entry_class_id,
+            to_class_id=student.entry_class_id,
+            session_id=session_id,
+            promotion_type="repeat",
+            user_id=user_id,
+            reason=reason or "Repeating class",
+        )
+
+    def graduate(
+        self,
+        student_id: int,
+        session_id: int,
+        user_id: int,
+    ) -> StudentPromotion:
+        """Graduate a student (from SSS 3)."""
+        student = self.db.query(Student).filter(Student.id == student_id).first()
+        if not student:
+            raise ValueError("Student not found")
+        return self.promote(
+            student_id=student_id,
+            from_class_id=student.entry_class_id,
+            to_class_id=student.entry_class_id,
+            session_id=session_id,
+            promotion_type="graduate",
+            user_id=user_id,
+            reason="Graduation",
+        )
+
+    def bulk_promote(
+        self,
+        student_ids: List[int],
+        to_class_id: int,
+        session_id: int,
+        user_id: int,
+        promotion_type: str = "automatic",
+    ) -> Dict[str, Any]:
+        """Bulk promote multiple students."""
+        results = {"promoted": [], "failed": []}
+        for sid in student_ids:
+            try:
+                student = self.db.query(Student).filter(Student.id == sid).first()
+                if not student:
+                    results["failed"].append({"student_id": sid, "reason": "Student not found"})
+                    continue
+                self.promote(
+                    student_id=sid,
+                    from_class_id=student.entry_class_id,
+                    to_class_id=to_class_id,
+                    session_id=session_id,
+                    promotion_type=promotion_type,
+                    user_id=user_id,
+                )
+                results["promoted"].append(sid)
+            except Exception as e:
+                results["failed"].append({"student_id": sid, "reason": str(e)})
+        return results
+
+    def list_promotions(
+        self,
+        student_id: Optional[int] = None,
+        session_id: Optional[int] = None,
+    ) -> List[StudentPromotion]:
+        q = self.db.query(StudentPromotion)
+        if student_id:
+            q = q.filter(StudentPromotion.student_id == student_id)
+        if session_id:
+            q = q.filter(StudentPromotion.session_id == session_id)
+        return q.order_by(StudentPromotion.created_at.desc()).all()

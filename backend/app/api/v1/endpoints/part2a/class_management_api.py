@@ -1,0 +1,79 @@
+"""Class management endpoints."""
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.dependencies import require_admin_or_above
+from app.services.part2a.class_management_service import ClassManagementService
+from app.models.user import User
+from pydantic import BaseModel
+
+router = APIRouter()
+
+
+class ClassMgmtCreate(BaseModel):
+    class_level_id: int
+    session_id: int
+    arm_id: Optional[int] = None
+    class_teacher_id: Optional[int] = None
+    assistant_teacher_id: Optional[int] = None
+    room: Optional[str] = None
+    capacity: int = 40
+
+
+@router.post("")
+def create(payload: ClassMgmtCreate, db: Session = Depends(get_db), _: User = Depends(require_admin_or_above)):
+    service = ClassManagementService(db)
+    return service.create(**payload.model_dump())
+
+
+@router.get("")
+def list_for_session(session_id: int, db: Session = Depends(get_db)):
+    service = ClassManagementService(db)
+    return service.list_for_session(session_id)
+
+
+@router.get("/{class_mgmt_id}/statistics")
+def stats(class_mgmt_id: int, db: Session = Depends(get_db)):
+    service = ClassManagementService(db)
+    try:
+        return service.get_statistics(class_mgmt_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+
+class AssignTeacher(BaseModel):
+    teacher_id: int
+
+
+@router.post("/{class_mgmt_id}/assign-teacher")
+def assign_teacher(
+    class_mgmt_id: int,
+    payload: AssignTeacher,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin_or_above),
+):
+    service = ClassManagementService(db)
+    try:
+        return service.assign_class_teacher(class_mgmt_id, payload.teacher_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+
+class AssignStudent(BaseModel):
+    student_id: int
+
+
+@router.post("/{class_mgmt_id}/assign-student")
+def assign_student(
+    class_mgmt_id: int,
+    payload: AssignStudent,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin_or_above),
+):
+    service = ClassManagementService(db)
+    try:
+        service.assign_student_to_class(payload.student_id, class_mgmt_id)
+        return {"message": "Assigned"}
+    except ValueError as e:
+        raise HTTPException(404, str(e))

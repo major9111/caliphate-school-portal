@@ -1,0 +1,71 @@
+"""Transfer endpoints."""
+from typing import Optional
+from datetime import date
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.dependencies import require_admin_or_above
+from app.services.part2a.transfer_service import TransferService
+from app.models.user import User
+from pydantic import BaseModel
+
+router = APIRouter()
+
+
+class InternalTransfer(BaseModel):
+    student_id: int
+    from_class_id: int
+    to_class_id: int
+    transfer_date: date
+    reason: Optional[str] = None
+
+
+@router.post("/internal")
+def transfer_internal(payload: InternalTransfer, db: Session = Depends(get_db), current_user: User = Depends(require_admin_or_above)):
+    service = TransferService(db)
+    return service.transfer_internal(payload.student_id, payload.from_class_id, payload.to_class_id, payload.transfer_date, current_user.id, payload.reason)
+
+
+class ExternalOut(BaseModel):
+    student_id: int
+    to_school: str
+    transfer_date: date
+    reason: Optional[str] = None
+
+
+@router.post("/external-out")
+def transfer_out(payload: ExternalOut, db: Session = Depends(get_db), current_user: User = Depends(require_admin_or_above)):
+    service = TransferService(db)
+    return service.transfer_out(payload.student_id, payload.to_school, payload.transfer_date, current_user.id, payload.reason)
+
+
+class ApproveOut(BaseModel):
+    certificate_url: Optional[str] = None
+
+
+@router.post("/{transfer_id}/approve-out")
+def approve_out(transfer_id: int, payload: ApproveOut, db: Session = Depends(get_db), current_user: User = Depends(require_admin_or_above)):
+    service = TransferService(db)
+    try:
+        return service.approve_transfer_out(transfer_id, current_user.id, payload.certificate_url)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+
+class ExternalIn(BaseModel):
+    student_id: int
+    from_school: str
+    to_class_id: int
+    transfer_date: date
+    reason: Optional[str] = None
+
+
+@router.post("/external-in")
+def transfer_in(payload: ExternalIn, db: Session = Depends(get_db), current_user: User = Depends(require_admin_or_above)):
+    service = TransferService(db)
+    return service.transfer_in(payload.student_id, payload.from_school, payload.to_class_id, payload.transfer_date, current_user.id, payload.reason)
+
+
+@router.get("")
+def list_transfers(student_id: Optional[int] = None, db: Session = Depends(get_db)):
+    return TransferService(db).list_transfers(student_id)

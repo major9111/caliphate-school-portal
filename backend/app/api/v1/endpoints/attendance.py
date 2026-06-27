@@ -1,0 +1,58 @@
+"""Attendance endpoints."""
+from typing import List
+from datetime import date
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.dependencies import require_teacher_or_above
+from app.services.auth_service import AuthService
+from app.models.attendance import StudentAttendance
+from app.schemas.attendance import AttendanceBulkCreate, AttendanceOut
+from app.models.user import User
+
+router = APIRouter()
+
+
+@router.post("", response_model=List[AttendanceOut], status_code=201)
+def mark_attendance(
+    payload: AttendanceBulkCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_teacher_or_above),
+):
+    records = []
+    for entry in payload.entries:
+        rec = StudentAttendance(
+            student_id=entry.student_id,
+            class_id=payload.class_id,
+            term_id=payload.term_id,
+            date=payload.date,
+            status=entry.status,
+            marked_by_id=current_user.id,
+            remark=entry.remark,
+        )
+        db.add(rec)
+        records.append(rec)
+    db.commit()
+    for r in records:
+        db.refresh(r)
+    return records
+
+
+@router.get("", response_model=List[AttendanceOut])
+def list_attendance(
+    class_id: int = Query(...),
+    date_from: date = Query(...),
+    date_to: date = Query(...),
+    db: Session = Depends(get_db),
+    _: User = Depends(require_teacher_or_above),
+):
+    return (
+        db.query(StudentAttendance)
+        .filter(
+            StudentAttendance.class_id == class_id,
+            StudentAttendance.date >= date_from,
+            StudentAttendance.date <= date_to,
+        )
+        .order_by(StudentAttendance.date.desc())
+        .all()
+    )

@@ -1,0 +1,88 @@
+"""User management endpoints."""
+from typing import List
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.dependencies import get_current_active_user, require_super_admin, get_pagination, Pagination
+from app.repositories.user_repo import UserRepository
+from app.services.auth_service import AuthService
+from app.schemas.user import UserCreate, UserUpdate, UserOut
+from app.schemas.common import PaginatedResponse, Message
+from app.models.user import User
+
+router = APIRouter()
+
+
+@router.get("", response_model=PaginatedResponse[UserOut])
+def list_users(
+    pagination: Pagination = Depends(get_pagination),
+    db: Session = Depends(get_db),
+    _: User = Depends(require_super_admin),
+):
+    repo = UserRepository(db)
+    items = repo.get_many(
+        skip=pagination.offset,
+        limit=pagination.page_size,
+        search=pagination.search,
+        search_fields=["full_name", "email", "username"],
+    )
+    total = repo.count(search=pagination.search, search_fields=["full_name", "email", "username"])
+    total_pages = (total + pagination.page_size - 1) // pagination.page_size
+    return PaginatedResponse(items=items, total=total, page=pagination.page, page_size=pagination.page_size, total_pages=total_pages)
+
+
+@router.post("", response_model=UserOut, status_code=201)
+def create_user(
+    payload: UserCreate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_super_admin),
+):
+    service = AuthService(db)
+    return service.register_user(
+        email=payload.email,
+        username=payload.username,
+        full_name=payload.full_name,
+        password=payload.password,
+        role=payload.role,
+        phone=payload.phone,
+    )
+
+
+@router.get("/{user_id}", response_model=UserOut)
+def get_user(user_id: int, db: Session = Depends(get_db), _: User = Depends(require_super_admin)):
+    repo = UserRepository(db)
+    user = repo.get(user_id)
+    if not user:
+        from fastapi import HTTPException
+        raise HTTPException(404, "User not found")
+    return user
+
+
+@router.patch("/{user_id}", response_model=UserOut)
+def update_user(
+    user_id: int,
+    payload: UserUpdate,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_super_admin),
+):
+    repo = UserRepository(db)
+    user = repo.get(user_id)
+    if not user:
+        from fastapi import HTTPException
+        raise HTTPException(404, "User not found")
+    for k, v in payload.model_dump(exclude_unset=True).items():
+        setattr(user, k, v)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.delete("/{user_id}", response_model=Message)
+def delete_user(user_id: int, db: Session = Depends(get_db), _: User = Depends(require_super_admin)):
+    repo = UserRepository(db)
+    user = repo.get(user_id)
+    if not user:
+        from fastapi import HTTPException
+        raise HTTPException(404, "User not found")
+    repo.delete(user)
+    return Message(message="User deleted")

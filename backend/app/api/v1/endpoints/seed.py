@@ -1,0 +1,14 @@
+"""Seed endpoints."""
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.dependencies import require_super_admin
+from app.models.user import User
+from app.services.seed_service import SeedService
+
+router = APIRouter()
+
+@router.post("/run")
+def run_seed(db: Session = Depends(get_db), _: User = Depends(require_super_admin)):
+    service = SeedService(db)
+    return service.seed_all()

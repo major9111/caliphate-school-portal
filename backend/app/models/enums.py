@@ -1,0 +1,77 @@
+"""Enumerations used across the system."""
+import enum
+
+
+class UserRole(str, enum.Enum):
+    SUPER_ADMIN = "super_admin"
+    PRINCIPAL = "principal"
+    VICE_PRINCIPAL = "vice_principal"
+    REGISTRAR = "registrar"
+    TEACHER = "teacher"
+    EXAMINATION_OFFICER = "examination_officer"
+    ACCOUNTANT = "accountant"
+    RECEPTIONIST = "receptionist"
+    HEAD_TEACHER = "head_teacher"
+    ADMINISTRATOR = "administrator"
+
+
+class Gender(str, enum.Enum):
+    MALE = "male"
+    FEMALE = "female"
+
+
+class SectionType(str, enum.Enum):
+    NURSERY = "nursery"
+    PRIMARY = "primary"
+    JUNIOR_SECONDARY = "junior_secondary"
+    SENIOR_SECONDARY = "senior_secondary"
+
+
+class PaymentStatus(str, enum.Enum):
+    PENDING = "pending"
+    PARTIAL = "partial"
+    PAID = "paid"
+    OVERDUE = "overdue"
+    WAIVED = "waived"
+
+
+class AttendanceStatus(str, enum.Enum):
+    PRESENT = "present"
+    ABSENT = "absent"
+    LATE = "late"
+    EXCUSED = "excused"
+
+
+class ExamType(str, enum.Enum):
+    CA1 = "ca1"
+    CA2 = "ca2"
+    CA3 = "ca3"
+    EXAM = "exam"
+    ASSIGNMENT = "assignment"
+
+
+class AdmissionStatus(str, enum.Enum):
+    PENDING = "pending"
+    UNDER_REVIEW = "under_review"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    ENROLLED = "enrolled"
+
+
+class UniformCategory(str, enum.Enum):
+    MALE_NURSERY = "male_nursery"
+    FEMALE_NURSERY = "female_nursery"
+    MALE_PRIMARY = "male_primary"
+    FEMALE_PRIMARY = "female_primary"
+    MALE_JUNIOR_SECONDARY = "male_junior_secondary"
+    FEMALE_JUNIOR_SECONDARY = "female_junior_secondary"
+    MALE_SENIOR_SECONDARY = "male_senior_secondary"
+    FEMALE_SENIOR_SECONDARY = "female_senior_secondary"
+    SPORTS_WEAR = "sports_wear"
+    FRIDAY_WEAR = "friday_wear"
+    CARDIGAN = "cardigan"
+    CAP = "cap"
+    TIE = "tie"
+    BADGE = "badge"
+    SOCKS = "socks"
+    SHOES = "shoes"

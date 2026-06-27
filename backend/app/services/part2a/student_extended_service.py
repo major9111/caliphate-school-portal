@@ -1,0 +1,156 @@
+"""Extended student service: documents, medical alerts, profile."""
+from typing import Optional, List
+from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func
+from app.models.part2a.student_extended import (
+    StudentDocument, StudentMedicalAlert, StudentIDCard,
+    StudentPromotion, StudentTransfer,
+)
+from app.models.student import Student, Enrollment
+from app.models.attendance import StudentAttendance
+
+
+class StudentExtendedService:
+    def __init__(self, db: Session):
+        self.db = db
+
+    # Documents
+    def list_documents(self, student_id: int) -> List[StudentDocument]:
+        return self.db.query(StudentDocument).filter(
+            StudentDocument.student_id == student_id
+        ).order_by(StudentDocument.created_at.desc()).all()
+
+    def add_document(
+        self,
+        student_id: int,
+        document_type: str,
+        file_url: str,
+        thumbnail_url: Optional[str],
+        file_name: str,
+        file_size: int,
+        mime_type: str,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        uploaded_by_id: Optional[int] = None,
+    ) -> StudentDocument:
+        doc = StudentDocument(
+            student_id=student_id,
+            document_type=document_type,
+            file_url=file_url,
+            thumbnail_url=thumbnail_url,
+            file_name=file_name,
+            file_size=file_size,
+            mime_type=mime_type,
+            title=title or document_type.replace("_", " ").title(),
+            description=description,
+            uploaded_by_id=uploaded_by_id,
+        )
+        self.db.add(doc)
+        self.db.commit()
+        self.db.refresh(doc)
+        return doc
+
+    def delete_document(self, doc_id: int, user_id: int) -> bool:
+        doc = self.db.query(StudentDocument).filter(StudentDocument.id == doc_id).first()
+        if doc:
+            self.db.delete(doc)
+            self.db.commit()
+            return True
+        return False
+
+    # Medical Alerts
+    def list_alerts(self, student_id: int) -> List[StudentMedicalAlert]:
+        return self.db.query(StudentMedicalAlert).filter(
+            StudentMedicalAlert.student_id == student_id,
+            StudentMedicalAlert.is_active == True,
+        ).all()
+
+    def add_alert(
+        self,
+        student_id: int,
+        alert_type: str,
+        title: str,
+        details: Optional[str],
+        severity: str,
+        recorded_by_id: Optional[int],
+    ) -> StudentMedicalAlert:
+        alert = StudentMedicalAlert(
+            student_id=student_id,
+            alert_type=alert_type,
+            title=title,
+            details=details,
+            severity=severity,
+            recorded_by_id=recorded_by_id,
+        )
+        self.db.add(alert)
+        self.db.commit()
+        self.db.refresh(alert)
+        return alert
+
+    def deactivate_alert(self, alert_id: int) -> bool:
+        alert = self.db.query(StudentMedicalAlert).filter(
+            StudentMedicalAlert.id == alert_id
+        ).first()
+        if alert:
+            alert.is_active = False
+            self.db.commit()
+            return True
+        return False
+
+    # Profile summary
+    def get_profile_summary(self, student_id: int) -> dict:
+        student = self.db.query(Student).options(
+            joinedload(Student.guardian),
+            joinedload(Student.enrollments),
+        ).filter(Student.id == student_id).first()
+        if not student:
+            raise ValueError("Student not found")
+
+        # Attendance summary
+        total_attendance = self.db.query(func.count(StudentAttendance.id)).filter(
+            StudentAttendance.student_id == student_id
+        ).scalar() or 0
+        present_attendance = self.db.query(func.count(StudentAttendance.id)).filter(
+            StudentAttendance.student_id == student_id,
+            StudentAttendance.status == "present",
+        ).scalar() or 0
+        attendance_pct = round((present_attendance / total_attendance * 100), 1) if total_attendance else 0
+
+        # Promotions
+        promotions = self.db.query(StudentPromotion).filter(
+            StudentPromotion.student_id == student_id
+        ).order_by(StudentPromotion.created_at.desc()).all()
+
+        # Transfers
+        transfers = self.db.query(StudentTransfer).filter(
+            StudentTransfer.student_id == student_id
+        ).order_by(StudentTransfer.created_at.desc()).all()
+
+        # Documents
+        documents = self.list_documents(student_id)
+
+        # Alerts
+        alerts = self.list_alerts(student_id)
+
+        return {
+            "student": student,
+            "attendance_summary": {
+                "total_records": total_attendance,
+                "present_count": present_attendance,
+                "percentage": attendance_pct,
+            },
+            "promotions": promotions,
+            "transfers": transfers,
+            "documents": documents,
+            "medical_alerts": alerts,
+        }
+
+    # Search
+    def search(self, query: str, limit: int = 50) -> List[Student]:
+        like = f"%{query}%"
+        return self.db.query(Student).filter(
+            (Student.admission_number.ilike(like))
+            | (Student.first_name.ilike(like))
+            | (Student.last_name.ilike(like))
+            | (Student.other_names.ilike(like))
+        ).limit(limit).all()

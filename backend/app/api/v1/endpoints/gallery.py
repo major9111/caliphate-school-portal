@@ -1,0 +1,59 @@
+"""Gallery endpoints."""
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from sqlalchemy.orm import Session, joinedload
+from app.core.database import get_db
+from app.core.dependencies import require_admin_or_above
+from app.models.gallery import GalleryAlbum, GalleryMedia
+from app.schemas.gallery import AlbumCreate, AlbumOut, MediaCreate, MediaOut
+from app.services.storage_service import StorageService
+from app.models.user import User
+
+router = APIRouter()
+
+
+@router.get("/albums", response_model=List[AlbumOut])
+def list_albums(category: str = None, db: Session = Depends(get_db)):
+    q = db.query(GalleryAlbum).options(joinedload(GalleryAlbum.media))
+    if category:
+        q = q.filter(GalleryAlbum.category == category)
+    return q.order_by(GalleryAlbum.id.desc()).all()
+
+
+@router.post("/albums", response_model=AlbumOut, status_code=201)
+def create_album(payload: AlbumCreate, db: Session = Depends(get_db), _: User = Depends(require_admin_or_above)):
+    album = GalleryAlbum(**payload.model_dump())
+    db.add(album)
+    db.commit()
+    db.refresh(album)
+    return album
+
+
+@router.delete("/albums/{album_id}")
+def delete_album(album_id: int, db: Session = Depends(get_db), _: User = Depends(require_admin_or_above)):
+    album = db.query(GalleryAlbum).filter(GalleryAlbum.id == album_id).first()
+    if not album:
+        raise HTTPException(404, "Album not found")
+    db.delete(album)
+    db.commit()
+    return {"message": "Deleted"}
+
+
+@router.post("/albums/{album_id}/media", response_model=MediaOut, status_code=201)
+async def upload_media(
+    album_id: int,
+    file: UploadFile = File(...),
+    caption: str = Form(None),
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin_or_above),
+):
+    album = db.query(GalleryAlbum).filter(GalleryAlbum.id == album_id).first()
+    if not album:
+        raise HTTPException(404, "Album not found")
+    storage = StorageService()
+    url = await storage.upload(file, folder=f"gallery/{album.slug}")
+    media = GalleryMedia(album_id=album_id, url=url, caption=caption, media_type="image")
+    db.add(media)
+    db.commit()
+    db.refresh(media)
+    return media
