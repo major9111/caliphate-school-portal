@@ -1,1 +1,88 @@
-"""Core dependencies for FastAPI.""" from fastapi import Query, Request, Depends, HTTPException from sqlalchemy.orm import Session from typing import Optional, List from app.core.database import get_db from app.models.user import User from app.core.security import verify_token class Pagination: """Pagination helper class.""" def __init__(self, page: int = 1, page_size: int = 20): self.page = max(1, page) self.page_size = max(1, min(page_size, 100)) self.offset = (self.page - 1) * self.page_size self.limit = self.page_size def get_pagination( page: int = Query(1, ge=1, description="Page number"), page_size: int = Query(20, ge=1, le=100, description="Items per page") ) -> Pagination: """Get pagination parameters.""" return Pagination(page=page, page_size=page_size) def get_current_user( request: Request, db: Session = Depends(get_db) ) -> User: """Get current authenticated user.""" auth_header = request.headers.get("Authorization") if not auth_header or not auth_header.startswith("Bearer "): raise HTTPException(status_code=401, detail="Not authenticated") token = auth_header.split(" ")[1] user = verify_token(token, db) if not user: raise HTTPException(status_code=401, detail="Invalid token") return user def get_current_active_user( current_user: User = Depends(get_current_user) ) -> User: """Get current active user.""" if not current_user.is_active: raise HTTPException(status_code=400, detail="Inactive user") return current_user def get_client_ip(request: Request) -> str: """Get client IP address.""" forwarded = request.headers.get("X-Forwarded-For") if forwarded: return forwarded.split(",")[0] return request.client.host if request.client else "unknown" # Role-based access control functions def require_super_admin( current_user: User = Depends(get_current_active_user) ) -> User: """Require super admin role.""" if current_user.role != 'super_admin': raise HTTPException( status_code=403, detail="Super admin access required" ) return current_user def require_admin_or_above( current_user: User = Depends(get_current_active_user) ) -> User: """Require admin or super admin role.""" if current_user.role not in ['admin', 'super_admin']: raise HTTPException( status_code=403, detail="Admin access required" ) return current_user def require_teacher_or_above( current_user: User = Depends(get_current_active_user) ) -> User: """Require teacher, admin, or super admin role.""" if current_user.role not in ['teacher', 'admin', 'super_admin']: raise HTTPException( status_code=403, detail="Teacher access required" ) return current_user def require_roles(allowed_roles: List[str]): """Require specific roles.""" def role_checker( current_user: User = Depends(get_current_active_user) ) -> User: if current_user.role not in allowed_roles: raise HTTPException( status_code=403, detail=f"Access denied. Required roles: {', '.join(allowed_roles)}" ) return current_user return role_checker 
+"""FastAPI dependencies for authentication and pagination."""
+from fastapi import Depends, HTTPException, status, Request, Query
+from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
+from typing import Optional
+from app.core.database import get_db
+from app.core.security import verify_token
+from app.models.user import User
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
+
+
+def get_current_active_user(
+    token: Optional[str] = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+) -> User:
+    """Get the current authenticated user."""
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    payload = verify_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    user_id: str = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+        )
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    
+    return user
+
+
+def get_current_user_optional(
+    token: Optional[str] = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """Get current user if authenticated, else None."""
+    if token is None:
+        return None
+    try:
+        return get_current_active_user(token, db)
+    except HTTPException:
+        return None
+
+
+class Pagination:
+    """Pagination parameters."""
+    def __init__(
+        self,
+        page: int = Query(1, ge=1),
+        page_size: int = Query(20, ge=1, le=100),
+    ):
+        self.page = page
+        self.page_size = page_size
+        self.offset = (page - 1) * page_size
+        self.limit = page_size
+
+
+def get_pagination(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+) -> Pagination:
+    """Get pagination parameters."""
+    return Pagination(page=page, page_size=page_size)
+
+
+def get_client_ip(request: Request) -> str:
+    """Extract client IP from request."""
+    if request.client:
+        return request.client.host
+    return "unknown"

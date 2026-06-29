@@ -1,1 +1,72 @@
-"""Students endpoints.""" from fastapi import APIRouter, HTTPException, Depends, Query from sqlalchemy.orm import Session from typing import Optional from app.core.database import get_db from app.core.dependencies import get_pagination, Pagination from app.models.user import User import logging logger = logging.getLogger(__name__) router = APIRouter() @router.get("/") def list_students( pagination: Pagination = Depends(get_pagination), search: Optional[str] = Query(None, description="Search by name or admission number"), db: Session = Depends(get_db) ): """List all students.""" try: # Query students (users with role 'student') query = db.query(User).filter(User.role == 'student') # Apply search filter if search: query = query.filter( (User.full_name.ilike(f"%{search}%")) | (User.email.ilike(f"%{search}%")) | (User.username.ilike(f"%{search}%")) ) # Get total count total = query.count() # Apply pagination students = query.offset(pagination.offset).limit(pagination.limit).all() return { "items": [ { "id": str(s.id), "admission_number": s.username, "first_name": s.full_name.split()[0] if s.full_name else "", "last_name": " ".join(s.full_name.split()[1:]) if s.full_name and len(s.full_name.split()) > 1 else "", "email": s.email, "phone": s.phone, "gender": "male", # Default, can be enhanced later "class_name": "Unassigned", # Can be enhanced with class relationship "enrollment_status": "active" if s.is_active else "inactive", "created_at": s.created_at.isoformat() if s.created_at else None } for s in students ], "total": total, "page": pagination.page, "page_size": pagination.page_size, "total_pages": (total + pagination.page_size - 1) // pagination.page_size } except Exception as e: logger.error(f"Error listing students: {e}", exc_info=True) raise HTTPException(status_code=500, detail="Failed to fetch students") @router.get("/{student_id}") def get_student(student_id: str, db: Session = Depends(get_db)): """Get student by ID.""" student = db.query(User).filter(User.id == student_id, User.role == 'student').first() if not student: raise HTTPException(status_code=404, detail="Student not found") return { "id": str(student.id), "admission_number": student.username, "first_name": student.full_name.split()[0] if student.full_name else "", "last_name": " ".join(student.full_name.split()[1:]) if student.full_name and len(student.full_name.split()) > 1 else "", "email": student.email, "phone": student.phone, "gender": "male", "class_name": "Unassigned", "enrollment_status": "active" if student.is_active else "inactive", "created_at": student.created_at.isoformat() if student.created_at else None } @router.post("/") def create_student(data: dict, db: Session = Depends(get_db)): """Create new student.""" import uuid from app.core.security import hash_password # Check if email exists existing = db.query(User).filter(User.email == data.get('email')).first() if existing: raise HTTPException(status_code=400, detail="Email already registered") # Generate admission number if not provided admission_number = data.get('admission_number', f"ADM/{uuid.uuid4().hex[:8].upper()}") # Create student user student = User( id=str(uuid.uuid4()), username=admission_number, email=data.get('email'), full_name=f"{data.get('first_name', '')} {data.get('last_name', '')}".strip(), phone=data.get('phone'), hashed_password=hash_password(data.get('password', 'Student@123')), role='student', is_active=True, is_verified=True ) db.add(student) db.commit() db.refresh(student) return { "id": str(student.id), "admission_number": student.username, "message": "Student created successfully" } @router.delete("/{student_id}") def delete_student(student_id: str, db: Session = Depends(get_db)): """Delete student.""" student = db.query(User).filter(User.id == student_id, User.role == 'student').first() if not student: raise HTTPException(status_code=404, detail="Student not found") db.delete(student) db.commit() return {"message": "Student deleted successfully"} 
+"""Students endpoints."""
+from fastapi import APIRouter, HTTPException, Depends, Query
+from sqlalchemy.orm import Session
+from typing import Optional
+from app.core.database import get_db
+from app.models.user import User
+import uuid
+from app.core.security import hash_password
+
+router = APIRouter()
+
+
+@router.get("/")
+def list_students(
+    page: int = 1,
+    limit: int = 20,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(User).filter(User.role == 'student')
+    if search:
+        query = query.filter(
+            (User.full_name.ilike(f"%{search}%")) |
+            (User.email.ilike(f"%{search}%")) |
+            (User.username.ilike(f"%{search}%"))
+        )
+    
+    total = query.count()
+    students = query.offset((page - 1) * limit).limit(limit).all()
+    
+    return {
+        "items": [
+            {
+                "id": str(s.id),
+                "admission_number": s.username,
+                "first_name": s.full_name.split()[0] if s.full_name else "",
+                "last_name": " ".join(s.full_name.split()[1:]) if s.full_name and len(s.full_name.split()) > 1 else "",
+                "email": s.email,
+                "phone": s.phone,
+                "class_name": "Unassigned",
+                "enrollment_status": "active" if s.is_active else "inactive",
+            }
+            for s in students
+        ],
+        "total": total,
+        "page": page,
+        "page_size": limit,
+    }
+
+
+@router.post("/")
+def create_student(data: dict, db: Session = Depends(get_db)):
+    existing = db.query(User).filter(User.email == data.get('email')).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    admission_number = data.get('admission_number', f"ADM/{uuid.uuid4().hex[:8].upper()}")
+    student = User(
+        id=str(uuid.uuid4()),
+        username=admission_number,
+        email=data.get('email'),
+        full_name=f"{data.get('first_name', '')} {data.get('last_name', '')}".strip(),
+        phone=data.get('phone'),
+        hashed_password=hash_password(data.get('password', 'Student@123')),
+        role='student',
+        is_active=True,
+        is_verified=True,
+    )
+    db.add(student)
+    db.commit()
+    db.refresh(student)
+    return {"id": str(student.id), "admission_number": student.username}

@@ -1,1 +1,52 @@
-"""AI Chat endpoint for intelligent responses.""" from fastapi import APIRouter, HTTPException from pydantic import BaseModel from typing import List, Optional from app.services.ai_service import ai_service import logging logger = logging.getLogger(__name__) router = APIRouter() class ChatMessage(BaseModel): role: str # "user" or "bot" text: str class ChatRequest(BaseModel): message: str history: List[ChatMessage] = [] session_id: Optional[str] = None class ChatResponse(BaseModel): response: str session_id: str @router.post("/chat", response_model=ChatResponse) async def chat_endpoint(request: ChatRequest): """Get intelligent AI response.""" try: logger.info(f"Chat request received: {request.message[:50]}...") # Convert history to dict format history = [{"role": msg.role, "text": msg.text} for msg in request.history] # Get AI response response = await ai_service.chat(history, request.message) logger.info(f"Chat response generated: {response[:50]}...") return ChatResponse( response=response, session_id=request.session_id or "default" ) except Exception as e: logger.error(f"Chat endpoint error: {e}", exc_info=True) raise HTTPException(status_code=500, detail=str(e)) @router.get("/health") async def ai_health(): """Check AI service health.""" is_configured = bool(ai_service.groq_api_key and ai_service.groq_api_key != "gsk_your_groq_api_key_here") return { "status": "healthy", "ai_enabled": is_configured, "model": ai_service.model, "api_key_configured": is_configured } 
+"""AI Chat endpoint."""
+from fastapi import APIRouter
+from pydantic import BaseModel
+from typing import List, Optional
+import os
+import logging
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+
+
+class ChatRequest(BaseModel):
+    message: str
+    history: List[dict] = []
+    session_id: Optional[str] = None
+
+
+@router.post("/chat")
+async def chat(request: ChatRequest):
+    api_key = os.getenv("GROQ_API_KEY", "")
+    if not api_key:
+        return {
+            "response": "I'm Iqra, your AI school assistant. The AI service is currently unavailable. Please contact the school directly at +234 800 000 0000.",
+            "session_id": request.session_id,
+        }
+    
+    try:
+        import httpx
+        async with httpx.AsyncClient() as client:
+            messages = [{"role": m.get("role", "user"), "content": m.get("text", "")} for m in request.history]
+            messages.append({"role": "user", "content": request.message})
+            
+            response = await client.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": "llama-3.3-70b-versatile",
+                    "messages": messages,
+                    "temperature": 0.7,
+                },
+                timeout=30.0,
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                ai_response = data["choices"][0]["message"]["content"]
+                return {"response": ai_response, "session_id": request.session_id}
+            else:
+                return {"response": "I'm having trouble connecting right now. Please try again later.", "session_id": request.session_id}
+    except Exception as e:
+        logger.error(f"AI chat error: {e}")
+        return {"response": "I'm having trouble connecting right now. Please contact the school at +234 800 000 0000.", "session_id": request.session_id}

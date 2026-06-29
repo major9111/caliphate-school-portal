@@ -1,1 +1,0 @@
-"""StaffLeave stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class StaffLeave(Base): __tablename__ = "staffleaves" id = Column(Integer, primary_key=True, index=True) 

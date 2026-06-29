@@ -1,1 +1,62 @@
-"""Teachers endpoints.""" from fastapi import APIRouter, Depends, HTTPException from sqlalchemy.orm import Session from typing import List, Optional from app.core.database import get_db from app.core.dependencies import get_pagination, Pagination from app.models.user import User router = APIRouter() @router.get("/") def list_teachers( pagination: Pagination = Depends(get_pagination), search: Optional[str] = None, db: Session = Depends(get_db) ): """List all teachers.""" query = db.query(User).filter(User.role == 'teacher') if search: query = query.filter( (User.full_name.ilike(f"%{search}%")) | (User.email.ilike(f"%{search}%")) ) total = query.count() teachers = query.offset(pagination.offset).limit(pagination.limit).all() return { "items": [ { "id": str(t.id), "full_name": t.full_name, "email": t.email, "phone": t.phone, "subject": "Mathematics", # Placeholder "qualification": "B.Sc, M.Ed", # Placeholder "employment_status": "active" if t.is_active else "inactive" } for t in teachers ], "total": total, "page": pagination.page, "page_size": pagination.page_size, "total_pages": (total + pagination.page_size - 1) // pagination.page_size } @router.get("/{teacher_id}") def get_teacher(teacher_id: str, db: Session = Depends(get_db)): """Get teacher by ID.""" teacher = db.query(User).filter(User.id == teacher_id, User.role == 'teacher').first() if not teacher: raise HTTPException(status_code=404, detail="Teacher not found") return { "id": str(teacher.id), "full_name": teacher.full_name, "email": teacher.email, "phone": teacher.phone, "subject": "Mathematics", "qualification": "B.Sc, M.Ed", "employment_status": "active" if teacher.is_active else "inactive" } @router.post("/") def create_teacher(data: dict, db: Session = Depends(get_db)): """Create new teacher.""" # Check if email exists existing = db.query(User).filter(User.email == data.get('email')).first() if existing: raise HTTPException(status_code=400, detail="Email already registered") # Create teacher user from app.core.security import hash_password teacher = User( email=data.get('email'), username=data.get('email').split('@')[0], full_name=data.get('full_name'), phone=data.get('phone'), hashed_password=hash_password("Teacher@123"), # Default password role='teacher', is_active=True, is_verified=True ) db.add(teacher) db.commit() db.refresh(teacher) return { "id": str(teacher.id), "full_name": teacher.full_name, "email": teacher.email, "message": "Teacher created successfully" } @router.delete("/{teacher_id}") def delete_teacher(teacher_id: str, db: Session = Depends(get_db)): """Delete teacher.""" teacher = db.query(User).filter(User.id == teacher_id, User.role == 'teacher').first() if not teacher: raise HTTPException(status_code=404, detail="Teacher not found") db.delete(teacher) db.commit() return {"message": "Teacher deleted successfully"} 
+"""Teachers endpoints."""
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+from typing import Optional
+from app.core.database import get_db
+from app.models.user import User
+
+router = APIRouter()
+
+
+@router.get("/")
+def list_teachers(
+    page: int = 1,
+    limit: int = 20,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(User).filter(User.role == 'teacher')
+    if search:
+        query = query.filter(
+            (User.full_name.ilike(f"%{search}%")) |
+            (User.email.ilike(f"%{search}%"))
+        )
+    
+    total = query.count()
+    teachers = query.offset((page - 1) * limit).limit(limit).all()
+    
+    return {
+        "items": [
+            {
+                "id": str(t.id),
+                "full_name": t.full_name,
+                "email": t.email,
+                "phone": t.phone,
+                "employment_status": "active" if t.is_active else "inactive",
+            }
+            for t in teachers
+        ],
+        "total": total,
+    }
+
+
+@router.post("/")
+def create_teacher(data: dict, db: Session = Depends(get_db)):
+    from app.core.security import hash_password
+    import uuid
+    
+    teacher = User(
+        id=str(uuid.uuid4()),
+        username=data.get('email', '').split('@')[0],
+        email=data.get('email'),
+        full_name=data.get('full_name'),
+        phone=data.get('phone'),
+        hashed_password=hash_password(data.get('password', 'Teacher@123')),
+        role='teacher',
+        is_active=True,
+        is_verified=True,
+    )
+    db.add(teacher)
+    db.commit()
+    db.refresh(teacher)
+    return {"id": str(teacher.id), "full_name": teacher.full_name}

@@ -1,1 +1,0 @@
-"""ScoreEntry stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class ScoreEntry(Base): __tablename__ = "scoreentrys" id = Column(Integer, primary_key=True, index=True) 

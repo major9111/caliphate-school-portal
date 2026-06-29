@@ -1,1 +1,78 @@
-"""User and related models with Soft Deletes and Indexes.""" from sqlalchemy import Column, String, Boolean, DateTime, Integer, ForeignKey, Text, Index from sqlalchemy.sql import func from sqlalchemy.orm import relationship from app.core.database import Base class User(Base): __tablename__ = "users" id = Column(String, primary_key=True, index=True) email = Column(String, unique=True, index=True, nullable=False) username = Column(String, unique=True, index=True, nullable=False) full_name = Column(String, nullable=False, index=True) # Indexed for search phone = Column(String, nullable=True) hashed_password = Column(String, nullable=False) avatar_url = Column(String, nullable=True) role = Column(String, default="parent", index=True) # Indexed for RBAC is_active = Column(Boolean, default=True) is_verified = Column(Boolean, default=False) is_deleted = Column(Boolean, default=False) # Soft delete flag email_verified_at = Column(DateTime, nullable=True) last_login_at = Column(DateTime, nullable=True) last_login_ip = Column(String, nullable=True) failed_login_attempts = Column(Integer, default=0) locked_until = Column(DateTime, nullable=True) password_reset_token = Column(String, nullable=True, index=True) password_reset_expires = Column(DateTime, nullable=True) preferences = Column(String, nullable=True) created_at = Column(DateTime(timezone=True), server_default=func.now()) updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now()) refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan") # Composite indexes for common queries __table_args__ = ( Index('idx_user_role_active', 'role', 'is_active'), Index('idx_user_email_deleted', 'email', 'is_deleted'), ) class RefreshToken(Base): __tablename__ = "refresh_tokens" id = Column(Integer, primary_key=True, index=True) user_id = Column(String, ForeignKey("users.id"), nullable=False, index=True) token_hash = Column(String, nullable=False, index=True) device_info = Column(String, nullable=True) ip_address = Column(String, nullable=True) expires_at = Column(DateTime, nullable=False, index=True) revoked = Column(Boolean, default=False) created_at = Column(DateTime(timezone=True), server_default=func.now()) updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now()) user = relationship("User", back_populates="refresh_tokens") class AuditLog(Base): __tablename__ = "audit_logs" id = Column(Integer, primary_key=True, index=True) user_id = Column(String, ForeignKey("users.id"), nullable=True, index=True) action = Column(String, nullable=False, index=True) module = Column(String, nullable=False, index=True) resource_id = Column(String, nullable=True) details = Column(Text, nullable=True) ip_address = Column(String, nullable=True) user_agent = Column(String, nullable=True) success = Column(Boolean, default=True) created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True) class ActivityLog(Base): __tablename__ = "activity_logs" id = Column(Integer, primary_key=True, index=True) user_id = Column(String, ForeignKey("users.id"), nullable=True, index=True) activity_type = Column(String, nullable=False) description = Column(Text, nullable=True) extra_data = Column(Text, nullable=True) created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True) 
+"""User and related models."""
+from sqlalchemy import Column, String, Boolean, DateTime, Integer, ForeignKey, Text
+from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
+from app.core.database import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True, index=True, nullable=False)
+    full_name = Column(String, nullable=False, index=True)
+    phone = Column(String, nullable=True)
+    hashed_password = Column(String, nullable=False)
+    avatar_url = Column(String, nullable=True)
+    role = Column(String, default="parent", index=True)
+    is_active = Column(Boolean, default=True)
+    is_verified = Column(Boolean, default=False)
+    is_deleted = Column(Boolean, default=False)
+    
+    email_verified_at = Column(DateTime, nullable=True)
+    last_login_at = Column(DateTime, nullable=True)
+    last_login_ip = Column(String, nullable=True)
+    failed_login_attempts = Column(Integer, default=0)
+    locked_until = Column(DateTime, nullable=True)
+    
+    password_reset_token = Column(String, nullable=True, index=True)
+    password_reset_expires = Column(DateTime, nullable=True)
+    
+    preferences = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+
+
+class RefreshToken(Base):
+    __tablename__ = "refresh_tokens"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False, index=True)
+    token_hash = Column(String, nullable=False, index=True)
+    device_info = Column(String, nullable=True)
+    ip_address = Column(String, nullable=True)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    revoked = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+    user = relationship("User", back_populates="refresh_tokens")
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=True, index=True)
+    action = Column(String, nullable=False, index=True)
+    module = Column(String, nullable=False, index=True)
+    resource_id = Column(String, nullable=True)
+    details = Column(Text, nullable=True)
+    ip_address = Column(String, nullable=True)
+    user_agent = Column(String, nullable=True)
+    success = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+
+class ActivityLog(Base):
+    __tablename__ = "activity_logs"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=True, index=True)
+    activity_type = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    extra_data = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)

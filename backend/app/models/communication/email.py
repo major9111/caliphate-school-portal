@@ -1,1 +1,0 @@
-"""EmailTemplate stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class EmailTemplate(Base): __tablename__ = "emailtemplates" id = Column(Integer, primary_key=True, index=True) 

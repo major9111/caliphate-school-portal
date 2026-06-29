@@ -1,1 +1,0 @@
-"""BarcodeService stub.""" from sqlalchemy.orm import Session class BarcodeService: def __init__(self, db: Session): self.db = db 

@@ -1,1 +1,0 @@
-from app.services.qr.qr_service import QRService from app.services.qr.verification_service import VerificationService 

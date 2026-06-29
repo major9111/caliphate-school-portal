@@ -1,1 +1,0 @@
-"""MedicalAlert stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class MedicalAlert(Base): __tablename__ = "medicalalerts" id = Column(Integer, primary_key=True, index=True) 

@@ -1,1 +1,116 @@
-"""Authentication endpoints.""" from datetime import datetime from fastapi import APIRouter, HTTPException, Depends, Request from fastapi.security import OAuth2PasswordBearer from pydantic import BaseModel from sqlalchemy.orm import Session from app.core.database import get_db from app.core.dependencies import get_current_user, get_client_ip from app.models.user import User from app.services.auth_service import auth_service import logging logger = logging.getLogger(__name__) router = APIRouter() oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login") # ===================== # REQUEST/RESPONSE MODELS # ===================== class LoginRequest(BaseModel): login: str password: str class RegisterRequest(BaseModel): full_name: str email: str phone: str = "" password: str role: str = "parent" class TokenResponse(BaseModel): access_token: str refresh_token: str = None token_type: str = "bearer" user: dict = None class UserResponse(BaseModel): id: str email: str username: str full_name: str phone: str = None role: str is_active: bool avatar_url: str = None # ===================== # LOGIN ENDPOINT # ===================== @router.post("/login", response_model=TokenResponse) def login( payload: LoginRequest, request: Request, db: Session = Depends(get_db) ): """Login user and return JWT tokens.""" try: ip = get_client_ip(request) result = auth_service.login(payload.login, payload.password, db, ip) return result except ValueError as e: logger.warning(f"Login failed for {payload.login}: {e}") raise HTTPException(status_code=401, detail=str(e)) except Exception as e: logger.error(f"Login error: {e}", exc_info=True) raise HTTPException(status_code=500, detail="Login failed") # ===================== # REGISTER ENDPOINT # ===================== @router.post("/register") def register_user( user: RegisterRequest, db: Session = Depends(get_db) ): """Register a new user account.""" from app.core.security import hash_password, create_access_token # Check if user already exists existing_user = db.query(User).filter( (User.email == user.email) | (User.username == user.email) ).first() if existing_user: raise HTTPException(status_code=400, detail="Email already registered") # Prevent self-registration as teacher/admin if user.role in ['teacher', 'admin', 'super_admin']: raise HTTPException( status_code=403, detail=f"Cannot self-register as {user.role}. Contact administrator." ) # Create new user new_user = User( id=str(__import__('uuid').uuid4()), username=user.email.split('@')[0], email=user.email, full_name=user.full_name, phone=user.phone, hashed_password=hash_password(user.password), role=user.role, is_active=True, is_verified=False, email_verified_at=datetime.utcnow() ) db.add(new_user) db.commit() db.refresh(new_user) # Generate token for auto-login access_token = create_access_token( data={"sub": str(new_user.id), "email": new_user.email, "role": new_user.role} ) # Send Welcome Email (non-blocking) try: from app.services.email_service import send_welcome_email import asyncio asyncio.create_task(send_welcome_email(user.full_name, user.email, user.role)) except Exception as e: logger.error(f"Failed to send welcome email: {e}") return { "message": "Registration successful!", "access_token": access_token, "token_type": "bearer", "user": { "id": str(new_user.id), "full_name": new_user.full_name, "email": new_user.email, "role": new_user.role } } # ===================== # GET CURRENT USER # ===================== @router.get("/me", response_model=UserResponse) def get_me(current_user: User = Depends(get_current_user)): """Get current authenticated user.""" return UserResponse( id=str(current_user.id), email=current_user.email, username=current_user.username, full_name=current_user.full_name, phone=current_user.phone, role=current_user.role, is_active=current_user.is_active, avatar_url=current_user.avatar_url ) # ===================== # LOGOUT ENDPOINT # ===================== @router.post("/logout") def logout( request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db) ): """Logout user.""" # In a real implementation, you'd revoke the refresh token here return {"message": "Logged out successfully"} # ===================== # REFRESH TOKEN # ===================== class RefreshTokenRequest(BaseModel): refresh_token: str @router.post("/refresh") def refresh_token( payload: RefreshTokenRequest, db: Session = Depends(get_db) ): """Refresh access token.""" try: result = auth_service.refresh_token(payload.refresh_token, db) return result except ValueError as e: raise HTTPException(status_code=401, detail=str(e)) except Exception as e: logger.error(f"Refresh token error: {e}", exc_info=True) raise HTTPException(status_code=500, detail="Token refresh failed") 
+"""Authentication endpoints."""
+from datetime import datetime
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from app.core.database import get_db
+from app.core.dependencies import get_current_active_user, get_client_ip
+from app.core.security import hash_password, verify_password, create_access_token
+from app.models.user import User
+import uuid
+import logging
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+
+
+class LoginRequest(BaseModel):
+    login: str
+    password: str
+
+
+class RegisterRequest(BaseModel):
+    full_name: str
+    email: str
+    phone: str = ""
+    password: str
+    role: str = "parent"
+
+
+@router.post("/login")
+def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    user = db.query(User).filter(
+        (User.email == payload.login) | (User.username == payload.login)
+    ).first()
+    
+    if not user or not verify_password(payload.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not user.is_active:
+        raise HTTPException(status_code=400, detail="Account is disabled")
+    
+    user.last_login_at = datetime.utcnow()
+    user.last_login_ip = get_client_ip(request)
+    user.failed_login_attempts = 0
+    db.commit()
+    
+    access_token = create_access_token(
+        data={"sub": str(user.id), "email": user.email, "role": user.role}
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": str(user.id),
+            "email": user.email,
+            "full_name": user.full_name,
+            "role": user.role,
+        }
+    }
+
+
+@router.post("/register")
+def register_user(user: RegisterRequest, db: Session = Depends(get_db)):
+    existing = db.query(User).filter(User.email == user.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    if user.role in ['teacher', 'admin', 'super_admin']:
+        raise HTTPException(status_code=403, detail=f"Cannot self-register as {user.role}")
+    
+    new_user = User(
+        id=str(uuid.uuid4()),
+        username=user.email.split('@')[0],
+        email=user.email,
+        full_name=user.full_name,
+        phone=user.phone,
+        hashed_password=hash_password(user.password),
+        role=user.role,
+        is_active=True,
+        is_verified=True,
+        email_verified_at=datetime.utcnow(),
+    )
+    
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    access_token = create_access_token(
+        data={"sub": str(new_user.id), "email": new_user.email, "role": new_user.role}
+    )
+    
+    return {
+        "message": "Registration successful",
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": str(new_user.id),
+            "email": new_user.email,
+            "full_name": new_user.full_name,
+            "role": new_user.role,
+        }
+    }
+
+
+@router.get("/me")
+def get_me(current_user: User = Depends(get_current_active_user)):
+    return {
+        "id": str(current_user.id),
+        "email": current_user.email,
+        "username": current_user.username,
+        "full_name": current_user.full_name,
+        "phone": current_user.phone,
+        "role": current_user.role,
+        "is_active": current_user.is_active,
+    }

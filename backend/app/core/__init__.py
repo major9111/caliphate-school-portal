@@ -1,1 +1,1 @@
-"""Core module: config, security, database, dependencies.""" 
+# Package init
