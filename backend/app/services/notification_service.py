@@ -1,0 +1,1 @@
+"""NotificationService stub.""" from sqlalchemy.orm import Session class NotificationService: def __init__(self, db: Session): self.db = db 

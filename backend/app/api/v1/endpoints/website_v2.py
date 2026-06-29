@@ -1,0 +1,1 @@
+"""Website V2 admin endpoints (stub).""" from fastapi import APIRouter router = APIRouter() @router.get("/site-settings") def get_site_settings(): return {} 

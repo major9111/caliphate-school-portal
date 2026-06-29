@@ -1,0 +1,1 @@
+"""ReceiptService stub.""" from sqlalchemy.orm import Session class ReceiptService: def __init__(self, db: Session): self.db = db 

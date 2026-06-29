@@ -1,0 +1,1 @@
+"""files endpoints (stub).""" from fastapi import APIRouter router = APIRouter() @router.get("/") def placeholder(): return {"message": "files endpoint not implemented"} 

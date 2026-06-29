@@ -1,0 +1,1 @@
+"""AI Receptionist endpoints (stub).""" from fastapi import APIRouter router = APIRouter() @router.get("/settings") def public_ai_settings(): return {"is_enabled": False, "message": "AI Receptionist not configured"} 

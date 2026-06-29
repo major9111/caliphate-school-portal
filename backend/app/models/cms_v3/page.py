@@ -1,0 +1,1 @@
+"""PageV3 stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class PageV3(Base): __tablename__ = "pagev3s" id = Column(Integer, primary_key=True, index=True) 

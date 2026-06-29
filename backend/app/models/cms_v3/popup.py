@@ -1,0 +1,1 @@
+"""Popup stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class Popup(Base): __tablename__ = "popups" id = Column(Integer, primary_key=True, index=True) 

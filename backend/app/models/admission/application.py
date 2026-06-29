@@ -1,0 +1,1 @@
+"""AdmissionApplication stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class AdmissionApplication(Base): __tablename__ = "admissionapplications" id = Column(Integer, primary_key=True, index=True) 

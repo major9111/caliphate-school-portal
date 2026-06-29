@@ -1,0 +1,1 @@
+"""ResultV2 stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class ResultV2(Base): __tablename__ = "resultv2s" id = Column(Integer, primary_key=True, index=True) 

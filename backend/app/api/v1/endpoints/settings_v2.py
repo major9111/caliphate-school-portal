@@ -1,0 +1,1 @@
+"""settings_v2 endpoints (stub).""" from fastapi import APIRouter router = APIRouter() @router.get("/") def placeholder(): return {"message": "settings_v2 endpoint not implemented"} 

@@ -1,0 +1,1 @@
+"""notifications endpoints (stub).""" from fastapi import APIRouter router = APIRouter() @router.get("/") def placeholder(): return {"message": "notifications endpoint not implemented"} 

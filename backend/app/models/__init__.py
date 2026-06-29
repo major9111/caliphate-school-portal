@@ -1,16 +1,1 @@
-"""ORM models - import all so Alembic sees them."""
-from app.models.base import TimestampMixin
-from app.models.user import User, RefreshToken, AuditLog, ActivityLog
-from app.models.school import SchoolInfo, ManagementProfile
-from app.models.student import Student, Enrollment, Guardian
-from app.models.academic import (
-    AcademicSession, AcademicTerm, ClassLevel, Section, Subject,
-    SubjectAssignment, Timetable,
-)
-from app.models.attendance import StudentAttendance, StaffAttendance
-from app.models.examination import Exam, ExamSchedule, Result, ResultDetail, GradingSystem
-from app.models.finance import FeeStructure, Invoice, Payment, Expense, Income
-from app.models.uniform import Uniform, UniformImage
-from app.models.gallery import GalleryAlbum, GalleryMedia
-from app.models.cms import Page, Post, Event, NewsItem, FAQ, DownloadFile
-from app.models.enums import UserRole, Gender, SectionType, PaymentStatus
+"""All models - import in dependency order.""" import logging logger = logging.getLogger(__name__) # Base models from app.models.base import TimestampMixin # Core models (no dependencies) from app.models.user import User, RefreshToken, AuditLog, ActivityLog from app.models.school import SchoolInfo, ManagementProfile # Academic models (referenced by others) from app.models.academic import ( AcademicSession, AcademicTerm, ClassLevel, Section, Subject, SubjectAssignment, Timetable, ) # Student models from app.models.student import Student, Enrollment, Guardian # Student V2 (MUST be before finance_v2) try: from app.models.student_v2 import StudentV2, ParentGuardian except Exception as e: logger.warning(f"Student V2: {e}") # Attendance from app.models.attendance import StudentAttendance, StaffAttendance # Examination from app.models.examination import Exam, ExamSchedule, Result, ResultDetail, GradingSystem # Uniform & Gallery from app.models.uniform import Uniform, UniformImage from app.models.gallery import GalleryAlbum, GalleryMedia # CMS from app.models.cms import Page, Post, Event, NewsItem, FAQ, DownloadFile # V2 models (academic, AI, website) try: from app.models.v2 import * except Exception as e: logger.warning(f"V2 models: {e}") # HR models try: from app.models.hr import * except Exception as e: logger.warning(f"HR models: {e}") # Exam V2 try: from app.models.exam_v2 import * except Exception as e: logger.warning(f"Exam V2: {e}") # Finance V2 (depends on students_v2) try: from app.models.finance_v2 import * except Exception as e: logger.warning(f"Finance V2: {e}") # Communication try: from app.models.communication import * except Exception as e: logger.warning(f"Communication: {e}") # CMS V3 try: from app.models.cms_v3 import * except Exception as e: logger.warning(f"CMS V3: {e}") # Admission try: from app.models.admission import * except Exception as e: logger.warning(f"Admission: {e}") # Notification try: from app.models.notification import Notification, NotificationPreference except ImportError: from app.models.notification import Notification NotificationPreference = None # File try: from app.models.file import FileRecord, FileFolder except Exception as e: logger.warning(f"File: {e}") # Settings try: from app.models.settings import SystemSetting except Exception as e: logger.warning(f"Settings: {e}") 

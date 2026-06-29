@@ -1,0 +1,1 @@
+"""IncomeService stub.""" from sqlalchemy.orm import Session class IncomeService: def __init__(self, db: Session): self.db = db 

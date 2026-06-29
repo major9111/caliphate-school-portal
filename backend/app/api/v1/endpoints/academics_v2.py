@@ -1,0 +1,1 @@
+"""Academics V2 endpoints (stub).""" from fastapi import APIRouter router = APIRouter() @router.get("/class-arms") def list_class_arms(): return [] 

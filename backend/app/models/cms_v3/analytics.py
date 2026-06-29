@@ -1,0 +1,1 @@
+"""PageView stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class PageView(Base): __tablename__ = "pageviews" id = Column(Integer, primary_key=True, index=True) 

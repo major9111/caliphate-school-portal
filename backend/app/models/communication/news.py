@@ -1,0 +1,1 @@
+"""NewsV2 stub model.""" from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON from app.core.database import Base class NewsV2(Base): __tablename__ = "newsv2s" id = Column(Integer, primary_key=True, index=True) 

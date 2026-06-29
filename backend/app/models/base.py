@@ -1,15 +1,1 @@
-"""Base mixins for all models."""
-from datetime import datetime
-from sqlalchemy import Column, Integer, DateTime, func
-
-
-class TimestampMixin:
-    """Adds created_at / updated_at columns."""
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
-
-
-class SoftDeleteMixin:
-    """Adds soft delete support."""
-    is_deleted = Column(Integer, default=0, nullable=False)
-    deleted_at = Column(DateTime(timezone=True), nullable=True)
+"""Base mixins for all models.""" from datetime import datetime from sqlalchemy import Column, Integer, DateTime, func class TimestampMixin: """Adds created_at / updated_at columns.""" created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False) updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False) class SoftDeleteMixin: """Adds soft delete support.""" is_deleted = Column(Integer, default=0, nullable=False) deleted_at = Column(DateTime(timezone=True), nullable=True) 

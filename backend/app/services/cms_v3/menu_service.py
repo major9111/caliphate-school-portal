@@ -1,0 +1,1 @@
+"""MenuService stub.""" from sqlalchemy.orm import Session class MenuService: def __init__(self, db: Session): self.db = db 

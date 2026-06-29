@@ -1,0 +1,1 @@
+"""DocumentService stub.""" from sqlalchemy.orm import Session class DocumentService: def __init__(self, db: Session): self.db = db 

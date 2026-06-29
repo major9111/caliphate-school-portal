@@ -1,0 +1,1 @@
+"""EventService stub.""" from sqlalchemy.orm import Session class EventService: def __init__(self, db: Session): self.db = db 

@@ -1,0 +1,1 @@
+"""Academic V2 models.""" from app.models.academic_v2.subject import SubjectV2, SubjectCategory from app.models.academic_v2.assignment import TeacherAssignment from app.models.academic_v2.timetable import TimetableV2, TimetableSlot 

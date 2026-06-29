@@ -1,0 +1,1 @@
+"""ReportCardService stub.""" from sqlalchemy.orm import Session class ReportCardService: def __init__(self, db: Session): self.db = db 

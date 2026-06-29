@@ -1,2 +1,1 @@
-"""Caliphate International Schools Gusau Ltd - Portal Backend."""
-__version__ = "1.0.0"
+"""Caliphate International Schools Gusau Ltd - Portal Backend.""" __version__ = "1.0.0" 
