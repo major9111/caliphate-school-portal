@@ -10,44 +10,19 @@ __pycache__/
 venv/
 .venv/
 *.egg-info/
-dist/
-build/
 
 # Node
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
+dist/
 
 # Database
 *.db
 *.sqlite
-*.sqlite3
 
-# Build
-frontend/dist/
-frontend/.vite/
+# IDE
+.vscode/
+.idea/
 
-# Logs
-*.log
-logs/
-
-# Testing
-coverage/
-.nyc_output/
-
-# Misc
-*.tsbuildinfo
+# OS
+.DS_Store
+Thumbs.db
