@@ -1,1 +1,0 @@
-from fastapi import APIRouter router = APIRouter() @router.get("/") def placeholder(): return {"message": "student_v2 not implemented"} 

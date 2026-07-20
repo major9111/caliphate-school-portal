@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { teachersApi } from '@/lib/api'
 
-export function useTeachers(params?: any) {
+export function useTeachers(params?: { page?: number; limit?: number; search?: string }) {
   return useQuery({ queryKey: ['teachers', params], queryFn: () => teachersApi.list(params) })
 }
 

@@ -3,7 +3,11 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { School, Lock, User, Mail, Phone, Loader2, ArrowLeft, Eye, EyeOff } from 'lucide-react'
+import { Lock, User, Mail, Phone, Loader2, ArrowLeft, Eye, EyeOff } from 'lucide-react'
+import { authApi } from '@/lib/api'
+import { getHomeRouteForRole } from '@/lib/utils'
+import { toast } from '@/components/ui/toast'
+import { isAxiosError } from 'axios'
 
 export function RegisterPage() {
   const [formData, setFormData] = useState({ full_name: '', email: '', phone: '', password: '', confirmPassword: '', role: 'parent' })
@@ -15,22 +19,35 @@ export function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!formData.full_name.trim() || !formData.email.trim()) { setError('Full name and email are required'); return }
     if (formData.password !== formData.confirmPassword) { setError('Passwords do not match'); return }
     if (formData.password.length < 8) { setError('Password must be at least 8 characters'); return }
     setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ full_name: formData.full_name, email: formData.email, phone: formData.phone, password: formData.password, role: formData.role }),
+      const data = await authApi.register({
+        full_name: formData.full_name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: formData.role,
       })
-      const data = await response.json()
-      if (response.ok) {
-        localStorage.setItem('token', data.access_token)
-        navigate('/app/dashboard')
-      } else setError(data.detail || 'Registration failed')
+      const token = (data as unknown as { access_token?: string }).access_token
+      const user = (data as unknown as { user?: { role?: string } }).user
+      if (token) {
+        localStorage.setItem('token', token)
+        if (user) localStorage.setItem('user', JSON.stringify(user))
+        toast('Account created successfully!', 'success')
+        navigate(getHomeRouteForRole(user?.role))
+      } else {
+        toast('Account created successfully. Please sign in.', 'success')
+        navigate('/login')
+      }
     } catch (err) {
-      setError('Cannot connect to server')
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.detail || 'Registration failed')
+      } else {
+        setError('Cannot connect to server')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -41,9 +58,7 @@ export function RegisterPage() {
       <div className="hidden lg:flex relative items-center justify-center bg-gradient-to-br from-primary-600 to-primary-900 p-12">
         <div className="relative text-white max-w-md z-10">
           <div className="flex items-center gap-3 mb-8">
-            <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <School className="h-6 w-6 text-white" />
-            </div>
+            <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="h-12 w-12 rounded-full object-cover ring-2 ring-white/30" />
             <div>
               <h1 className="text-2xl font-bold">Caliphate Schools</h1>
               <p className="text-sm text-blue-100">Portal Management System</p>

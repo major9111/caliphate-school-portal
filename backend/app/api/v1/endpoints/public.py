@@ -1,1 +1,0 @@
-"""Public website endpoints (stub).""" from fastapi import APIRouter router = APIRouter() @router.get("/school-info") def public_school_info(): return {"name": "Caliphate International Schools"} 

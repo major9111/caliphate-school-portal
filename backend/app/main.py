@@ -1,54 +1,58 @@
 """Main FastAPI application entry point."""
 import logging
+import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from app.core.config import settings
 from app.core.database import engine, Base
 from app.api.v1.router import router as api_router
 from app.core.security_headers import SecurityHeadersMiddleware
+from app.core.scheduler import start_scheduler
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("🚀 Caliphate International Schools API v2.0.0 started")
+    logger.info(f"   CORS origins: {settings.CORS_ORIGINS}")
+    logger.info(f"   Email configured: {'yes' if settings.SMTP_USER else 'no (dev mode)'}")
+    logger.info(f"   Cloudinary: {'yes' if settings.CLOUDINARY_CLOUD_NAME else 'no (local storage)'}")
+    start_scheduler()
+    yield
+
 
 app = FastAPI(
     title="Caliphate International Schools API",
     description="Enterprise School Management System API",
-    version="2.0.0"
+    version="2.0.0",
+    lifespan=lifespan,
 )
 
-# Security Headers Middleware
 app.add_middleware(SecurityHeadersMiddleware)
-
-# CORS Middleware - Allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins in development
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
     expose_headers=["*"],
-    max_age=86400,  # Cache preflight for 24 hours
+    max_age=86400,
 )
 
-# Include API routes
 app.include_router(api_router, prefix="/api/v1")
 
-@app.on_event("startup")
-async def startup_event():
-    logger.info(" Starting Caliphate International Schools API v2.0.0")
-    logger.info("✅ Security headers enabled")
-    logger.info("✅ Audit trail active")
-    logger.info("✅ RBAC system initialized")
-    logger.info("✅ CORS configured for development")
+# Serve local uploads in dev (Cloudinary replaces this in production)
+UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "..", "uploads")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
 
 @app.get("/")
 def root():
-    return {"status": "healthy", "system": "Caliphate Schools API"}
-
-@app.options("/{path:path}")
-async def options_handler(path: str):
-    """Handle all OPTIONS requests."""
-    return {"message": "OK"}
+    return {"status": "healthy", "system": "Caliphate Schools API", "version": "2.0.0"}

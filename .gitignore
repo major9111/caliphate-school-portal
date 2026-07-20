@@ -1,28 +1,16 @@
-# Environment
-.env
-.env.local
-.env.production
-
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
+.env
 venv/
-.venv/
-*.egg-info/
+*.db
 
 # Node
 node_modules/
 dist/
+.env.local
 
-# Database
-*.db
-*.sqlite
-
-# IDE
-.vscode/
-.idea/
-
-# OS
+# Misc
 .DS_Store
-Thumbs.db
+*.log
+.pytest_cache/

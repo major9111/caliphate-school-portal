@@ -1,13 +1,29 @@
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-.env
-.venv/
-venv/
+*.egg
 *.egg-info/
-.pytest_cache/
-.mypy_cache/
-.coverage
-htmlcov/
 dist/
 build/
+.eggs/
+*.pyo
+*.pyc
+
+# Environment
+.env
+venv/
+env/
+.venv/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Coverage
+.coverage
+htmlcov/
+
+# Misc
+.pytest_cache/
+*.log

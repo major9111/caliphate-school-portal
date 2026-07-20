@@ -60,6 +60,22 @@ def get_current_user_optional(
         return None
 
 
+def require_roles(*roles: str):
+    """Dependency factory: restrict an endpoint to specific user roles."""
+    def checker(user: User = Depends(get_current_active_user)) -> User:
+        if user.role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"This action requires one of the following roles: {', '.join(roles)}",
+            )
+        return user
+    return checker
+
+
+require_staff = require_roles("admin", "teacher", "staff", "super_admin")
+require_admin = require_roles("admin", "super_admin")
+
+
 class Pagination:
     """Pagination parameters."""
     def __init__(

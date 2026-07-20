@@ -14,8 +14,156 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc;
+  background-color: #eef2fb;
   color: #0f172a;
+}
+
+/* ── Ambient animated mesh background ─────────────────────────────────
+   Fixed behind the whole app; every glassy surface blurs this. */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  background: linear-gradient(160deg, #eef2fb 0%, #e9edfb 45%, #eef2fb 100%);
+  pointer-events: none;
+}
+
+.ambient-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.ambient-blob-1 {
+  top: -10%;
+  left: -8%;
+  width: 42vw;
+  height: 42vw;
+  background: radial-gradient(circle at 30% 30%, #93c5fd, #2563eb 70%);
+  animation: blobFloat1 26s ease-in-out infinite;
+}
+
+.ambient-blob-2 {
+  top: 10%;
+  right: -12%;
+  width: 38vw;
+  height: 38vw;
+  background: radial-gradient(circle at 60% 40%, #c4b5fd, #7c3aed 70%);
+  animation: blobFloat2 32s ease-in-out infinite;
+}
+
+.ambient-blob-3 {
+  bottom: -14%;
+  left: 15%;
+  width: 36vw;
+  height: 36vw;
+  background: radial-gradient(circle at 40% 60%, #a5f3fc, #0ea5e9 70%);
+  animation: blobFloat3 30s ease-in-out infinite;
+}
+
+.ambient-blob-4 {
+  bottom: 5%;
+  right: 10%;
+  width: 28vw;
+  height: 28vw;
+  background: radial-gradient(circle at 50% 50%, #fbcfe8, #db2777 70%);
+  opacity: 0.35;
+  animation: blobFloat1 22s ease-in-out infinite reverse;
+}
+
+@keyframes blobFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(4vw, 6vh) scale(1.08); }
+  66% { transform: translate(-3vw, 3vh) scale(0.96); }
+}
+
+@keyframes blobFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5vw, 5vh) scale(1.1); }
+}
+
+@keyframes blobFloat3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40% { transform: translate(3vw, -4vh) scale(1.05); }
+  75% { transform: translate(-4vw, -2vh) scale(0.94); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-blob { animation: none; }
+}
+
+/* ── Glassmorphism ─────────────────────────────────────────────────────
+   Overriding Tailwind's own generated utility classes (rather than
+   hand-editing every component) so every surface in the app — sidebar,
+   header, cards, tables, modals, toasts, inputs — becomes glassy at once. */
+
+.bg-white {
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.bg-secondary-50 {
+  background-color: rgba(255, 255, 255, 0.35) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.bg-secondary-100 {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.hover\:bg-secondary-50:hover {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(14px);
+}
+
+.hover\:bg-secondary-100:hover {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(14px);
+}
+
+.border-secondary-200,
+.border-secondary-300 {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.shadow-soft,
+.shadow-medium {
+  box-shadow: 0 8px 32px -8px rgba(30, 41, 59, 0.18), 0 2px 8px -2px rgba(30, 41, 59, 0.08) !important;
+}
+
+/* Primary CTAs stay solid for hierarchy, but get a frosted edge to match */
+.bg-primary-600 {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 ::-webkit-scrollbar {
@@ -36,13 +184,6 @@ body {
   background: #94a3b8;
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
 * {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -52,4 +193,44 @@ body {
 *:focus-visible {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
+}
+
+/* ── Dark Mode ─────────────────────────────────────────────────────── */
+.dark body {
+  @apply text-gray-100;
+}
+.dark .ambient-bg {
+  background: linear-gradient(160deg, #0b1120 0%, #0f1a33 45%, #0b1120 100%);
+}
+.dark .bg-white {
+  background-color: rgba(15, 23, 42, 0.55) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.dark .bg-secondary-50 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  backdrop-filter: blur(14px);
+}
+.dark .bg-secondary-100 {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+  backdrop-filter: blur(12px);
+}
+.dark .border-secondary-200,
+.dark .border-secondary-300 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.dark .text-secondary-500 {
+  @apply !text-gray-400;
+}
+.dark .text-secondary-600 {
+  @apply !text-gray-300;
+}
+.dark .text-secondary-900 {
+  @apply !text-gray-100;
+}
+.dark .hover\:bg-secondary-100:hover {
+  background-color: rgba(15, 23, 42, 0.65) !important;
+}
+.dark .hover\:bg-secondary-50:hover {
+  background-color: rgba(15, 23, 42, 0.55) !important;
 }

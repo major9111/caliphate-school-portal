@@ -13,8 +13,8 @@ export function AiReceptionistPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [form, setForm] = useState({ question: '', answer: '', category: 'general' })
   const qc = useQueryClient()
-  const { data, isLoading } = useQuery({ queryKey: ['ai-knowledge'], queryFn: aiKnowledgeApi.list })
-  const create = useMutation({ mutationFn: aiKnowledgeApi.create, onSuccess: () => { qc.invalidateQueries({ queryKey: ['ai-knowledge'] }); setModalOpen(false); setForm({ question: '', answer: '', category: 'general' }); toast('Knowledge added', 'success') } })
+  const { data, isLoading } = useQuery({ queryKey: ['ai-knowledge'], queryFn: () => aiKnowledgeApi.list() })
+  const create = useMutation({ mutationFn: aiKnowledgeApi.create, onSuccess: () => { qc.invalidateQueries({ queryKey: ['ai-knowledge'] }); setModalOpen(false); setForm({ question: '', answer: '', category: 'general' }); toast('Knowledge added', 'success') }, onError: () => toast('Failed to add knowledge', 'error') })
   const del = useMutation({ mutationFn: aiKnowledgeApi.delete, onSuccess: () => { qc.invalidateQueries({ queryKey: ['ai-knowledge'] }); toast('Deleted', 'success') } })
 
   const items = data?.items || []
@@ -37,7 +37,7 @@ export function AiReceptionistPage() {
           <h3 className="font-bold text-lg mb-4">Knowledge Base</h3>
           {isLoading ? <Loader2 className="h-8 w-8 animate-spin mx-auto" /> : items.length === 0 ? <p className="text-center py-8 text-secondary-500">No knowledge items</p> : (
             <div className="space-y-3">
-              {items.map((item: any) => (
+              {items.map((item) => (
                 <div key={item.id} className="p-4 border rounded-lg">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">

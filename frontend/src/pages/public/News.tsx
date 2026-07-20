@@ -1,3 +1,5 @@
+import { useScrollReveal, useScrollStagger } from '@/hooks/useGsapPublic'
+
 export function PublicNews() {
   const news = [
     { title: 'New Academic Session Begins', date: 'September 5, 2026', excerpt: 'We welcome all students back for the 2026/2027 session.' },
@@ -5,15 +7,20 @@ export function PublicNews() {
     { title: 'Quranic Recitation Competition', date: 'November 20, 2026', excerpt: 'Students demonstrate their memorization skills.' },
   ]
 
+  const headingRef = useScrollReveal<HTMLDivElement>()
+  const listRef = useScrollStagger()
+
   return (
     <div className="py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">News & Events</h1>
-          <p className="text-lg text-secondary-600 mb-12">Stay updated with the latest happenings at Caliphate Schools.</p>
-          <div className="space-y-6">
+          <div ref={headingRef}>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">News & Events</h1>
+            <p className="text-lg text-secondary-600 mb-12">Stay updated with the latest happenings at Caliphate Schools.</p>
+          </div>
+          <div ref={listRef} className="space-y-6">
             {news.map((item, i) => (
-              <article key={i} className="bg-white rounded-2xl p-6 shadow-soft border border-secondary-200">
+              <article key={i} data-reveal-item className="bg-white rounded-2xl p-6 shadow-soft border border-secondary-200">
                 <p className="text-sm text-primary-600 font-medium mb-2">{item.date}</p>
                 <h2 className="text-2xl font-bold mb-3">{item.title}</h2>
                 <p className="text-secondary-600">{item.excerpt}</p>

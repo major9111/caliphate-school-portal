@@ -20,14 +20,14 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     is_deleted = Column(Boolean, default=False)
     
-    email_verified_at = Column(DateTime, nullable=True)
-    last_login_at = Column(DateTime, nullable=True)
+    email_verified_at = Column(DateTime(timezone=True), nullable=True)
+    last_login_at = Column(DateTime(timezone=True), nullable=True)
     last_login_ip = Column(String, nullable=True)
     failed_login_attempts = Column(Integer, default=0)
-    locked_until = Column(DateTime, nullable=True)
+    locked_until = Column(DateTime(timezone=True), nullable=True)
     
     password_reset_token = Column(String, nullable=True, index=True)
-    password_reset_expires = Column(DateTime, nullable=True)
+    password_reset_expires = Column(DateTime(timezone=True), nullable=True)
     
     preferences = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -44,7 +44,7 @@ class RefreshToken(Base):
     token_hash = Column(String, nullable=False, index=True)
     device_info = Column(String, nullable=True)
     ip_address = Column(String, nullable=True)
-    expires_at = Column(DateTime, nullable=False, index=True)
+    expires_at = Column(DateTime(timezone=True), nullable=False, index=True)
     revoked = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

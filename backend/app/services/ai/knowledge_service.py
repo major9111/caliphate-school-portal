@@ -1,1 +1,0 @@
-"""AI Knowledge Service stub.""" from typing import List class KnowledgeService: def __init__(self, db): self.db = db def retrieve(self, query: str, top_k: int = 5) -> List[dict]: return [] 

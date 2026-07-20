@@ -5,7 +5,7 @@ export function useFinanceStats() {
   return useQuery({ queryKey: ['finance-stats'], queryFn: financeApi.getStats })
 }
 
-export function usePayments(params?: any) {
+export function usePayments(params?: { page?: number; limit?: number; status?: string; type?: string; student_name?: string }) {
   return useQuery({ queryKey: ['payments', params], queryFn: () => financeApi.getPayments(params) })
 }
 

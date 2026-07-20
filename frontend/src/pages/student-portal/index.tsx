@@ -50,9 +50,9 @@ export default function StudentPortalPage() {
       <div><h1 className="text-3xl font-bold">Student Portal</h1><p className="text-secondary-500 mt-1">Welcome, Student</p></div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <Card><CardContent className="p-6 flex items-center gap-4"><FileText className="h-8 w-8 text-blue-600" /><div><p className="text-sm text-secondary-500">Total Results</p><p className="text-2xl font-bold">{data?.total_results || 0}</p></div></CardContent></Card>
-        <Card><CardContent className="p-6 flex items-center gap-4"><Clock className="h-8 w-8 text-orange-600" /><div><p className="text-sm text-secondary-500">Pending Homework</p><p className="text-2xl font-bold">{data?.pending_homework || 0}</p></div></CardContent></Card>
-        <Card><CardContent className="p-6 flex items-center gap-4"><CheckCircle className="h-8 w-8 text-green-600" /><div><p className="text-sm text-secondary-500">Assignments Submitted</p><p className="text-2xl font-bold">{data?.assignments?.length || 0}</p></div></CardContent></Card>
+        <Card><CardContent className="p-6 flex items-center gap-4"><FileText className="h-8 w-8 text-blue-600" /><div><p className="text-sm text-secondary-500">Total Results</p><p className="text-2xl font-bold">{data?.results?.length || 0}</p></div></CardContent></Card>
+        <Card><CardContent className="p-6 flex items-center gap-4"><Clock className="h-8 w-8 text-orange-600" /><div><p className="text-sm text-secondary-500">Active Homework</p><p className="text-2xl font-bold">{data?.homework?.filter((h: { status: string }) => h.status === 'active').length || 0}</p></div></CardContent></Card>
+        <Card><CardContent className="p-6 flex items-center gap-4"><CheckCircle className="h-8 w-8 text-green-600" /><div><p className="text-sm text-secondary-500">Recent Payments</p><p className="text-2xl font-bold">{data?.payments?.length || 0}</p></div></CardContent></Card>
       </div>
 
       {data?.results && data.results.length > 0 && (
@@ -63,7 +63,7 @@ export default function StudentPortalPage() {
               <table className="w-full">
                 <thead><tr className="border-b bg-secondary-50"><th className="text-left p-3 text-xs uppercase">Subject</th><th className="text-left p-3 text-xs uppercase">Class</th><th className="text-left p-3 text-xs uppercase">CA</th><th className="text-left p-3 text-xs uppercase">Exam</th><th className="text-left p-3 text-xs uppercase">Total</th><th className="text-left p-3 text-xs uppercase">Grade</th><th className="text-left p-3 text-xs uppercase">Remark</th></tr></thead>
                 <tbody>
-                  {data.results.map((r: any, i: number) => (
+                  {data.results.map((r, i: number) => (
                     <tr key={i} className="border-b">
                       <td className="p-3 font-medium">{r.subject}</td>
                       <td className="p-3 text-sm">{r.class_name}</td>
@@ -86,7 +86,7 @@ export default function StudentPortalPage() {
           <CardContent className="p-6">
             <h3 className="text-xl font-bold mb-4">Homework & Assignments</h3>
             <div className="space-y-3">
-              {data.homework.map((h: any, i: number) => (
+              {data.homework.map((h, i: number) => (
                 <div key={i} className="p-4 border rounded-lg">
                   <div className="flex justify-between items-start">
                     <div>

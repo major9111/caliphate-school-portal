@@ -42,7 +42,7 @@ export function ChatBot() {
         text: msg.text,
       }))
       const response = await aiChatApi.sendMessage(currentInput, history, sessionId)
-      const botMessage: Message = { role: 'bot', text: response.response, timestamp: new Date() }
+      const botMessage: Message = { role: 'bot', text: response.reply, timestamp: new Date() }
       setMessages((prev) => [...prev, botMessage])
     } catch (error) {
       const errorMessage: Message = {

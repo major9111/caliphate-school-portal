@@ -3,7 +3,10 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { School, Lock, User, Loader2, Eye, EyeOff } from 'lucide-react'
+import { Lock, User, Loader2, Eye, EyeOff } from 'lucide-react'
+import { authApi } from '@/lib/api'
+import { getHomeRouteForRole } from '@/lib/utils'
+import { isAxiosError } from 'axios'
 
 export function LoginPage() {
   const [login, setLogin] = useState('')
@@ -16,23 +19,23 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!login.trim() || !password) {
+      setError('Please enter your username/email and password')
+      return
+    }
     setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login, password }),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        localStorage.setItem('token', data.access_token)
-        navigate('/app/dashboard')
-      } else {
-        const errData = await response.json()
-        setError(errData.detail || 'Invalid credentials')
-      }
+      const data = await authApi.login(login.trim(), password)
+      localStorage.setItem('token', data.access_token)
+      localStorage.setItem('refresh_token', (data as { refresh_token?: string }).refresh_token || '')
+      localStorage.setItem('user', JSON.stringify(data.user))
+      navigate(getHomeRouteForRole(data.user?.role))
     } catch (err) {
-      setError('Cannot connect to server')
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.detail || 'Invalid credentials')
+      } else {
+        setError('Cannot connect to server. Please try again.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -43,9 +46,7 @@ export function LoginPage() {
       <div className="hidden lg:flex relative items-center justify-center bg-gradient-to-br from-primary-600 to-primary-900 p-12">
         <div className="relative text-white max-w-md z-10">
           <div className="flex items-center gap-3 mb-8">
-            <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <School className="h-6 w-6 text-white" />
-            </div>
+            <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="h-12 w-12 rounded-full object-cover ring-2 ring-white/30" />
             <div>
               <h1 className="text-2xl font-bold">Caliphate Schools</h1>
               <p className="text-sm text-blue-100">Portal Management System</p>

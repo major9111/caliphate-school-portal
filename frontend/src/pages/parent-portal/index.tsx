@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+
 import { Loader2, Users, BookOpen, DollarSign, Bell } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { portalApi } from '@/lib/api'
@@ -51,7 +51,7 @@ export default function ParentPortalPage() {
 
       <div className="grid md:grid-cols-4 gap-4">
         <Card><CardContent className="p-6 flex items-center gap-4"><Users className="h-8 w-8 text-blue-600" /><div><p className="text-sm text-secondary-500">Children</p><p className="text-2xl font-bold">{data?.children?.length || 0}</p></div></CardContent></Card>
-        <Card><CardContent className="p-6 flex items-center gap-4"><BookOpen className="h-8 w-8 text-green-600" /><div><p className="text-sm text-secondary-500">Results</p><p className="text-2xl font-bold">{data?.children?.reduce((sum: number, c: any) => sum + (c.results?.length || 0), 0) || 0}</p></div></CardContent></Card>
+        <Card><CardContent className="p-6 flex items-center gap-4"><BookOpen className="h-8 w-8 text-green-600" /><div><p className="text-sm text-secondary-500">Results</p><p className="text-2xl font-bold">{data?.children?.reduce((sum: number, c) => sum + (c.results?.length || 0), 0) || 0}</p></div></CardContent></Card>
         <Card><CardContent className="p-6 flex items-center gap-4"><DollarSign className="h-8 w-8 text-orange-600" /><div><p className="text-sm text-secondary-500">Outstanding Fees</p><p className="text-2xl font-bold">0</p></div></CardContent></Card>
         <Card><CardContent className="p-6 flex items-center gap-4"><Bell className="h-8 w-8 text-purple-600" /><div><p className="text-sm text-secondary-500">Notifications</p><p className="text-2xl font-bold">{data?.notifications?.length || 0}</p></div></CardContent></Card>
       </div>
@@ -61,7 +61,7 @@ export default function ParentPortalPage() {
           <CardContent className="p-6">
             <h3 className="text-xl font-bold mb-4">Recent Notifications</h3>
             <div className="space-y-3">
-              {data.notifications.slice(0, 5).map((n: any, i: number) => (
+              {data.notifications.slice(0, 5).map((n, i: number) => (
                 <div key={i} className="p-3 border rounded-lg">
                   <p className="font-medium">{n.title}</p>
                   <p className="text-sm text-secondary-600">{n.message}</p>

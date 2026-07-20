@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { School, Mail, Loader2, ArrowLeft, CheckCircle } from 'lucide-react'
+import { authApi } from '@/lib/api'
+import { Mail, Loader2, ArrowLeft, CheckCircle } from 'lucide-react'
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -16,15 +17,10 @@ export function ForgotPasswordPage() {
     setError('')
     setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      })
-      if (response.ok) setIsSuccess(true)
-      else setError('Failed to send reset email')
+      await authApi.forgotPassword(email)
+      setIsSuccess(true)
     } catch (err) {
-      setError('Cannot connect to server')
+      setError('Cannot connect to server. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -38,7 +34,7 @@ export function ForgotPasswordPage() {
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold mb-2">Check your email</h2>
-          <p className="text-secondary-500 mb-6">We've sent a password reset link to {email}</p>
+          <p className="text-secondary-500 mb-6">If an account exists for {email}, we've sent a password reset link to it.</p>
           <Link to="/login"><Button className="w-full">Back to login</Button></Link>
         </div>
       </div>
@@ -75,4 +71,4 @@ export function ForgotPasswordPage() {
   )
 }
 
-export default ForgotPassword
+export default ForgotPasswordPage

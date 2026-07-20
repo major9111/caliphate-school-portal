@@ -4,11 +4,13 @@ import { Menu, X, Phone, Mail, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ChatBot } from '@/components/ChatBot'
 import { cn } from '@/lib/utils'
+import { useHeroReveal, useScrollReveal } from '@/hooks/useGsapPublic'
 
 const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'About', href: '/about' },
   { name: 'Admissions', href: '/admissions' },
+  { name: 'Gallery', href: '/gallery' },
   { name: 'News', href: '/news' },
   { name: 'Contact', href: '/contact' },
 ]
@@ -16,6 +18,8 @@ const navLinks = [
 export function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
+  const headerRef = useHeroReveal()
+  const footerRef = useScrollReveal<HTMLElement>()
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -32,17 +36,17 @@ export function PublicLayout() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 bg-white border-b border-secondary-200 shadow-sm">
+      <header ref={headerRef} className="sticky top-0 z-50 bg-white border-b border-secondary-200 shadow-sm">
         <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-primary-600 text-white flex items-center justify-center font-bold text-base md:text-lg">C</div>
+          <Link to="/" data-reveal className="flex items-center gap-3">
+            <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover ring-1 ring-secondary-200" />
             <div>
               <h1 className="text-sm md:text-lg font-bold text-secondary-900 leading-tight">Caliphate Schools</h1>
               <p className="text-xs text-secondary-500 leading-tight hidden sm:block">Excellence in Education</p>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-6 md:gap-8">
+          <nav data-reveal className="hidden lg:flex items-center gap-6 md:gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -57,7 +61,7 @@ export function PublicLayout() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-2 md:gap-3">
+          <div data-reveal className="hidden lg:flex items-center gap-2 md:gap-3">
             <Link to="/login"><Button variant="outline" size="sm">Portal Login</Button></Link>
             <Link to="/register"><Button size="sm">Sign Up</Button></Link>
           </div>
@@ -84,11 +88,11 @@ export function PublicLayout() {
 
       <main className="flex-1"><Outlet /></main>
 
-      <footer className="bg-secondary-900 text-secondary-300 py-8 md:py-12">
+      <footer ref={footerRef} className="glass-dark text-secondary-300 py-8 md:py-12">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg bg-primary-600 text-white flex items-center justify-center font-bold">C</div>
+              <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover ring-1 ring-white/20" />
               <h3 className="text-white font-bold text-base md:text-lg">Caliphate Schools</h3>
             </div>
             <p className="text-xs md:text-sm text-secondary-400 mb-4">Providing quality Islamic and Western education in Gusau, Zamfara State since 2013.</p>

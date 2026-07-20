@@ -3,7 +3,7 @@ import re
 import hashlib
 import secrets
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Dict, Any
 from fastapi import Request, HTTPException, status
 from sqlalchemy.orm import Session
@@ -61,7 +61,7 @@ class RateLimiter:
         self.requests: Dict[str, List[datetime]] = {}
     
     def is_rate_limited(self, key: str, max_requests: int = 100, window_minutes: int = 15) -> bool:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         window_start = now - timedelta(minutes=window_minutes)
         if key in self.requests:
             self.requests[key] = [t for t in self.requests[key] if t > window_start]

@@ -1,1 +1,0 @@
-"""NewsService stub.""" from sqlalchemy.orm import Session class NewsService: def __init__(self, db: Session): self.db = db 

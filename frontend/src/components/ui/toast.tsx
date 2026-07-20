@@ -1,76 +1,122 @@
-import { useState, useEffect, createContext, useContext } from 'react'
-import { X, CheckCircle, AlertCircle, Info } from 'lucide-react'
+import { useState, useEffect, createContext, useContext, useCallback, type ReactNode } from 'react'
+import { X, CheckCircle2, AlertCircle, Info, AlertTriangle } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-interface Toast {
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+type ToastType = 'success' | 'error' | 'info' | 'warning'
+
+interface ToastItem {
   id: string
   message: string
-  type: 'success' | 'error' | 'info'
+  type: ToastType
+  duration?: number
 }
 
-interface ToastContextType {
-  toast: (message: string, type?: 'success' | 'error' | 'info') => void
+interface ToastContextValue {
+  addToast: (message: string, type?: ToastType, duration?: number) => void
 }
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined)
+// ── Context ───────────────────────────────────────────────────────────────────
 
+const ToastContext = createContext<ToastContextValue | null>(null)
+
+// ── Hook ──────────────────────────────────────────────────────────────────────
+
+// eslint-disable-next-line react-refresh/only-export-components
 export function useToast() {
   const ctx = useContext(ToastContext)
   if (!ctx) throw new Error('useToast must be used within ToastProvider')
   return ctx
 }
 
-export const toast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
-  const event = new CustomEvent('toast', { detail: { message, type } })
-  window.dispatchEvent(event)
+// ── Global toast function (works outside React tree via event) ─────────────
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const toast = (message: string, type: ToastType = 'info', duration?: number) => {
+  window.dispatchEvent(new CustomEvent('__toast__', { detail: { message, type, duration } }))
 }
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([])
+// ── Provider ──────────────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const handler = (e: Event) => {
-      const { message, type } = (e as CustomEvent).detail
-      const id = Math.random().toString(36).substr(2, 9)
-      setToasts((prev) => [...prev, { id, message, type }])
-      setTimeout(() => {
-        setToasts((prev) => prev.filter((t) => t.id !== id))
-      }, 3000)
-    }
-    window.addEventListener('toast', handler)
-    return () => window.removeEventListener('toast', handler)
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<ToastItem[]>([])
+
+  const addToast = useCallback((message: string, type: ToastType = 'info', duration = 4000) => {
+    const id = Math.random().toString(36).slice(2)
+    setToasts((prev) => [...prev, { id, message, type, duration }])
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, duration)
   }, [])
 
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
+  // Listen for global toast events
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { message, type, duration } = (e as CustomEvent).detail
+      addToast(message, type, duration)
+    }
+    window.addEventListener('__toast__', handler)
+    return () => window.removeEventListener('__toast__', handler)
+  }, [addToast])
+
+  const icons: Record<ToastType, typeof CheckCircle2> = {
+    success: CheckCircle2,
+    error: AlertCircle,
+    info: Info,
+    warning: AlertTriangle,
+  }
+
+  const styles: Record<ToastType, string> = {
+    success: 'bg-green-50/70 backdrop-blur-xl border-green-200/60 text-green-800',
+    error:   'bg-red-50/70 backdrop-blur-xl border-red-200/60 text-red-800',
+    info:    'bg-blue-50/70 backdrop-blur-xl border-blue-200/60 text-blue-800',
+    warning: 'bg-yellow-50/70 backdrop-blur-xl border-yellow-200/60 text-yellow-800',
+  }
+
+  const iconStyles: Record<ToastType, string> = {
+    success: 'text-green-500',
+    error:   'text-red-500',
+    info:    'text-blue-500',
+    warning: 'text-yellow-500',
+  }
+
   return (
-    <ToastContext.Provider value={{ toast }}>
+    <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div className="fixed top-4 right-4 z-[9999] space-y-2">
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            className={`flex items-center gap-3 p-4 rounded-lg shadow-lg min-w-[300px] ${
-              t.type === 'success' ? 'bg-green-50 border border-green-200' :
-              t.type === 'error' ? 'bg-red-50 border border-red-200' :
-              'bg-blue-50 border border-blue-200'
-            }`}
-          >
-            {t.type === 'success' && <CheckCircle className="h-5 w-5 text-green-600" />}
-            {t.type === 'error' && <AlertCircle className="h-5 w-5 text-red-600" />}
-            {t.type === 'info' && <Info className="h-5 w-5 text-blue-600" />}
-            <span className={`text-sm font-medium ${
-              t.type === 'success' ? 'text-green-800' :
-              t.type === 'error' ? 'text-red-800' :
-              'text-blue-800'
-            }`}>{t.message}</span>
-            <button onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))} className="ml-auto">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        ))}
+      <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)] pointer-events-none">
+        {toasts.map((t) => {
+          const Icon = icons[t.type]
+          return (
+            <div
+              key={t.id}
+              className={cn(
+                'flex items-start gap-3 p-4 rounded-xl shadow-lg border pointer-events-auto',
+                'animate-in slide-in-from-right-4 fade-in duration-200',
+                styles[t.type]
+              )}
+            >
+              <Icon className={cn('h-5 w-5 flex-shrink-0 mt-0.5', iconStyles[t.type])} />
+              <span className="text-sm font-medium flex-1">{t.message}</span>
+              <button
+                onClick={() => removeToast(t.id)}
+                className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )
+        })}
       </div>
     </ToastContext.Provider>
   )
 }
 
+/** Legacy no-op — ToastProvider now handles rendering. */
 export function ToastContainer() {
   return null
 }
