@@ -4,7 +4,7 @@ import { Menu, X, Phone, Mail, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ChatBot } from '@/components/ChatBot'
 import { cn } from '@/lib/utils'
-import { useHeroReveal, useScrollReveal } from '@/hooks/useGsapPublic'
+import { useHeroReveal } from '@/hooks/useGsapPublic'
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -19,7 +19,6 @@ export function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const location = useLocation()
   const headerRef = useHeroReveal()
-  const footerRef = useScrollReveal<HTMLElement>()
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -88,7 +87,7 @@ export function PublicLayout() {
 
       <main className="flex-1"><Outlet /></main>
 
-      <footer ref={footerRef} className="glass-dark text-secondary-300 py-8 md:py-12">
+      <footer className="site-footer text-secondary-300 py-8 md:py-12">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           <div>
             <div className="flex items-center gap-3 mb-4">

@@ -166,6 +166,14 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+/* Solid footer treatment — the translucent .glass-dark style washes out to a
+   dull grey once it sits over the page's white background, so the footer
+   gets its own deep, cool navy instead of relying on backdrop-blur. */
+.site-footer {
+  background: linear-gradient(180deg, #0b1324 0%, #0f1a30 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

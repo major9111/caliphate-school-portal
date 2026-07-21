@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authApi } from '@/lib/api'
 import { isAxiosError } from 'axios'
-import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
@@ -82,6 +82,9 @@ export function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary-50 p-6">
       <div className="w-full max-w-md">
+        <Link to="/login" className="inline-flex items-center text-sm text-secondary-600 hover:text-primary-600 mb-6">
+          <ArrowLeft className="h-4 w-4 mr-1" /> Back to Login
+        </Link>
         <div className="bg-white rounded-2xl shadow-soft border border-secondary-200 p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Create new password</h2>

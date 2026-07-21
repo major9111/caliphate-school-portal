@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Lock, User, Loader2, Eye, EyeOff } from 'lucide-react'
+import { Lock, User, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import { authApi } from '@/lib/api'
 import { getHomeRouteForRole } from '@/lib/utils'
 import { isAxiosError } from 'axios'
@@ -59,6 +59,9 @@ export function LoginPage() {
 
       <div className="flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md">
+          <Link to="/" className="inline-flex items-center text-sm text-secondary-600 hover:text-primary-600 mb-6">
+            <ArrowLeft className="h-4 w-4 mr-1" /> Back to Home
+          </Link>
           <div className="bg-white rounded-2xl shadow-soft border border-secondary-200 p-8">
             <div className="mb-6">
               <h2 className="text-2xl font-bold">Sign in</h2>
@@ -70,7 +73,7 @@ export function LoginPage() {
                 <Label>Username or Email</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
-                  <Input value={login} onChange={(e) => setLogin(e.target.value)} placeholder="superadmin" className="pl-10" required />
+                  <Input value={login} onChange={(e) => setLogin(e.target.value)} placeholder="Enter your username or email" className="pl-10" required />
                 </div>
               </div>
               <div className="space-y-2">

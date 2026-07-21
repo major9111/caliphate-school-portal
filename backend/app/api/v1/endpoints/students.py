@@ -77,6 +77,9 @@ def get_student(student_id: str, db: Session = Depends(get_db)):
 
 @router.post("/")
 def create_student(data: dict, db: Session = Depends(get_db)):
+    if not data.get("email") or not (data.get("first_name") or data.get("full_name")):
+        raise HTTPException(status_code=422, detail="email and first_name (or full_name) are required")
+
     existing = db.query(User).filter(User.email == data.get('email')).first()
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")

@@ -5,7 +5,8 @@ import {
   FileText, DollarSign, Clock, BarChart3, Settings, Megaphone, Globe,
   Bot, Bell, Bus, Package, CreditCard, CalendarDays, UserCheck,
   LogOut, Menu, X, ChevronDown, ChevronRight, Sparkles, BookMarked,
-  ClipboardList, Shield, Receipt, Upload, User as UserIcon, Image, ArrowUpCircle
+  ClipboardList, Shield, Receipt, Upload, User as UserIcon, Image, ArrowUpCircle,
+  ChevronLeft
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -203,13 +204,25 @@ export function Layout() {
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         {/* Top nav */}
         <header className="flex h-16 items-center justify-between border-b border-secondary-200 bg-white px-4 lg:px-6 flex-shrink-0">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-1 rounded-lg hover:bg-secondary-100 transition-colors"
-            aria-label="Toggle sidebar"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-1 rounded-lg hover:bg-secondary-100 transition-colors"
+              aria-label="Toggle sidebar"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            {location.pathname !== '/app/dashboard' && (
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-secondary-600 hover:bg-secondary-100 hover:text-secondary-900 transition-colors"
+                aria-label="Go back"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Back</span>
+              </button>
+            )}
+          </div>
 
           <div className="flex items-center gap-3">
             <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-secondary-100 transition-colors" aria-label="Toggle dark mode">

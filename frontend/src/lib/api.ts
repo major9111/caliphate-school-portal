@@ -2,6 +2,22 @@ import axios, { AxiosError } from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
 
+// If this app isn't running on localhost but is still configured to call a
+// localhost API, every request is guaranteed to fail with a network error —
+// that's almost always a missing VITE_API_URL on the hosting provider
+// (e.g. Vercel), not a bug in the request itself. Surface it loudly once,
+// in the console, so it's obvious to whoever is debugging "can't register".
+const isBrowserOnLocalhost = typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname)
+if (typeof window !== 'undefined' && !isBrowserOnLocalhost && API_BASE_URL.includes('localhost')) {
+  // eslint-disable-next-line no-console
+  console.error(
+    '[config] This site is deployed but VITE_API_URL was never set at build time, ' +
+    `so API calls are pointed at ${API_BASE_URL}, which does not exist for site visitors. ` +
+    'Set VITE_API_URL to your deployed backend URL (see frontend/.env.example) and redeploy.'
+  )
+}
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
