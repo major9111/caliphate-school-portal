@@ -9,6 +9,7 @@ router = APIRouter()
 # (module_name, prefix, tags, dependencies_or_None)
 _ENDPOINTS = [
     ("auth",            "/auth",           ["Authentication"],   None),
+    ("public_admissions","/public",         ["Public"],           None),
     ("students",        "/students",       ["Students"],         [Depends(require_staff)]),
     ("teachers",        "/teachers",       ["Teachers"],         [Depends(require_staff)]),
     ("finance",         "/finance",        ["Finance"],          [Depends(require_staff)]),

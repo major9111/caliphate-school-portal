@@ -1,46 +1,29 @@
-# Caliphate International Schools — Management Portal
+# Fixes — apply into your project at matching paths (overwrite existing files)
 
-Enterprise school management system. React 19 + TypeScript frontend, FastAPI backend, PostgreSQL-ready (Neon) with SQLite for local development.
+## Frontend (frontend/src/...)
+1. pages/auth/Register.tsx
+   - Email and Phone fields stacked into one column instead of a 2-col grid.
+2. hooks/useGsapPublic.ts
+   - Added `useHeaderReveal()` — opacity+y reveal (no `scale`) for sticky/fixed
+     headers, avoiding the scroll jank scale transforms cause on `position: sticky`.
+3. components/layout/PublicLayout.tsx
+   - Sticky `<header>` now uses `useHeaderReveal()` instead of `useHeroReveal()`.
+4. pages/public/Admissions.tsx  (NEW FIX)
+   - The public "Apply for Admission" form was posting to `/admin/admissions`,
+     which requires staff login — so anonymous applicants always got rejected.
+     Now posts to the new public `/public/admissions` endpoint (see backend below).
 
-See `AUDIT_REPORT.md` for the full audit findings and the fix log from the enterprise refactor pass.
+## Backend (backend/app/api/v1/...)
+5. endpoints/public_admissions.py  (NEW FILE)
+   - Unauthenticated POST /public/admissions — lets a visitor submit an
+     application. Staff-only admissions management (list/approve/enroll)
+     is untouched at /admin/admissions.
+6. router.py
+   - Registers the new public_admissions router at prefix /public, no auth
+     dependency.
 
-## Stack
-
-**Frontend:** React 19, TypeScript, Vite, Tailwind CSS, shadcn/ui, Chart.js + Recharts, React Router, TanStack Query
-**Backend:** Python, FastAPI, SQLAlchemy, JWT auth (python-jose + bcrypt)
-**Database:** SQLite locally, PostgreSQL (Neon) in production
-**Deployment:** Frontend → Vercel. Backend → Railway or Render.
-
-## Local development
-
-### Backend
-```bash
-cd backend
-python3 -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env   # edit SECRET_KEY at minimum
-uvicorn app.main:app --reload --port 8000
-```
-API docs available at `http://localhost:8000/docs`.
-
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-Runs at `http://localhost:5173`. Set `VITE_API_URL` in a `.env` file if the backend isn't on `localhost:8000/api/v1`.
-
-## Architecture notes
-
-- **Auth:** JWT bearer tokens. `/auth/register` blocks self-registration as `teacher`/`admin`/`super_admin` — those accounts must be created by an existing admin via the Teachers page or directly in the database.
-- **Authorization:** Role-based. `/students`, `/teachers`, `/finance`, `/admin/*`, `/system/*` require `admin`/`super_admin`/`teacher`/`staff` roles. `/audit/*` requires `admin`/`super_admin`. `/system/portal/*` allows the resource owner (a student/parent viewing their own record) or any staff member.
-- **Data storage:** `users`, `refresh_tokens`, `audit_logs`, and `activity_logs` are proper SQLAlchemy-backed relational tables. Every other module (results, finance, library, transport, inventory, payroll, CMS, events, etc.) is stored as JSON in a `system_settings` key-value table — a deliberate simplification given the project's existing state, documented as a known limitation in `AUDIT_REPORT.md`. A future migration to dedicated relational tables would be the next major architecture improvement.
-- **AI Receptionist:** Uses Groq's API if `GROQ_API_KEY` is set; otherwise falls back to a canned "contact the school directly" response. Knowledge base entries are managed under Admin → AI Receptionist.
-
-## Production checklist
-
-- Set a real `SECRET_KEY` (the app refuses to start in `APP_ENV=production` with the default).
-- Set `DATABASE_URL` to your Neon Postgres connection string.
-- Set `CORS_ORIGINS` to your actual Vercel domain(s).
-- Set `GROQ_API_KEY` if you want the AI Receptionist to give real answers instead of the fallback.
+## Still outstanding (needs action on your end, not a code fix)
+- Set VITE_API_URL on Vercel to your Render backend + /api/v1, then redeploy
+  (Vite only bakes env vars in at build time).
+- Run backend/scripts/seed_admin.py against your production DATABASE_URL to
+  create your admin login.
