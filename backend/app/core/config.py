@@ -53,6 +53,13 @@ class Settings(BaseSettings):
     # Frontend
     FRONTEND_URL: str = "http://localhost:5173"
 
+    # Optional — if set, the app auto-creates/resets this super_admin account
+    # on every startup, using whichever DATABASE_URL this service is actually
+    # running with. Leave unset once you no longer need it (see main.py).
+    ADMIN_EMAIL: str = ""
+    ADMIN_PASSWORD: str = ""
+    ADMIN_NAME: str = "Site Administrator"
+
     # Email (SMTP) — for password reset, admission letters, fee reminders
     SMTP_HOST: str = "smtp.gmail.com"
     SMTP_PORT: int = 587

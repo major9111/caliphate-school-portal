@@ -1,0 +1,28 @@
+# ─── fugusau-daphne.service ───────────────────────────────────────────────────
+# Copy to: /etc/systemd/system/fugusau-daphne.service
+# WebSocket / ASGI server (runs alongside Gunicorn on port 8001)
+# Enable:  sudo systemctl enable --now fugusau-daphne
+# ──────────────────────────────────────────────────────────────────────────────
+[Unit]
+Description=FUGUSAU Portal — Daphne ASGI/WebSocket server
+After=network.target postgresql.service redis.service fugusau-gunicorn.service
+Requires=postgresql.service redis.service
+
+[Service]
+Type=simple
+User=fugusau
+Group=fugusau
+WorkingDirectory=/opt/fugusau/backend
+Environment="DJANGO_SETTINGS_MODULE=fugusau.settings.production"
+EnvironmentFile=/opt/fugusau/backend/.env
+ExecStart=/opt/fugusau/venv/bin/daphne \
+          -b 0.0.0.0 \
+          -p 8001 \
+          --proxy-headers \
+          fugusau.asgi:application
+Restart=on-failure
+RestartSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

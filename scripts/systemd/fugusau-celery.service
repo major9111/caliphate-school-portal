@@ -1,0 +1,35 @@
+# ─── fugusau-celery.service ───────────────────────────────────────────────────
+# Copy to: /etc/systemd/system/fugusau-celery.service
+# Create dirs first:
+#   sudo mkdir -p /var/run/celery /var/log/celery
+#   sudo chown fugusau:fugusau /var/run/celery /var/log/celery
+# Enable:  sudo systemctl enable --now fugusau-celery
+# ──────────────────────────────────────────────────────────────────────────────
+[Unit]
+Description=FUGUSAU Portal — Celery Worker
+After=network.target redis.service postgresql.service
+Requires=redis.service
+
+[Service]
+Type=forking
+User=fugusau
+Group=fugusau
+WorkingDirectory=/opt/fugusau/backend
+Environment="DJANGO_SETTINGS_MODULE=fugusau.settings.production"
+EnvironmentFile=/opt/fugusau/backend/.env
+ExecStart=/opt/fugusau/venv/bin/celery \
+          -A fugusau worker \
+          --loglevel=info \
+          --concurrency=4 \
+          --pidfile=/var/run/celery/fugusau-worker.pid \
+          --logfile=/var/log/celery/fugusau-worker.log
+ExecStop=/bin/kill -s TERM $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+PIDFile=/var/run/celery/fugusau-worker.pid
+RuntimeDirectory=celery
+RuntimeDirectoryMode=0755
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

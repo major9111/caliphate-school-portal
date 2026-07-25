@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Federal University Gusau (FUGUSAU) — Official Website</title>
+    <meta name="description" content="Federal University Gusau (FUGUSAU) — official university website. Admissions, academics, research, student life, news and events at FUGUSAU, Zamfara State, Nigeria." />
+    <meta name="keywords" content="Federal University Gusau, FUGUSAU, FUGUSAU admission, FUGUSAU portal, Zamfara university, POST-UTME Gusau" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.fugusau.edu.ng/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Federal University Gusau" />
+    <meta property="og:title" content="Federal University Gusau (FUGUSAU) — Official Website" />
+    <meta property="og:description" content="Admissions, academics, research and student life at Federal University Gusau." />
+    <meta property="og:image" content="/fugusau-logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/fugusau-logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <script>
+      (function () {
+        try {
+          var stored = window.localStorage.getItem('fugusau-site-theme');
+          var theme = (stored === 'light' || stored === 'dark') ? stored
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+
+    <!-- JSON-LD structured data for search engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollegeOrUniversity",
+      "name": "Federal University Gusau",
+      "alternateName": "FUGUSAU",
+      "url": "https://www.fugusau.edu.ng",
+      "logo": "https://www.fugusau.edu.ng/fugusau-logo.png",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Gusau",
+        "addressRegion": "Zamfara State",
+        "addressCountry": "NG"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

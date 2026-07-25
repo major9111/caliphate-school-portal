@@ -1,0 +1,114 @@
+envVarGroups:
+  - name: fugusau-shared
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: fugusau.settings.production
+      - key: DEBUG
+        value: "False"
+      - key: HTTPS_ENABLED
+        value: "True"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false          # paste your Neon connection string (with ?sslmode=require)
+      - key: ALLOWED_HOSTS
+        sync: false          # e.g. fugusau-backend.onrender.com
+      - key: FRONTEND_URL
+        sync: false          # e.g. https://fugusau-portal.vercel.app
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false          # e.g. https://fugusau-portal.vercel.app
+      - key: SENDGRID_API_KEY
+        sync: false          # required at boot even as a placeholder — see notes
+      - key: DEFAULT_FROM_EMAIL
+        value: noreply@fugusau.edu.ng
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_PUBLIC_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: AI_PROVIDER
+        value: gemini
+
+services:
+  - type: web
+    name: fugusau-backend
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health/
+    envVars:
+      - fromGroup: fugusau-shared
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+
+  - type: worker
+    name: fugusau-celery-worker
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    dockerCommand: celery -A fugusau worker -l info
+    envVars:
+      - fromGroup: fugusau-shared
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+
+  - type: worker
+    name: fugusau-celery-beat
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    dockerCommand: celery -A fugusau beat -l info
+    envVars:
+      - fromGroup: fugusau-shared
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: keyvalue
+          name: fugusau-redis
+          property: connectionString
+
+  - type: keyvalue
+    name: fugusau-redis
+    plan: free
+    ipAllowList: []

@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+   python manage.py migrate --noinput
+   python manage.py collectstatic --noinput
+   python manage.py createsuperuser --noinput || true
+   exec daphne -b 0.0.0.0 -p 8000 fugusau.asgi:application

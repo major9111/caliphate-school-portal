@@ -1,41 +1,86 @@
-# Core
-fastapi>=0.115.0
-uvicorn[standard]>=0.30.0
-sqlalchemy>=2.0.35
-psycopg2-binary>=2.9.10
+# ─── Django Core ────────────────────────────────────────────────
+Django==4.2.9
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+django-filter==23.5
+drf-spectacular==0.26.5          # OpenAPI/Swagger docs
 
-# Validation & settings
-pydantic>=2.9.0
-pydantic-settings>=2.5.0
-email-validator>=2.2.0
+# ─── Database ────────────────────────────────────────────────────
+psycopg2-binary==2.9.9
 
-# Authentication & Security
-python-jose[cryptography]>=3.3.0
-bcrypt>=4.1.0
-python-multipart>=0.0.12
-pyotp>=2.9.0
+# ─── WebSockets / Real-time Chat ─────────────────────────────────
+channels==4.0.0
+channels-redis==4.1.0
+daphne==4.0.0
 
-# PDF & Excel generation
-reportlab>=4.2.5
-openpyxl>=3.1.5
-pillow>=11.0.0
+# ─── Async Task Queue ────────────────────────────────────────────
+celery==5.3.4
+django-celery-beat==2.5.0
+django-celery-results==2.5.1
+redis==5.0.1
 
-# Templates (email HTML)
-jinja2>=3.1.4
+# ─── Storage ─────────────────────────────────────────────────────
+boto3==1.34.0                    # AWS S3
+django-storages==1.14.2
+Pillow==10.1.0                   # Image processing
+cloudinary==1.37.0               # Cloudinary alternative
 
-# HTTP client (AI chat + external APIs)
-httpx>=0.27.0
+# ─── AI / ML / OCR ───────────────────────────────────────────────
+pytesseract==0.3.10              # OCR text extraction
+opencv-python-headless==4.8.1.78 # Image analysis
+scikit-learn==1.3.2              # ML models
+numpy==1.26.2
+Pillow==10.1.0
+pdf2image==1.16.3                # PDF to image for OCR
+python-magic==0.4.27             # File type detection
+anthropic==0.8.1                 # Claude AI Chatbot API
 
-# File/Image storage
-cloudinary>=1.41.0
+# ─── PDF / Excel Generation ──────────────────────────────────────
+reportlab==4.0.8                 # PDF generation
+openpyxl==3.1.2                  # Excel generation
+# weasyprint==60.2
 
-# Environment
-python-dotenv>=1.0.1
+# ─── Payments ────────────────────────────────────────────────────
+requests==2.31.0                 # Paystack API calls
 
-# Production server
-gunicorn>=23.0.0
+# ─── Email / SMS ─────────────────────────────────────────────────
+sendgrid==6.11.0
+django-sendgrid-v5==1.2.3        # provides sendgrid_backend.SendgridBackend (used in settings/production.py)
+africastalking==1.2.5            # SMS via Africa's Talking
 
-# Testing
-pytest>=8.3.0
-pytest-asyncio>=0.24.0
-apscheduler>=3.10.4
+# ─── Authentication & Security ───────────────────────────────────
+django-allauth==0.61.0
+django-otp==1.3.0               # Two-factor auth
+qrcode==7.4.2                   # QR code generation
+
+# ─── Environment & Config ────────────────────────────────────────
+python-decouple==3.8
+python-dotenv==1.0.0
+
+# ─── Utilities ───────────────────────────────────────────────────
+django-extensions==3.2.3
+django-model-utils==4.3.1
+shortuuid==1.0.11
+phonenumbers==8.13.27
+Faker==21.0.0                    # Test data generation
+
+# ─── Development ─────────────────────────────────────────────────
+pytest==7.4.3
+pytest-django==4.7.0
+factory-boy==3.3.0
+coverage==7.3.3
+black==23.12.0
+flake8==7.0.0
+
+# Gap dependencies
+weasyprint==62.3        # PDF generation (reports/services.py)
+geoip2==4.7.0           # Geo-IP enrichment (security/tasks.py)
+django-recaptcha==4.0.0
+gunicorn==21.2.0
+psutil==5.9.8
+dj-database-url==2.1.0
+whitenoise==6.6.0
+pypdf==4.0.0
+
+

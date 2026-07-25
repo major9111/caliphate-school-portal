@@ -1,0 +1,29 @@
+# ─── fugusau-celerybeat.service ───────────────────────────────────────────────
+# Copy to: /etc/systemd/system/fugusau-celerybeat.service
+# Enable:  sudo systemctl enable --now fugusau-celerybeat
+# ──────────────────────────────────────────────────────────────────────────────
+[Unit]
+Description=FUGUSAU Portal — Celery Beat Scheduler
+After=network.target redis.service postgresql.service fugusau-celery.service
+Requires=redis.service
+
+[Service]
+Type=simple
+User=fugusau
+Group=fugusau
+WorkingDirectory=/opt/fugusau/backend
+Environment="DJANGO_SETTINGS_MODULE=fugusau.settings.production"
+EnvironmentFile=/opt/fugusau/backend/.env
+ExecStart=/opt/fugusau/venv/bin/celery \
+          -A fugusau beat \
+          --loglevel=info \
+          --scheduler django_celery_beat.schedulers:DatabaseScheduler \
+          --pidfile=/var/run/celery/fugusau-beat.pid \
+          --logfile=/var/log/celery/fugusau-beat.log
+PIDFile=/var/run/celery/fugusau-beat.pid
+RuntimeDirectory=celery
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
