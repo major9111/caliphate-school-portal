@@ -1,79 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>FUGUSAU — Undergraduate Students Portal</title>
-    <meta name="description" content="Federal University Gusau (FUGUSAU) official student portal — sign in to manage courses, results, fees and more, or apply for POST-UTME admission." />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://fugusau-portal.vercel.app/" />
-    <meta property="og:title" content="FUGUSAU — Undergraduate Students Portal" />
-    <meta property="og:description" content="Federal University Gusau official student portal. Apply for admission, check application status, or sign in to your student/staff account." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://fugusau-portal.vercel.app/" />
-    <meta property="og:image" content="%BASE_URL%fugusau-logo.png" />
-    <meta name="twitter:card" content="summary" />
-
-    <!-- Set the theme before first paint so there's no flash of the wrong
-         theme. Mirrors ThemeContext's logic: explicit saved choice, else the
-         OS/browser color-scheme preference, else light. -->
-    <script>
-      (function () {
-        try {
-          var stored = window.localStorage.getItem('fugusau-theme');
-          var theme = (stored === 'light' || stored === 'dark')
-            ? stored
-            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-          document.documentElement.setAttribute('data-theme', theme);
-        } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
-      })();
-    </script>
-
-    <!-- Last-resort fallback: if the JS bundle itself fails to load/execute
-         (e.g. a stale service-worker cache serving a deleted file after a
-         redeploy), show something instead of a silent blank screen. The
-         in-app ErrorBoundary can't help here since React never got to run. -->
-    <script>
-      window.addEventListener('error', function (e) {
-        setTimeout(function () {
-          var root = document.getElementById('root');
-          if (root && root.childElementCount === 0) {
-            root.innerHTML =
-              '<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#060E0A;color:#E8F5ED;font-family:sans-serif;text-align:center;padding:24px;">' +
-              '<div style="font-size:32px;">\u26A0\uFE0F</div>' +
-              '<h1 style="font-size:16px;font-weight:800;margin:0;">Failed to load</h1>' +
-              '<p style="font-size:12px;opacity:.6;max-width:320px;margin:0;word-break:break-word;">' +
-              (e && e.message ? e.message : 'A required file failed to load. Try refreshing.') +
-              '</p>' +
-              '<button onclick="location.reload()" style="margin-top:4px;padding:10px 24px;border-radius:10px;border:none;background:#006B3F;color:#fff;font-weight:700;font-size:13px;">Reload</button>' +
-              '</div>';
-          }
-        }, 300);
-      });
-    </script>
-
-    <!-- PWA Settings -->
-    <link rel="manifest" href="%BASE_URL%manifest.json" />
-    <meta name="theme-color" content="#006B3F" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="FUGUSAU" />
-    <link rel="apple-touch-icon" href="%BASE_URL%fugusau-logo.png" />
-    <link rel="icon" type="image/png" href="%BASE_URL%fugusau-logo.png" />
-
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="/images/logo.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0EA5E9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Caliphate International Schools Gusau Ltd - Official Portal" />
+    <title>Caliphate International Schools Gusau Ltd</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('%BASE_URL%sw.js', { scope: '%BASE_URL%' })
-            .catch(err => console.log('SW failed:', err));
-        });
+  <script type="module">
+      if ("serviceWorker" in navigator && import.meta.env.PROD) {
+        navigator.serviceWorker.register("/sw.js");
       }
     </script>
   </body>

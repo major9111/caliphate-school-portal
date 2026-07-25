@@ -1,9 +1,0 @@
-{
-  "buildCommand": "bash combine-build.sh",
-  "outputDirectory": "combined-dist",
-  "installCommand": "echo 'handled inside combine-build.sh'",
-  "rewrites": [
-    { "source": "/portal/:path*", "destination": "/portal/index.html" },
-    { "source": "/:path*", "destination": "/index.html" }
-  ]
-}
