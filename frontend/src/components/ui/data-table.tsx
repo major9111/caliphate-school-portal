@@ -43,19 +43,25 @@ export function DataTable<T>({
     <div className={cn('overflow-x-auto -mx-6 px-6 sm:mx-0 sm:px-0', className)}>
       <table className="w-full min-w-[600px]">
         <thead>
-          <tr className="border-b bg-secondary-50">
+          <tr>
             {columns.map(col => (
-              <th key={col.key} className={cn('p-3 text-left text-xs font-semibold uppercase tracking-wide text-secondary-500', col.className)}>
+              <th
+                key={col.key}
+                className={cn(
+                  'sticky top-0 z-10 bg-[var(--surface)] border-b border-[var(--border)] p-3.5 text-left text-[11px] font-semibold uppercase tracking-wide text-[var(--text-3)]',
+                  col.className
+                )}
+              >
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {data.map((row, i) => (
-            <tr key={rowKey(row)} className={cn('border-b transition-colors hover:bg-secondary-50', i % 2 === 0 ? '' : 'bg-secondary-50/30')}>
+          {data.map((row) => (
+            <tr key={rowKey(row)} className="border-b border-[var(--border)] last:border-b-0 transition-colors hover:bg-[var(--surface-2)]">
               {columns.map(col => (
-                <td key={col.key} className={cn('p-3 text-sm', col.className)}>
+                <td key={col.key} className={cn('p-3.5 text-sm text-[var(--text-2)]', col.className)}>
                   {col.render(row)}
                 </td>
               ))}

@@ -35,7 +35,7 @@ export default function AuditLogsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Audit Logs</h1><p className="text-secondary-500 mt-1">{data?.total || 0} total log entries</p></div>
+        <div><h1 className="text-3xl font-bold">Audit Logs</h1><p className="text-[var(--text-2)] mt-1">{data?.total || 0} total log entries</p></div>
         <Button variant="outline" onClick={() => refetch()}><RefreshCw className="h-4 w-4 mr-2" />Refresh</Button>
       </div>
 
@@ -71,23 +71,23 @@ export default function AuditLogsPage() {
         {selectedLog && (
           <div className="space-y-3 text-sm">
             <div className="grid grid-cols-2 gap-3">
-              <div><p className="text-xs text-secondary-500 mb-1">ID</p><p className="font-mono">{selectedLog.id}</p></div>
-              <div><p className="text-xs text-secondary-500 mb-1">Status</p><Badge variant={selectedLog.success ? 'success' : 'danger'}>{selectedLog.success ? 'Success' : 'Failed'}</Badge></div>
-              <div><p className="text-xs text-secondary-500 mb-1">Module</p><p className="font-medium">{selectedLog.module}</p></div>
-              <div><p className="text-xs text-secondary-500 mb-1">Action</p><p className="font-medium">{selectedLog.action}</p></div>
-              <div><p className="text-xs text-secondary-500 mb-1">User ID</p><p className="font-mono text-xs">{selectedLog.user_id || 'system'}</p></div>
-              <div><p className="text-xs text-secondary-500 mb-1">Resource ID</p><p className="font-mono text-xs">{selectedLog.resource_id || '—'}</p></div>
-              <div><p className="text-xs text-secondary-500 mb-1">IP Address</p><p>{selectedLog.ip_address || '—'}</p></div>
-              <div><p className="text-xs text-secondary-500 mb-1">Timestamp</p><p>{new Date(selectedLog.created_at).toLocaleString()}</p></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">ID</p><p className="font-mono">{selectedLog.id}</p></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">Status</p><Badge variant={selectedLog.success ? 'success' : 'danger'}>{selectedLog.success ? 'Success' : 'Failed'}</Badge></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">Module</p><p className="font-medium">{selectedLog.module}</p></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">Action</p><p className="font-medium">{selectedLog.action}</p></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">User ID</p><p className="font-mono text-xs">{selectedLog.user_id || 'system'}</p></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">Resource ID</p><p className="font-mono text-xs">{selectedLog.resource_id || '—'}</p></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">IP Address</p><p>{selectedLog.ip_address || '—'}</p></div>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">Timestamp</p><p>{new Date(selectedLog.created_at).toLocaleString()}</p></div>
             </div>
             {selectedLog.details && (
-              <div><p className="text-xs text-secondary-500 mb-1">Details</p>
-                <pre className="bg-secondary-50 p-3 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap">{selectedLog.details}</pre>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">Details</p>
+                <pre className="bg-[var(--surface-2)] p-3 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap">{selectedLog.details}</pre>
               </div>
             )}
             {selectedLog.user_agent && (
-              <div><p className="text-xs text-secondary-500 mb-1">User Agent</p>
-                <p className="text-xs text-secondary-600 break-all">{selectedLog.user_agent}</p>
+              <div><p className="text-xs text-[var(--text-2)] mb-1">User Agent</p>
+                <p className="text-xs text-[var(--text-2)] break-all">{selectedLog.user_agent}</p>
               </div>
             )}
             <div className="flex justify-end pt-4 border-t">

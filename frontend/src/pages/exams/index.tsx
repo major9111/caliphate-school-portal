@@ -51,7 +51,7 @@ export default function ExamsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Examinations</h1><p className="text-secondary-500 mt-1">Schedule and manage exams</p></div>
+        <div><h1 className="text-3xl font-bold">Examinations</h1><p className="text-[var(--text-2)] mt-1">Schedule and manage exams</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Schedule Exam</Button>
       </div>
 
@@ -74,8 +74,8 @@ export default function ExamsPage() {
             )},
             { key: 'actions', header: '', render: e => (
               <div className="flex items-center gap-1 justify-end">
-                <button onClick={() => openEdit(e)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => { if (confirm(`Delete ${e.name}?`)) del.mutate(e.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => openEdit(e)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => { if (confirm(`Delete ${e.name}?`)) del.mutate(e.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button>
               </div>
             )},
           ]}
@@ -91,7 +91,7 @@ export default function ExamsPage() {
             <div><Label>End Date</Label><Input type="date" value={form.end_date} onChange={e => setForm({ ...form, end_date: e.target.value })} required /></div>
           </div>
           <div><Label>Status</Label>
-            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
               <option value="scheduled">Scheduled</option><option value="ongoing">Ongoing</option><option value="completed">Completed</option>
             </select>
           </div>
@@ -111,7 +111,7 @@ export default function ExamsPage() {
             <div><Label>End Date</Label><Input type="date" value={editForm.end_date} onChange={e => setEditForm({ ...editForm, end_date: e.target.value })} required /></div>
           </div>
           <div><Label>Status</Label>
-            <select value={editForm.status} onChange={e => setEditForm({ ...editForm, status: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+            <select value={editForm.status} onChange={e => setEditForm({ ...editForm, status: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
               <option value="scheduled">Scheduled</option><option value="ongoing">Ongoing</option><option value="completed">Completed</option>
             </select>
           </div>

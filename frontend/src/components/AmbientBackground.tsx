@@ -1,7 +1,8 @@
 /**
- * Sits fixed behind the whole app (mounted once in App.tsx) so every glass
- * panel — sidebar, cards, modals, tables — has a soft, slowly-drifting
- * blue/violet mesh gradient underneath it to blur.
+ * Sits fixed behind the whole app (mounted once in App.tsx) so glass
+ * panels — sidebar, top nav, dropdowns, modals — have a soft, slowly
+ * drifting indigo/cyan/emerald mesh gradient underneath them to blur.
+ * Solid surfaces (cards, tables, forms) are unaffected by this layer.
  */
 export function AmbientBackground() {
   return (
@@ -9,7 +10,6 @@ export function AmbientBackground() {
       <div className="ambient-blob ambient-blob-1" />
       <div className="ambient-blob ambient-blob-2" />
       <div className="ambient-blob ambient-blob-3" />
-      <div className="ambient-blob ambient-blob-4" />
     </div>
   )
 }

@@ -54,7 +54,7 @@ export default function BulkImportPage() {
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
-      <div><h1 className="text-3xl font-bold">Bulk Import</h1><p className="text-secondary-500 mt-1">Upload CSV files to import data in bulk</p></div>
+      <div><h1 className="text-3xl font-bold">Bulk Import</h1><p className="text-[var(--text-2)] mt-1">Upload CSV files to import data in bulk</p></div>
 
       {/* Type selector */}
       <div className="grid grid-cols-3 gap-4">
@@ -62,7 +62,7 @@ export default function BulkImportPage() {
           const cfg = typeConfig[type]
           return (
             <button key={type} onClick={() => { setActiveType(type); setResult(null) }}
-              className={cn('rounded-xl border-2 p-4 text-left transition-all', activeType === type ? 'border-primary-600 bg-primary-50' : 'border-secondary-200 hover:border-secondary-300')}>
+              className={cn('rounded-xl border-2 p-4 text-left transition-all', activeType === type ? 'border-primary-600 bg-primary-50' : 'border-[var(--border)] hover:border-[var(--border)]')}>
               <div className={cn('h-10 w-10 rounded-lg flex items-center justify-center mb-2', cfg.bg)}>
                 <cfg.icon className={cn('h-5 w-5', cfg.color)} />
               </div>
@@ -76,7 +76,7 @@ export default function BulkImportPage() {
       <Card><CardContent className="p-4 flex items-center justify-between">
         <div>
           <p className="font-medium text-sm">Download CSV Template</p>
-          <p className="text-xs text-secondary-500 mt-0.5">Use this template to format your data correctly before importing</p>
+          <p className="text-xs text-[var(--text-2)] mt-0.5">Use this template to format your data correctly before importing</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => downloadTemplate(activeType)}>
           <Download className="h-4 w-4 mr-2" />Download Template
@@ -86,7 +86,7 @@ export default function BulkImportPage() {
       {/* Required columns */}
       <Card><CardContent className="p-4">
         <p className="text-sm font-medium mb-2">Required CSV columns for {typeConfig[activeType].label}:</p>
-        <code className="text-xs bg-secondary-100 rounded p-2 block text-secondary-700 break-all">{TEMPLATES[activeType].headers}</code>
+        <code className="text-xs bg-[var(--surface-2)] rounded p-2 block text-[var(--text)] break-all">{TEMPLATES[activeType].headers}</code>
       </CardContent></Card>
 
       {/* Drop zone */}
@@ -95,15 +95,15 @@ export default function BulkImportPage() {
         onDragLeave={() => setIsDragging(false)}
         onDrop={(e) => { e.preventDefault(); setIsDragging(false); const file = e.dataTransfer.files[0]; if (file) handleFile(file) }}
         onClick={() => fileRef.current?.click()}
-        className={cn('border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors', isDragging ? 'border-primary-500 bg-primary-50' : 'border-secondary-300 hover:border-primary-400 hover:bg-secondary-50')}
+        className={cn('border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-colors', isDragging ? 'border-primary-500 bg-primary-50' : 'border-[var(--border)] hover:border-primary-400 hover:bg-[var(--surface-2)]')}
       >
         {loading ? (
           <div><Loader2 className="h-12 w-12 animate-spin text-primary-600 mx-auto mb-3" /><p className="font-medium">Importing…</p></div>
         ) : (
           <>
-            <Upload className="h-12 w-12 text-secondary-400 mx-auto mb-3" />
+            <Upload className="h-12 w-12 text-[var(--text-3)] mx-auto mb-3" />
             <p className="font-medium">Drop your CSV file here, or click to browse</p>
-            <p className="text-sm text-secondary-500 mt-1">Only .csv files are accepted</p>
+            <p className="text-sm text-[var(--text-2)] mt-1">Only .csv files are accepted</p>
           </>
         )}
         <input ref={fileRef} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f) }} />

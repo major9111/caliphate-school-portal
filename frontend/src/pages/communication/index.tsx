@@ -48,13 +48,13 @@ export default function CommunicationPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Communication</h1><p className="text-secondary-500 mt-1">Announcements and email blasts</p></div>
+        <div><h1 className="text-3xl font-bold">Communication</h1><p className="text-[var(--text-2)] mt-1">Announcements and email blasts</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />New Announcement</Button>
       </div>
 
       <Card><CardContent className="p-4 flex items-end gap-4">
         <div><Label>Filter by Audience</Label>
-          <select value={audienceFilter} onChange={e => setAudienceFilter(e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-1 text-sm">
+          <select value={audienceFilter} onChange={e => setAudienceFilter(e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-1 text-sm">
             <option value="">All Audiences</option>{['all','students','teachers','parents','staff'].map(a => <option key={a} value={a}>{a}</option>)}
           </select>
         </div>
@@ -72,7 +72,7 @@ export default function CommunicationPage() {
           emptyAction={{ label: 'New Announcement', onClick: () => setModalOpen(true) }}
           columns={[
             { key: 'title', header: 'Title', render: a => <p className="font-medium">{a.title}</p> },
-            { key: 'content', header: 'Message', render: a => <p className="text-sm text-secondary-600 line-clamp-2">{a.content}</p> },
+            { key: 'content', header: 'Message', render: a => <p className="text-sm text-[var(--text-2)] line-clamp-2">{a.content}</p> },
             { key: 'audience', header: 'Audience', render: a => <Badge variant="secondary">{a.audience}</Badge> },
             { key: 'priority', header: 'Priority', render: a => <Badge variant={(priorityVariant[a.priority || 'normal'] || 'secondary') as 'danger'|'secondary'|'info'}>{a.priority || 'normal'}</Badge> },
             { key: 'date', header: 'Published', render: a => <span className="text-xs">{new Date(a.created_at).toLocaleDateString()}</span> },
@@ -86,7 +86,7 @@ export default function CommunicationPage() {
                 {blasting === a.id ? 'Sending…' : 'Send Email'}
               </button>
             )},
-            { key: 'del', header: '', render: a => <button onClick={() => del.mutate(a.id)} className="text-secondary-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></button> },
+            { key: 'del', header: '', render: a => <button onClick={() => del.mutate(a.id)} className="text-[var(--text-3)] hover:text-red-600"><Trash2 className="h-4 w-4" /></button> },
           ]}
         />
       </CardContent></Card>
@@ -94,15 +94,15 @@ export default function CommunicationPage() {
       <Modal open={modalOpen} onOpenChange={setModalOpen} title="New Announcement">
         <form onSubmit={(e) => { e.preventDefault(); create.mutate(form) }} className="space-y-4">
           <div><Label>Title</Label><Input value={form.title} onChange={e => setForm({...form, title: e.target.value})} required /></div>
-          <div><Label>Content</Label><textarea value={form.content} onChange={e => setForm({...form, content: e.target.value})} className="flex min-h-[100px] w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" required /></div>
+          <div><Label>Content</Label><textarea value={form.content} onChange={e => setForm({...form, content: e.target.value})} className="flex min-h-[100px] w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" required /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Audience</Label>
-              <select value={form.audience} onChange={e => setForm({...form, audience: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.audience} onChange={e => setForm({...form, audience: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['all','students','teachers','parents','staff'].map(a => <option key={a} value={a}>{a}</option>)}
               </select>
             </div>
             <div><Label>Priority</Label>
-              <select value={form.priority} onChange={e => setForm({...form, priority: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.priority} onChange={e => setForm({...form, priority: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['low','normal','high'].map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>

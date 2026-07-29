@@ -76,10 +76,10 @@ export default function PayrollPage() {
       <div className="flex justify-between items-center flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-bold">Payroll</h1>
-          <p className="text-secondary-500 mt-1">Manage staff salaries with automatic tax calculations</p>
+          <p className="text-[var(--text-2)] mt-1">Manage staff salaries with automatic tax calculations</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <a href={exportsApi.payrollExcel(filters)} download className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-secondary-50"><FileDown className="h-4 w-4" />Excel</a>
+          <a href={exportsApi.payrollExcel(filters)} download className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-[var(--surface-2)]"><FileDown className="h-4 w-4" />Excel</a>
           <Button variant="outline" onClick={() => setBulkModalOpen(true)}><PlayCircle className="h-4 w-4 mr-2" />Bulk Run</Button>
           <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Entry</Button>
         </div>
@@ -87,15 +87,15 @@ export default function PayrollPage() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Total Entries</p><p className="text-2xl font-bold">{data?.total || 0}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Total Net Pay</p><p className="text-2xl font-bold text-green-600">₦{totalNet.toLocaleString()}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Pending</p><p className="text-2xl font-bold text-orange-600">{data?.items?.filter(p => p.status === 'pending').length || 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Total Entries</p><p className="text-2xl font-bold">{data?.total || 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Total Net Pay</p><p className="text-2xl font-bold text-green-600">₦{totalNet.toLocaleString()}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Pending</p><p className="text-2xl font-bold text-orange-600">{data?.items?.filter(p => p.status === 'pending').length || 0}</p></CardContent></Card>
       </div>
 
       {/* Filters */}
       <Card><CardContent className="p-4 grid sm:grid-cols-2 gap-4">
         <div><Label>Month</Label>
-          <select value={filters.month} onChange={e => setF('month', e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-1">
+          <select value={filters.month} onChange={e => setF('month', e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-1">
             <option value="">All Months</option>{MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
           </select>
         </div>
@@ -112,7 +112,7 @@ export default function PayrollPage() {
           emptyDescription="Use Bulk Run to generate payroll for all staff, or add individual entries."
           emptyAction={{ label: 'Bulk Run', onClick: () => setBulkModalOpen(true) }}
           columns={[
-            { key: 'name', header: 'Employee', render: p => <button onClick={() => openEdit(p)} className="text-left"><p className="font-medium hover:text-primary-600 transition-colors">{p.employee_name}</p><p className="text-xs text-secondary-500">{p.role}</p></button> },
+            { key: 'name', header: 'Employee', render: p => <button onClick={() => openEdit(p)} className="text-left"><p className="font-medium hover:text-primary-600 transition-colors">{p.employee_name}</p><p className="text-xs text-[var(--text-2)]">{p.role}</p></button> },
             { key: 'basic', header: 'Basic', render: p => `₦${Number(p.basic_salary).toLocaleString()}` },
             { key: 'allow', header: 'Allowances', render: p => `₦${Number(p.allowances).toLocaleString()}` },
             { key: 'ded', header: 'Deductions', render: p => <span className="text-red-600">₦{Number(p.deductions).toLocaleString()}</span> },
@@ -122,14 +122,14 @@ export default function PayrollPage() {
             { key: 'tax', header: 'Tax Breakdown', render: p => {
               const tb = (p as { tax_breakdown?: { paye?: number; pension?: number; nhis?: number; nhf?: number } }).tax_breakdown
               return tb ? (
-                <span className="text-xs text-secondary-500">PAYE: ₦{(tb.paye||0).toLocaleString()} | Pension: ₦{(tb.pension||0).toLocaleString()}</span>
+                <span className="text-xs text-[var(--text-2)]">PAYE: ₦{(tb.paye||0).toLocaleString()} | Pension: ₦{(tb.pension||0).toLocaleString()}</span>
               ) : '—'
             }},
             { key: 'pdf', header: '', render: p => <a href={exportsApi.payslipPdf(p.id)} download className="text-xs text-primary-600 hover:underline whitespace-nowrap">Payslip</a> },
             { key: 'actions', header: '', render: p => (
               <div className="flex items-center gap-1 justify-end">
-                <button onClick={() => openEdit(p)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => { if(confirm('Delete?')) del.mutate(p.id) }} className="text-secondary-400 hover:text-red-600 text-xs px-1">Del</button>
+                <button onClick={() => openEdit(p)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => { if(confirm('Delete?')) del.mutate(p.id) }} className="text-[var(--text-3)] hover:text-red-600 text-xs px-1">Del</button>
               </div>
             )},
           ]}
@@ -150,10 +150,10 @@ export default function PayrollPage() {
             <div><Label>Allowances (₦)</Label><Input type="number" min={0} value={form.allowances} onChange={e => setForm({...form, allowances: Number(e.target.value)})} /></div>
             <div><Label>Extra Deductions (₦)</Label><Input type="number" min={0} value={form.deductions} onChange={e => setForm({...form, deductions: Number(e.target.value)})} /></div>
           </div>
-          <p className="text-xs text-secondary-500 bg-blue-50 rounded p-2">Statutory deductions (PAYE, Pension 8%, NHIS 1.75%, NHF 2.5%) are calculated automatically.</p>
+          <p className="text-xs text-[var(--text-2)] bg-blue-50 rounded p-2">Statutory deductions (PAYE, Pension 8%, NHIS 1.75%, NHF 2.5%) are calculated automatically.</p>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Month</Label>
-              <select value={form.month} onChange={e => setForm({...form, month: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.month} onChange={e => setForm({...form, month: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
@@ -176,7 +176,7 @@ export default function PayrollPage() {
             </div>
             {bulkResult.skipped.length > 0 && (
               <div><p className="text-sm font-medium mb-2">Skipped (already exists):</p>
-                <ul className="text-sm text-secondary-600 space-y-1">{bulkResult.skipped.map(s => <li key={s}>• {s}</li>)}</ul>
+                <ul className="text-sm text-[var(--text-2)] space-y-1">{bulkResult.skipped.map(s => <li key={s}>• {s}</li>)}</ul>
               </div>
             )}
             <div className="flex justify-end pt-4 border-t">
@@ -185,10 +185,10 @@ export default function PayrollPage() {
           </div>
         ) : (
           <form onSubmit={(e) => { e.preventDefault(); bulkRun.mutate(bulkForm) }} className="space-y-4">
-            <p className="text-sm text-secondary-600">Generates payroll for all active teachers and staff with automatic Nigerian PAYE, Pension, NHIS, and NHF deductions.</p>
+            <p className="text-sm text-[var(--text-2)]">Generates payroll for all active teachers and staff with automatic Nigerian PAYE, Pension, NHIS, and NHF deductions.</p>
             <div className="grid grid-cols-2 gap-4">
               <div><Label>Month</Label>
-                <select value={bulkForm.month} onChange={e => setBulkForm({...bulkForm, month: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+                <select value={bulkForm.month} onChange={e => setBulkForm({...bulkForm, month: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                   {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
@@ -198,7 +198,7 @@ export default function PayrollPage() {
               <div><Label>Default Basic Salary (₦)</Label><Input type="number" value={bulkForm.base_salary} onChange={e => setBulkForm({...bulkForm, base_salary: Number(e.target.value)})} /></div>
               <div><Label>Default Allowances (₦)</Label><Input type="number" value={bulkForm.allowances} onChange={e => setBulkForm({...bulkForm, allowances: Number(e.target.value)})} /></div>
             </div>
-            <p className="text-xs text-secondary-500">Staff with individual salary set in their profile will use that amount instead of the default above.</p>
+            <p className="text-xs text-[var(--text-2)]">Staff with individual salary set in their profile will use that amount instead of the default above.</p>
             <div className="flex justify-end gap-3 pt-4 border-t">
               <Button type="button" variant="outline" onClick={() => setBulkModalOpen(false)}>Cancel</Button>
               <Button type="submit" disabled={bulkRun.isPending}>
@@ -220,22 +220,22 @@ export default function PayrollPage() {
             <div><Label>Allowances (₦)</Label><Input type="number" min={0} value={editForm.allowances} onChange={e => setEditForm({...editForm, allowances: Number(e.target.value)})} /></div>
             <div><Label>Extra Deductions (₦)</Label><Input type="number" min={0} value={editForm.deductions} onChange={e => setEditForm({...editForm, deductions: Number(e.target.value)})} /></div>
           </div>
-          <p className="text-xs text-secondary-500 bg-blue-50 rounded p-2">Changing salary figures automatically recalculates PAYE, Pension, NHIS, and NHF, and the net pay shown on the payslip.</p>
+          <p className="text-xs text-[var(--text-2)] bg-blue-50 rounded p-2">Changing salary figures automatically recalculates PAYE, Pension, NHIS, and NHF, and the net pay shown on the payslip.</p>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Month</Label>
-              <select value={editForm.month} onChange={e => setEditForm({...editForm, month: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={editForm.month} onChange={e => setEditForm({...editForm, month: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
             <div><Label>Year</Label><Input value={editForm.year} onChange={e => setEditForm({...editForm, year: e.target.value})} /></div>
           </div>
           {editingEntry && (
-            <div className="flex items-center justify-between rounded-lg border border-secondary-200 p-3">
+            <div className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3">
               <span className="text-sm font-medium">Status</span>
               <select
                 value={editingEntry.status}
                 onChange={e => setEditingEntry({ ...editingEntry, status: e.target.value })}
-                className="h-9 rounded-lg border border-secondary-300 bg-white px-3 text-sm"
+                className="h-9 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 text-sm"
               >
                 <option value="pending">Pending</option>
                 <option value="paid">Paid</option>

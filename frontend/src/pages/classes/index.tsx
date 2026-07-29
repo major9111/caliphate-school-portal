@@ -61,14 +61,14 @@ export function ClassesPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Classes</h1><p className="text-secondary-500 mt-1">Manage class levels</p></div>
+        <div><h1 className="text-3xl font-bold">Classes</h1><p className="text-[var(--text-2)] mt-1">Manage class levels</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Class</Button>
       </div>
 
       {isLoading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
       ) : classes.length === 0 ? (
-        <Card><CardContent className="p-12 text-center text-secondary-500"><BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" /><p>No classes yet. Add your first class to get started.</p></CardContent></Card>
+        <Card><CardContent className="p-12 text-center text-[var(--text-2)]"><BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" /><p>No classes yet. Add your first class to get started.</p></CardContent></Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {classes.map((cls) => (
@@ -79,21 +79,21 @@ export function ClassesPage() {
                     <div className="h-10 w-10 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center"><BookOpen className="h-5 w-5" /></div>
                     <div>
                       <h3 className="font-bold text-lg">{cls.name}</h3>
-                      <p className="text-sm text-secondary-500 capitalize">{cls.level.replace('_', ' ')}</p>
+                      <p className="text-sm text-[var(--text-2)] capitalize">{cls.level.replace('_', ' ')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => openEdit(cls)} className="text-secondary-400 hover:text-primary-600 transition-colors" title="Edit">
+                    <button onClick={() => openEdit(cls)} className="text-[var(--text-3)] hover:text-primary-600 transition-colors" aria-label="Edit" title="Edit">
                       <Pencil className="h-4 w-4" />
                     </button>
-                    <button onClick={() => { if (confirm(`Delete ${cls.name}?`)) del.mutate(cls.id) }} className="text-secondary-400 hover:text-red-600 transition-colors" title="Delete">
+                    <button onClick={() => { if (confirm(`Delete ${cls.name}?`)) del.mutate(cls.id) }} className="text-[var(--text-3)] hover:text-red-600 transition-colors" aria-label="Delete" title="Delete">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-secondary-500">Capacity</span><span className="font-medium">{cls.capacity} students</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-secondary-500">Enrolled</span><span className="font-medium">{cls.student_count || 0} students</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[var(--text-2)]">Capacity</span><span className="font-medium">{cls.capacity} students</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[var(--text-2)]">Enrolled</span><span className="font-medium">{cls.student_count || 0} students</span></div>
                 </div>
               </CardContent>
             </Card>
@@ -105,7 +105,7 @@ export function ClassesPage() {
         <form onSubmit={(e) => { e.preventDefault(); create.mutate(form) }} className="space-y-4">
           <div><Label>Class Name</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g. JSS 1A" required /></div>
           <div><Label>Level</Label>
-            <select value={form.level} onChange={e => setForm({ ...form, level: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+            <select value={form.level} onChange={e => setForm({ ...form, level: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
               <option value="nursery">Nursery</option>
               <option value="primary">Primary</option>
               <option value="junior_secondary">Junior Secondary</option>
@@ -124,7 +124,7 @@ export function ClassesPage() {
         <form onSubmit={handleEditSubmit} className="space-y-4">
           <div><Label>Class Name</Label><Input value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} required /></div>
           <div><Label>Level</Label>
-            <select value={editForm.level} onChange={e => setEditForm({ ...editForm, level: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+            <select value={editForm.level} onChange={e => setEditForm({ ...editForm, level: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
               <option value="nursery">Nursery</option>
               <option value="primary">Primary</option>
               <option value="junior_secondary">Junior Secondary</option>

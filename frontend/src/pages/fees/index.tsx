@@ -98,14 +98,14 @@ export default function FeesPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Fee Management</h1><p className="text-secondary-500 mt-1">Define fee structures and track outstanding payments</p></div>
+        <div><h1 className="text-3xl font-bold">Fee Management</h1><p className="text-[var(--text-2)] mt-1">Define fee structures and track outstanding payments</p></div>
         {tab === 'structures' && <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Structure</Button>}
       </div>
 
       {/* Tabs */}
       <div className="flex gap-2 border-b">
         {(['structures', 'outstanding'] as const).map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab === t ? 'border-primary-600 text-primary-600' : 'border-transparent text-secondary-500 hover:text-secondary-900'}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab === t ? 'border-primary-600 text-primary-600' : 'border-transparent text-[var(--text-2)] hover:text-[var(--text)]'}`}>{t}</button>
         ))}
       </div>
 
@@ -113,13 +113,13 @@ export default function FeesPage() {
         <Card><CardContent className="p-6">
           {structLoading ? <SkeletonTable rows={4} cols={5} /> : structures.length === 0 ? (
             <div className="text-center py-12">
-              <DollarSign className="h-12 w-12 mx-auto mb-4 text-secondary-300" />
-              <p className="text-secondary-500">No fee structures yet. Create one to define what students should pay each term.</p>
+              <DollarSign className="h-12 w-12 mx-auto mb-4 text-[var(--text-3)]" />
+              <p className="text-[var(--text-2)]">No fee structures yet. Create one to define what students should pay each term.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead><tr className="border-b bg-secondary-50">
+                <thead><tr className="border-b bg-[var(--surface-2)]">
                   <th className="p-3 text-left text-xs uppercase">Class</th>
                   <th className="p-3 text-left text-xs uppercase">Term</th>
                   <th className="p-3 text-left text-xs uppercase">Session</th>
@@ -130,16 +130,16 @@ export default function FeesPage() {
                 </tr></thead>
                 <tbody>
                   {structures.map(s => (
-                    <tr key={s.id} className="border-b hover:bg-secondary-50">
+                    <tr key={s.id} className="border-b hover:bg-[var(--surface-2)]">
                       <td className="p-3 font-medium">{s.class_name}</td>
                       <td className="p-3 text-sm">{s.term}</td>
                       <td className="p-3 text-sm">{s.session}</td>
                       <td className="p-3 font-bold text-green-700">₦{Number(s.total_amount).toLocaleString()}</td>
                       <td className="p-3 text-sm">{s.due_date || '—'}</td>
-                      <td className="p-3 text-xs text-secondary-500">{s.fees?.map(f => `${f.type}: ₦${Number(f.amount).toLocaleString()}`).join(' · ')}</td>
+                      <td className="p-3 text-xs text-[var(--text-2)]">{s.fees?.map(f => `${f.type}: ₦${Number(f.amount).toLocaleString()}`).join(' · ')}</td>
                       <td className="p-3 flex gap-2">
-                        <button onClick={() => openEdit(s)} className="text-secondary-400 hover:text-primary-600"><Edit className="h-4 w-4" /></button>
-                        <button onClick={() => { if (confirm('Delete?')) del.mutate(s.id) }} className="text-secondary-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></button>
+                        <button onClick={() => openEdit(s)} className="text-[var(--text-3)] hover:text-primary-600"><Edit className="h-4 w-4" /></button>
+                        <button onClick={() => { if (confirm('Delete?')) del.mutate(s.id) }} className="text-[var(--text-3)] hover:text-red-600"><Trash2 className="h-4 w-4" /></button>
                       </td>
                     </tr>
                   ))}
@@ -156,13 +156,13 @@ export default function FeesPage() {
             <div className="grid sm:grid-cols-3 gap-4">
               <div>
                 <Label>Term</Label>
-                <select value={outFilter.term} onChange={e => setOutFilter({ ...outFilter, term: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm mt-1">
+                <select value={outFilter.term} onChange={e => setOutFilter({ ...outFilter, term: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm mt-1">
                   {TERMS.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
                 <Label>Session</Label>
-                <select value={outFilter.session} onChange={e => setOutFilter({ ...outFilter, session: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm mt-1">
+                <select value={outFilter.session} onChange={e => setOutFilter({ ...outFilter, session: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm mt-1">
                   {SESSIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
@@ -175,10 +175,10 @@ export default function FeesPage() {
 
           {outData && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Total Students</p><p className="text-2xl font-bold">{outData.total_students}</p></CardContent></Card>
-              <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Fully Paid</p><p className="text-2xl font-bold text-green-600">{outData.fully_paid_count}</p></CardContent></Card>
-              <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Outstanding</p><p className="text-2xl font-bold text-red-600">{outData.outstanding_count}</p></CardContent></Card>
-              <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Total Outstanding</p><p className="text-xl font-bold text-red-600">₦{totalOutstanding.toLocaleString()}</p></CardContent></Card>
+              <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Total Students</p><p className="text-2xl font-bold">{outData.total_students}</p></CardContent></Card>
+              <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Fully Paid</p><p className="text-2xl font-bold text-green-600">{outData.fully_paid_count}</p></CardContent></Card>
+              <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Outstanding</p><p className="text-2xl font-bold text-red-600">{outData.outstanding_count}</p></CardContent></Card>
+              <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Total Outstanding</p><p className="text-xl font-bold text-red-600">₦{totalOutstanding.toLocaleString()}</p></CardContent></Card>
             </div>
           )}
 
@@ -193,11 +193,11 @@ export default function FeesPage() {
 
           <Card><CardContent className="p-0">
             {outLoading ? <div className="p-6"><SkeletonTable rows={5} cols={5} /></div> : outstanding.length === 0 ? (
-              <p className="text-center py-12 text-secondary-500">No outstanding fees found for the selected period. Either no fee structures exist for these classes, or all students have paid.</p>
+              <p className="text-center py-12 text-[var(--text-2)]">No outstanding fees found for the selected period. Either no fee structures exist for these classes, or all students have paid.</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead><tr className="bg-secondary-50 border-b">
+                  <thead><tr className="bg-[var(--surface-2)] border-b">
                     <th className="p-3 text-left text-xs uppercase">Student</th>
                     <th className="p-3 text-left text-xs uppercase">Class</th>
                     <th className="p-3 text-right text-xs uppercase">Expected</th>
@@ -208,10 +208,10 @@ export default function FeesPage() {
                   </tr></thead>
                   <tbody>
                     {outstanding.map(r => (
-                      <tr key={r.student_id} className="border-b hover:bg-secondary-50">
+                      <tr key={r.student_id} className="border-b hover:bg-[var(--surface-2)]">
                         <td className="p-3">
                           <p className="font-medium">{r.student_name}</p>
-                          {r.email && <p className="text-xs text-secondary-500">{r.email}</p>}
+                          {r.email && <p className="text-xs text-[var(--text-2)]">{r.email}</p>}
                         </td>
                         <td className="p-3 text-sm">{r.class_name}</td>
                         <td className="p-3 text-right text-sm">₦{Number(r.expected).toLocaleString()}</td>
@@ -229,7 +229,7 @@ export default function FeesPage() {
                             </Button>
                           )}
                           {!r.fully_paid && !r.email && (
-                            <span title="No email on record"><AlertCircle className="h-4 w-4 text-secondary-300" /></span>
+                            <span title="No email on record"><AlertCircle className="h-4 w-4 text-[var(--text-3)]" /></span>
                           )}
                         </td>
                       </tr>
@@ -247,7 +247,7 @@ export default function FeesPage() {
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Class Name</Label><Input value={form.class_name} onChange={e => setForm({...form, class_name: e.target.value})} placeholder="e.g. JSS 1" required /></div>
             <div><Label>Level</Label>
-              <select value={form.level} onChange={e => setForm({...form, level: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.level} onChange={e => setForm({...form, level: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 <option value="nursery">Nursery</option><option value="primary">Primary</option>
                 <option value="junior_secondary">Junior Secondary</option><option value="senior_secondary">Senior Secondary</option>
               </select>
@@ -255,12 +255,12 @@ export default function FeesPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Term</Label>
-              <select value={form.term} onChange={e => setForm({...form, term: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.term} onChange={e => setForm({...form, term: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {TERMS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div><Label>Session</Label>
-              <select value={form.session} onChange={e => setForm({...form, session: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.session} onChange={e => setForm({...form, session: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {SESSIONS.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
@@ -274,7 +274,7 @@ export default function FeesPage() {
             <div className="space-y-2">
               {form.fees.map((fee, i) => (
                 <div key={i} className="flex gap-2 items-center">
-                  <select value={fee.type} onChange={e => updateFeeRow(i, 'type', e.target.value)} className="flex h-9 flex-1 rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm">
+                  <select value={fee.type} onChange={e => updateFeeRow(i, 'type', e.target.value)} className="flex h-9 flex-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm">
                     {FEE_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g,' ')}</option>)}
                   </select>
                   <Input type="number" min={0} value={fee.amount} onChange={e => updateFeeRow(i, 'amount', Number(e.target.value))} placeholder="Amount (₦)" className="flex-1 h-9" />
@@ -282,7 +282,7 @@ export default function FeesPage() {
                 </div>
               ))}
             </div>
-            <p className="text-sm text-secondary-500 mt-2 font-medium">Total: ₦{form.fees.reduce((s, f) => s + Number(f.amount || 0), 0).toLocaleString()}</p>
+            <p className="text-sm text-[var(--text-2)] mt-2 font-medium">Total: ₦{form.fees.reduce((s, f) => s + Number(f.amount || 0), 0).toLocaleString()}</p>
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button type="button" variant="outline" onClick={closeModal}>Cancel</Button>

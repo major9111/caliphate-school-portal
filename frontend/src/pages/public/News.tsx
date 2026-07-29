@@ -1,4 +1,5 @@
 import { useScrollReveal, useScrollStagger } from '@/hooks/useGsapPublic'
+import { Card } from '@/components/ui/card'
 
 export function PublicNews() {
   const news = [
@@ -15,16 +16,18 @@ export function PublicNews() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div ref={headingRef}>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">News & Events</h1>
-            <p className="text-lg text-secondary-600 mb-12">Stay updated with the latest happenings at Caliphate Schools.</p>
+            <h1 className="font-display font-bold text-4xl md:text-5xl mb-6 text-[var(--text)]">News & Events</h1>
+            <p className="text-lg text-[var(--text-2)] mb-12">Stay updated with the latest happenings at Caliphate Schools.</p>
           </div>
           <div ref={listRef} className="space-y-6">
             {news.map((item, i) => (
-              <article key={i} data-reveal-item className="bg-white rounded-2xl p-6 shadow-soft border border-secondary-200">
-                <p className="text-sm text-primary-600 font-medium mb-2">{item.date}</p>
-                <h2 className="text-2xl font-bold mb-3">{item.title}</h2>
-                <p className="text-secondary-600">{item.excerpt}</p>
-              </article>
+              <div key={i} data-reveal-item>
+                <Card className="p-6">
+                  <p className="text-sm text-[var(--indigo)] font-medium mb-2">{item.date}</p>
+                  <h2 className="font-display font-bold text-2xl mb-3 text-[var(--text)]">{item.title}</h2>
+                  <p className="text-[var(--text-2)]">{item.excerpt}</p>
+                </Card>
+              </div>
             ))}
           </div>
         </div>

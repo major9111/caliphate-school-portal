@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
-import { gsap, prefersReducedMotion } from '@/lib/gsap'
+import { loadGsap, prefersReducedMotion } from '@/lib/gsap'
 
 /**
  * Bold hero entrance: children of the container animate in with a staggered
@@ -15,23 +15,21 @@ export function useHeroReveal(selector = '[data-reveal]') {
     const targets = ref.current.querySelectorAll(selector)
     if (!targets.length) return
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        targets,
-        { opacity: 0, y: 48, scale: 0.96 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1,
-          ease: 'power3.out',
-          stagger: 0.15,
-          delay: 0.1,
-        }
-      )
-    }, ref)
+    let cancelled = false
+    let ctx: ReturnType<Awaited<ReturnType<typeof loadGsap>>['gsap']['context']> | undefined
 
-    return () => ctx.revert()
+    loadGsap().then(({ gsap }) => {
+      if (cancelled || !ref.current) return
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          targets,
+          { opacity: 0, y: 48, scale: 0.96 },
+          { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power3.out', stagger: 0.15, delay: 0.1 }
+        )
+      }, ref)
+    })
+
+    return () => { cancelled = true; ctx?.revert() }
   }, [selector])
 
   return ref as RefObject<HTMLElement>
@@ -49,27 +47,24 @@ export function useScrollStagger(selector = '[data-reveal-item]') {
     const targets = ref.current.querySelectorAll(selector)
     if (!targets.length) return
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        targets,
-        { opacity: 0, y: 40, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          ease: 'back.out(1.4)',
-          stagger: 0.12,
-          scrollTrigger: {
-            trigger: ref.current,
-            start: 'top 82%',
-            once: true,
-          },
-        }
-      )
-    }, ref)
+    let cancelled = false
+    let ctx: ReturnType<Awaited<ReturnType<typeof loadGsap>>['gsap']['context']> | undefined
 
-    return () => ctx.revert()
+    loadGsap().then(({ gsap }) => {
+      if (cancelled || !ref.current) return
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          targets,
+          { opacity: 0, y: 40, scale: 0.95 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.4)', stagger: 0.12,
+            scrollTrigger: { trigger: ref.current, start: 'top 82%', once: true },
+          }
+        )
+      }, ref)
+    })
+
+    return () => { cancelled = true; ctx?.revert() }
   }, [selector])
 
   return ref as RefObject<HTMLElement>
@@ -84,25 +79,24 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>() {
   useEffect(() => {
     if (!ref.current || prefersReducedMotion) return
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ref.current,
-        { opacity: 0, y: 32 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: ref.current,
-            start: 'top 85%',
-            once: true,
-          },
-        }
-      )
+    let cancelled = false
+    let ctx: ReturnType<Awaited<ReturnType<typeof loadGsap>>['gsap']['context']> | undefined
+
+    loadGsap().then(({ gsap }) => {
+      if (cancelled || !ref.current) return
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          ref.current,
+          { opacity: 0, y: 32 },
+          {
+            opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+            scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true },
+          }
+        )
+      })
     })
 
-    return () => ctx.revert()
+    return () => { cancelled = true; ctx?.revert() }
   }, [])
 
   return ref

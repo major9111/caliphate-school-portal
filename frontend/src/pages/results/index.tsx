@@ -67,10 +67,10 @@ export default function ResultsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Results</h1><p className="text-secondary-500 mt-1">Manage academic results ({data?.total || 0} entries)</p></div>
+        <div><h1 className="text-3xl font-bold">Results</h1><p className="text-[var(--text-2)] mt-1">Manage academic results ({data?.total || 0} entries)</p></div>
         <div className="flex gap-2 flex-wrap">
-          <a href={exportsApi.resultsExcel({ term: filters.term || undefined, class_name: filters.class_name || undefined })} download className="inline-flex items-center gap-2 px-3 py-2 border border-secondary-300 rounded-lg text-sm font-medium hover:bg-secondary-50"><FileDown className="h-4 w-4" />Excel</a>
-          <a href={exportsApi.resultsCsv(filters.term || undefined)} download className="inline-flex items-center gap-2 px-3 py-2 border border-secondary-300 rounded-lg text-sm font-medium hover:bg-secondary-50"><FileDown className="h-4 w-4" />CSV</a>
+          <a href={exportsApi.resultsExcel({ term: filters.term || undefined, class_name: filters.class_name || undefined })} download className="inline-flex items-center gap-2 px-3 py-2 border border-[var(--border)] rounded-lg text-sm font-medium hover:bg-[var(--surface-2)]"><FileDown className="h-4 w-4" />Excel</a>
+          <a href={exportsApi.resultsCsv(filters.term || undefined)} download className="inline-flex items-center gap-2 px-3 py-2 border border-[var(--border)] rounded-lg text-sm font-medium hover:bg-[var(--surface-2)]"><FileDown className="h-4 w-4" />CSV</a>
           <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Result</Button>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function ResultsPage() {
         <div><Label>Student Name</Label><Input className="mt-1" placeholder="Search…" value={filters.student_name} onChange={e => setFilter('student_name', e.target.value)} /></div>
         <div><Label>Class</Label><Input className="mt-1" placeholder="All classes" value={filters.class_name} onChange={e => setFilter('class_name', e.target.value)} /></div>
         <div><Label>Term</Label>
-          <select value={filters.term} onChange={e => setFilter('term', e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-1">
+          <select value={filters.term} onChange={e => setFilter('term', e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-1">
             <option value="">All Terms</option>{TERMS.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
@@ -107,8 +107,8 @@ export default function ResultsPage() {
             ) : null },
             { key: 'del', header: '', render: r => (
               <div className="flex items-center gap-1 justify-end">
-                <button onClick={() => openEdit(r)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => { if(confirm('Delete this result?')) del.mutate(r.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => openEdit(r)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => { if(confirm('Delete this result?')) del.mutate(r.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button>
               </div>
             )},
           ]}
@@ -132,7 +132,7 @@ export default function ResultsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Term</Label>
-              <select value={form.term} onChange={e => setForm({ ...form, term: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.term} onChange={e => setForm({ ...form, term: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {TERMS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
@@ -158,10 +158,10 @@ export default function ResultsPage() {
             <div><Label>CA Score (40)</Label><Input type="number" min={0} max={40} value={editForm.ca_score} onChange={e => setEditForm({ ...editForm, ca_score: Number(e.target.value) })} /></div>
             <div><Label>Exam Score (60)</Label><Input type="number" min={0} max={60} value={editForm.exam_score} onChange={e => setEditForm({ ...editForm, exam_score: Number(e.target.value) })} /></div>
           </div>
-          <p className="text-xs text-secondary-500 bg-blue-50 rounded p-2">Total and grade are recalculated automatically from CA + Exam scores.</p>
+          <p className="text-xs text-[var(--text-2)] bg-blue-50 rounded p-2">Total and grade are recalculated automatically from CA + Exam scores.</p>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Term</Label>
-              <select value={editForm.term} onChange={e => setEditForm({ ...editForm, term: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={editForm.term} onChange={e => setEditForm({ ...editForm, term: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {TERMS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>

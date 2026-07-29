@@ -53,19 +53,19 @@ export default function AdmissionsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Admissions</h1><p className="text-secondary-500 mt-1">{data?.total || 0} applications</p></div>
+        <div><h1 className="text-3xl font-bold">Admissions</h1><p className="text-[var(--text-2)] mt-1">{data?.total || 0} applications</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Application</Button>
       </div>
 
       <Card><CardContent className="p-4 grid sm:grid-cols-2 gap-4">
         <div className="relative">
           <Label>Search</Label>
-          <div className="relative mt-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+          <div className="relative mt-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
             <Input className="pl-10" placeholder="Search by name or email…" value={search} onChange={e => setF(() => setSearch(e.target.value))} />
           </div>
         </div>
         <div><Label>Status</Label>
-          <select value={status} onChange={e => setF(() => setStatus(e.target.value))} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-1 text-sm">
+          <select value={status} onChange={e => setF(() => setStatus(e.target.value))} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-1 text-sm">
             <option value="">All Statuses</option>{['pending','approved','rejected','enrolled'].map(s => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>
@@ -81,7 +81,7 @@ export default function AdmissionsPage() {
           emptyDescription="Applications submitted via the public form will appear here."
           emptyAction={{ label: 'Add Application', onClick: () => setModalOpen(true) }}
           columns={[
-            { key: 'name', header: 'Applicant', render: a => <div><p className="font-medium">{a.applicant_name}</p><p className="text-xs text-secondary-500">{a.email}</p></div> },
+            { key: 'name', header: 'Applicant', render: a => <div><p className="font-medium">{a.applicant_name}</p><p className="text-xs text-[var(--text-2)]">{a.email}</p></div> },
             { key: 'app_no', header: 'App. Number', render: a => <span className="font-mono text-xs">{a.application_number}</span> },
             { key: 'class', header: 'Class', render: a => a.class_applying },
             { key: 'parent', header: 'Parent', render: a => a.parent_name || '—' },
@@ -97,7 +97,7 @@ export default function AdmissionsPage() {
                 {a.status === 'approved' && (
                   <>
                     <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => { if (confirm(`Enroll ${a.applicant_name}?`)) enroll.mutate(a.id) }}>Enroll</Button>
-                    <a href={exportsApi.admissionLetterPdf(a.id)} download className="inline-flex items-center px-3 py-1 text-xs border rounded-md text-primary-700 border-primary-300 hover:bg-primary-50">Letter PDF</a>
+                    <a href={exportsApi.admissionLetterPdf(a.id)} download className="inline-flex items-center px-3 py-1 text-xs border rounded-md text-primary-700 border-primary-300 hover:bg-primary-500/10">Letter PDF</a>
                   </>
                 )}
                 {a.status === 'enrolled' && <span className="text-xs text-green-600 font-medium">✓ Enrolled</span>}

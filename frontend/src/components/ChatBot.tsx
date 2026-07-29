@@ -66,8 +66,8 @@ export function ChatBot() {
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-[9998] w-[calc(100vw-3rem)] sm:w-96 bg-white rounded-2xl shadow-2xl border border-secondary-200 overflow-hidden flex flex-col max-h-[600px]">
-          <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-4">
+        <div className="glass-panel fixed bottom-24 right-6 z-[9998] w-[calc(100vw-3rem)] sm:w-96 rounded-2xl overflow-hidden flex flex-col max-h-[600px]">
+          <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-4 flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center relative">
                 <Bot className="h-6 w-6" />
@@ -75,7 +75,7 @@ export function ChatBot() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-lg">Iqra</h3>
+                  <h3 className="font-display font-semibold text-lg">Iqra</h3>
                   <Sparkles className="h-3 w-3 text-yellow-300" />
                 </div>
                 <p className="text-xs text-blue-100">AI School Assistant</p>
@@ -83,20 +83,20 @@ export function ChatBot() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-secondary-50 to-white min-h-[300px]">
+          <div className="flex-1 overflow-y-auto p-4 min-h-[300px]">
             <div className="space-y-4">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                     <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${
-                      msg.role === 'user' ? 'bg-primary-100 text-primary-700' : 'bg-gradient-to-br from-primary-500 to-primary-700 text-white'
+                      msg.role === 'user' ? 'bg-primary-500/10 text-primary-600 dark:text-primary-300' : 'bg-gradient-to-br from-primary-500 to-primary-700 text-white'
                     }`}>
                       {msg.role === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
                     </div>
                     <div className={`p-3 rounded-2xl text-sm ${
                       msg.role === 'user'
                         ? 'bg-gradient-to-br from-primary-500 to-primary-700 text-white rounded-br-sm'
-                        : 'bg-white text-secondary-900 border border-secondary-200 rounded-bl-sm shadow-sm'
+                        : 'bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] rounded-bl-sm shadow-sm'
                     }`}>
                       {msg.text}
                     </div>
@@ -109,7 +109,7 @@ export function ChatBot() {
                     <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center">
                       <Bot className="h-4 w-4" />
                     </div>
-                    <div className="bg-white border border-secondary-200 rounded-2xl p-3 shadow-sm">
+                    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-3 shadow-sm">
                       <div className="flex gap-1">
                         <span className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" />
                         <span className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -123,7 +123,7 @@ export function ChatBot() {
             </div>
           </div>
 
-          <div className="p-4 bg-white border-t border-secondary-200">
+          <div className="p-4 bg-[var(--surface)]/60 border-t border-[var(--border)] flex-shrink-0">
             <div className="flex gap-2">
               <Input
                 value={input}

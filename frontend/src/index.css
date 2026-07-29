@@ -1,8 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+   Light values are the default; .dark overrides swap the palette.
+   Every component should read from these variables rather than raw
+   Tailwind grays, so theme changes stay centralized here.
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #FAFAF9;
+  --surface: #FFFFFF;
+  --surface-2: #F4F4F3;
+  --border: #E7E5E2;
+  --text: #14151A;
+  --text-2: #5B5E68;
+  --text-3: #8A8D96;
+
+  --indigo: #4F46E5;
+  --indigo-soft: #EEF0FF;
+  --cyan: #06B6D4;
+  --cyan-soft: #E6F9FC;
+  --emerald: #10B981;
+  --emerald-soft: #E9FBF3;
+  --amber: #F59E0B;
+  --amber-soft: #FEF6E7;
+
+  /* Glass tuning — accent surfaces only (see .glass-* utilities below) */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-blur: 16px;
+}
+
+.dark {
+  --bg: #0B0F14;
+  --surface: #12161D;
+  --surface-2: #171C24;
+  --border: #232833;
+  --text: #F2F3F5;
+  --text-2: #9BA1AC;
+  --text-3: #6B7280;
+
+  --indigo: #818CF8;
+  --indigo-soft: #1C1F3A;
+  --cyan: #22D3EE;
+  --cyan-soft: #0E2A31;
+  --emerald: #34D399;
+  --emerald-soft: #0E2A22;
+  --amber: #FBBF24;
+  --amber-soft: #2A2210;
+
+  --glass-bg: rgba(18, 22, 29, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
 
 * {
   margin: 0;
@@ -14,64 +64,57 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #eef2fb;
-  color: #0f172a;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ── Ambient animated mesh background ─────────────────────────────────
-   Fixed behind the whole app; every glassy surface blurs this. */
+   Subtle — sits behind the app; only the whitelisted glass surfaces
+   (sidebar, top nav, dropdowns, modals, etc.) should blur it. Cards,
+   tables and forms are solid and unaffected by this layer. */
 .ambient-bg {
   position: fixed;
   inset: 0;
   z-index: -10;
   overflow: hidden;
-  background: linear-gradient(160deg, #eef2fb 0%, #e9edfb 45%, #eef2fb 100%);
+  background: var(--bg);
   pointer-events: none;
 }
 
 .ambient-blob {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(90px);
-  opacity: 0.55;
+  filter: blur(100px);
+  opacity: 0.35;
   will-change: transform;
 }
 
 .ambient-blob-1 {
   top: -10%;
   left: -8%;
-  width: 42vw;
-  height: 42vw;
-  background: radial-gradient(circle at 30% 30%, #93c5fd, #2563eb 70%);
+  width: 38vw;
+  height: 38vw;
+  background: radial-gradient(circle at 30% 30%, var(--indigo), transparent 70%);
   animation: blobFloat1 26s ease-in-out infinite;
 }
 
 .ambient-blob-2 {
   top: 10%;
   right: -12%;
-  width: 38vw;
-  height: 38vw;
-  background: radial-gradient(circle at 60% 40%, #c4b5fd, #7c3aed 70%);
+  width: 34vw;
+  height: 34vw;
+  background: radial-gradient(circle at 60% 40%, var(--cyan), transparent 70%);
   animation: blobFloat2 32s ease-in-out infinite;
 }
 
 .ambient-blob-3 {
   bottom: -14%;
   left: 15%;
-  width: 36vw;
-  height: 36vw;
-  background: radial-gradient(circle at 40% 60%, #a5f3fc, #0ea5e9 70%);
+  width: 32vw;
+  height: 32vw;
+  background: radial-gradient(circle at 40% 60%, var(--emerald), transparent 70%);
   animation: blobFloat3 30s ease-in-out infinite;
-}
-
-.ambient-blob-4 {
-  bottom: 5%;
-  right: 10%;
-  width: 28vw;
-  height: 28vw;
-  background: radial-gradient(circle at 50% 50%, #fbcfe8, #db2777 70%);
-  opacity: 0.35;
-  animation: blobFloat1 22s ease-in-out infinite reverse;
 }
 
 @keyframes blobFloat1 {
@@ -95,150 +138,92 @@ body {
   .ambient-blob { animation: none; }
 }
 
-/* ── Glassmorphism ─────────────────────────────────────────────────────
-   Overriding Tailwind's own generated utility classes (rather than
-   hand-editing every component) so every surface in the app — sidebar,
-   header, cards, tables, modals, toasts, inputs — becomes glassy at once. */
+/* ══════════════════════════════════════════════════════════════════
+   GLASSMORPHISM — ACCENT ONLY
+   Applied explicitly via these utility classes, never globally.
+   Use on: sidebar shell, top nav, dropdowns, modals, command palette,
+   FABs, notification panel, floating toolbars.
+   Do NOT use on: cards, tables, forms, dashboard widgets — those use
+   the solid .surface-panel treatment further down.
+   ══════════════════════════════════════════════════════════════════ */
+.glass-nav {
+  background: rgba(250, 250, 249, 0.72);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+.dark .glass-nav {
+  background: rgba(11, 15, 20, 0.65);
+}
 
-.bg-white {
-  background-color: rgba(255, 255, 255, 0.55) !important;
+.glass-sidebar {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px -12px rgba(20, 21, 26, 0.12);
+}
+.dark .glass-sidebar {
+  box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-panel {
+  /* Dropdowns, popovers, command palette, notification panel, context menus */
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 16px 40px -16px rgba(20, 21, 26, 0.25);
+}
+.dark .glass-panel {
+  background: rgba(18, 22, 29, 0.82);
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.6);
 }
 
-.bg-secondary-50 {
-  background-color: rgba(255, 255, 255, 0.35) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-.bg-secondary-100 {
-  background-color: rgba(255, 255, 255, 0.45) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.hover\:bg-secondary-50:hover {
-  background-color: rgba(255, 255, 255, 0.5) !important;
-  backdrop-filter: blur(14px);
-}
-
-.hover\:bg-secondary-100:hover {
-  background-color: rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: blur(14px);
-}
-
-.border-secondary-200,
-.border-secondary-300 {
-  border-color: rgba(255, 255, 255, 0.5) !important;
-}
-
-.shadow-soft,
-.shadow-medium {
-  box-shadow: 0 8px 32px -8px rgba(30, 41, 59, 0.18), 0 2px 8px -2px rgba(30, 41, 59, 0.08) !important;
-}
-
-/* Primary CTAs stay solid for hierarchy, but get a frosted edge to match */
-.bg-primary-600 {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-.glass-strong {
-  background: rgba(255, 255, 255, 0.7);
+.glass-modal {
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 24px 64px -20px rgba(20, 21, 26, 0.3);
+}
+.dark .glass-modal {
+  background: rgba(18, 22, 29, 0.88);
 }
 
-.glass-dark {
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+.glass-fab {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 28px -10px rgba(20, 21, 26, 0.28);
+}
+.dark .glass-fab {
+  background: rgba(18, 22, 29, 0.7);
 }
 
-/* Solid footer treatment — the translucent .glass-dark style washes out to a
-   dull grey once it sits over the page's white background, so the footer
-   gets its own deep, cool navy instead of relying on backdrop-blur. */
-.site-footer {
-  background: linear-gradient(180deg, #0b1324 0%, #0f1a30 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
+/* ══════════════════════════════════════════════════════════════════
+   SOLID SURFACES — the default for cards, tables, forms, widgets
+   ══════════════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--surface-2);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  background: var(--text-3);
 }
 
 *:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--indigo);
   outline-offset: 2px;
-}
-
-/* ── Dark Mode ─────────────────────────────────────────────────────── */
-.dark body {
-  @apply text-gray-100;
-}
-.dark .ambient-bg {
-  background: linear-gradient(160deg, #0b1120 0%, #0f1a33 45%, #0b1120 100%);
-}
-.dark .bg-white {
-  background-color: rgba(15, 23, 42, 0.55) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-.dark .bg-secondary-50 {
-  background-color: rgba(15, 23, 42, 0.4) !important;
-  backdrop-filter: blur(14px);
-}
-.dark .bg-secondary-100 {
-  background-color: rgba(15, 23, 42, 0.5) !important;
-  backdrop-filter: blur(12px);
-}
-.dark .border-secondary-200,
-.dark .border-secondary-300 {
-  border-color: rgba(255, 255, 255, 0.12) !important;
-}
-.dark .text-secondary-500 {
-  @apply !text-gray-400;
-}
-.dark .text-secondary-600 {
-  @apply !text-gray-300;
-}
-.dark .text-secondary-900 {
-  @apply !text-gray-100;
-}
-.dark .hover\:bg-secondary-100:hover {
-  background-color: rgba(15, 23, 42, 0.65) !important;
-}
-.dark .hover\:bg-secondary-50:hover {
-  background-color: rgba(15, 23, 42, 0.55) !important;
 }

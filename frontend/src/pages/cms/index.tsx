@@ -72,7 +72,7 @@ export function CmsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Website CMS</h1><p className="text-secondary-500 mt-1">Manage pages</p></div>
+        <div><h1 className="text-3xl font-bold">Website CMS</h1><p className="text-[var(--text-2)] mt-1">Manage pages</p></div>
         <Button onClick={openCreate}><Plus className="h-4 w-4 mr-2" />New Page</Button>
       </div>
 
@@ -81,7 +81,7 @@ export function CmsPage() {
           {isLoading ? (
             <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
           ) : pages.length === 0 ? (
-            <p className="text-center py-8 text-secondary-500">No pages yet. Create your first page.</p>
+            <p className="text-center py-8 text-[var(--text-2)]">No pages yet. Create your first page.</p>
           ) : (
             <div className="space-y-3">
               {pages.map((page) => (
@@ -90,7 +90,7 @@ export function CmsPage() {
                     <Globe className="h-8 w-8 text-primary-600" />
                     <div>
                       <p className="font-medium">{page.title}</p>
-                      <p className="text-sm text-secondary-500">/{page.slug} <Badge variant={page.status === 'published' ? 'success' : 'secondary'} className="ml-2">{page.status}</Badge></p>
+                      <p className="text-sm text-[var(--text-2)]">/{page.slug} <Badge variant={page.status === 'published' ? 'success' : 'secondary'} className="ml-2">{page.status}</Badge></p>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -109,12 +109,12 @@ export function CmsPage() {
           <div><Label>Title</Label><Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
           <div><Label>Slug</Label><Input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} placeholder="auto-generated from title" /></div>
           <div><Label>Status</Label>
-            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+            <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
               <option value="published">Published</option>
               <option value="draft">Draft</option>
             </select>
           </div>
-          <div><Label>Content</Label><textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} className="flex min-h-[150px] w-full rounded-lg border border-secondary-300 bg-white px-3 py-2" /></div>
+          <div><Label>Content</Label><textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} className="flex min-h-[150px] w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2" /></div>
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button type="button" variant="outline" onClick={closeModal}>Cancel</Button>
             <Button type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : editingId ? 'Update' : 'Create'}</Button>

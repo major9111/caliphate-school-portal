@@ -64,7 +64,7 @@ export default function HomeworkPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Homework</h1><p className="text-secondary-500 mt-1">{data?.total || 0} assignments</p></div>
+        <div><h1 className="text-3xl font-bold">Homework</h1><p className="text-[var(--text-2)] mt-1">{data?.total || 0} assignments</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Assign Homework</Button>
       </div>
 
@@ -95,8 +95,8 @@ export default function HomeworkPage() {
             )},
             { key: 'del', header: '', render: h => (
               <div className="flex items-center gap-1 justify-end">
-                <button onClick={() => openEdit(h)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => del.mutate(h.id)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => openEdit(h)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => del.mutate(h.id)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button>
               </div>
             )},
           ]}
@@ -106,7 +106,7 @@ export default function HomeworkPage() {
       <Modal open={modalOpen} onOpenChange={setModalOpen} title="Assign Homework">
         <form onSubmit={(e) => { e.preventDefault(); create.mutate(form) }} className="space-y-4">
           <div><Label>Title</Label><Input value={form.title} onChange={e => setForm({...form, title: e.target.value})} required /></div>
-          <div><Label>Description</Label><textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="flex min-h-[80px] w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" /></div>
+          <div><Label>Description</Label><textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="flex min-h-[80px] w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Subject</Label><Input value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} required /></div>
             <div><Label>Class</Label><Input value={form.class_name} onChange={e => setForm({...form, class_name: e.target.value})} required /></div>
@@ -122,7 +122,7 @@ export default function HomeworkPage() {
       <Modal open={!!editingHomework} onOpenChange={(open) => { if (!open) setEditingHomework(null) }} title={`Edit — ${editingHomework?.title}`}>
         <form onSubmit={handleEditSubmit} className="space-y-4">
           <div><Label>Title</Label><Input value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} required /></div>
-          <div><Label>Description</Label><textarea value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} className="flex min-h-[80px] w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" /></div>
+          <div><Label>Description</Label><textarea value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} className="flex min-h-[80px] w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Subject</Label><Input value={editForm.subject} onChange={e => setEditForm({...editForm, subject: e.target.value})} required /></div>
             <div><Label>Class</Label><Input value={editForm.class_name} onChange={e => setEditForm({...editForm, class_name: e.target.value})} required /></div>
@@ -145,15 +145,15 @@ export default function HomeworkPage() {
       </Modal>
 
       <Modal open={!!viewSubmissions} onOpenChange={() => setViewSubmissions(null)} title="Student Submissions">
-        {subLoading ? <p className="text-center py-8 text-secondary-500">Loading…</p> : (submissions?.items?.length ?? 0) === 0 ? (
-          <p className="text-center py-8 text-secondary-500">No submissions yet.</p>
+        {subLoading ? <p className="text-center py-8 text-[var(--text-2)]">Loading…</p> : (submissions?.items?.length ?? 0) === 0 ? (
+          <p className="text-center py-8 text-[var(--text-2)]">No submissions yet.</p>
         ) : (
           <div className="space-y-3">
             {submissions!.items.map(s => (
               <div key={s.id} className="border rounded-lg p-3">
                 <p className="font-medium text-sm">{s.student_name}</p>
-                <p className="text-xs text-secondary-500 mt-1">{s.submission_text}</p>
-                <p className="text-xs text-secondary-400 mt-1">Submitted {new Date(s.submitted_at).toLocaleString()}</p>
+                <p className="text-xs text-[var(--text-2)] mt-1">{s.submission_text}</p>
+                <p className="text-xs text-[var(--text-3)] mt-1">Submitted {new Date(s.submitted_at).toLocaleString()}</p>
               </div>
             ))}
           </div>

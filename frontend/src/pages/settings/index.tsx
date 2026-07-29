@@ -84,30 +84,30 @@ export function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="text-3xl font-bold">Settings</h1><p className="text-secondary-500 mt-1">Configure school preferences</p></div>
+      <div><h1 className="text-3xl font-bold">Settings</h1><p className="text-[var(--text-2)] mt-1">Configure school preferences</p></div>
 
       <Card>
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-4"><CalendarClock className="h-8 w-8 text-primary-600" /><h2 className="text-xl font-bold">Academic Calendar</h2></div>
-          <div className="flex items-center justify-between flex-wrap gap-4 bg-secondary-50 rounded-xl p-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 bg-[var(--surface-2)] rounded-xl p-4">
             <div>
-              <p className="text-sm text-secondary-500">Currently</p>
+              <p className="text-sm text-[var(--text-2)]">Currently</p>
               <p className="text-lg font-bold">{form.current_term} — {form.current_session}</p>
             </div>
-            <div className="flex items-center gap-3 text-secondary-400">
+            <div className="flex items-center gap-3 text-[var(--text-3)]">
               <ArrowRight className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm text-secondary-500">{isRolloverNext ? 'Next (new session)' : 'Next'}</p>
+              <p className="text-sm text-[var(--text-2)]">{isRolloverNext ? 'Next (new session)' : 'Next'}</p>
               <p className="text-lg font-bold text-primary-700">{nextTerm} — {nextSession}</p>
             </div>
             <Button onClick={handleAdvance} disabled={advanceTerm.isPending}>
               {advanceTerm.isPending ? 'Advancing…' : isRolloverNext ? 'Advance & Start New Session' : 'Advance to Next Term'}
             </Button>
           </div>
-          {isRolloverNext && <p className="text-xs text-secondary-500 mt-3">This is a session rollover — you'll be taken to Class Promotion afterward to move students up (or graduate final-year students).</p>}
+          {isRolloverNext && <p className="text-xs text-[var(--text-2)] mt-3">This is a session rollover — you'll be taken to Class Promotion afterward to move students up (or graduate final-year students).</p>}
           <div className="flex items-center justify-between mt-4 pt-4 border-t">
-            <p className="text-sm text-secondary-500">Don't rebuild every class's fees from scratch — copy them forward instead.</p>
+            <p className="text-sm text-[var(--text-2)]">Don't rebuild every class's fees from scratch — copy them forward instead.</p>
             <Button variant="outline" size="sm" onClick={handleCopyForward} disabled={copyForward.isPending}>
               <Copy className="h-4 w-4 mr-2" />{copyForward.isPending ? 'Copying…' : `Copy Fees to ${nextTerm}`}
             </Button>
@@ -123,24 +123,24 @@ export function SettingsPage() {
               {runAutomation.isPending ? 'Running…' : 'Run Now'}
             </Button>
           </div>
-          <p className="text-sm text-secondary-500 mb-4">
+          <p className="text-sm text-[var(--text-2)] mb-4">
             Runs automatically once a day: fee &amp; library reminders, exam status updates, absence alerts, and birthday shout-outs.
           </p>
-          <div className="flex items-center gap-2 text-sm bg-secondary-50 rounded-lg p-3 mb-4">
-            <Clock className="h-4 w-4 text-secondary-400" />
+          <div className="flex items-center gap-2 text-sm bg-[var(--surface-2)] rounded-lg p-3 mb-4">
+            <Clock className="h-4 w-4 text-[var(--text-3)]" />
             <span>Last ran: {autoStatus?.last_run_at ? new Date(autoStatus.last_run_at).toLocaleString() : 'Never yet'}</span>
           </div>
           {autoLog && autoLog.items.length > 0 && (
             <div className="space-y-2">
               {autoLog.items.slice(0, 5).map(entry => (
-                <div key={entry.id} className="flex items-center justify-between text-sm p-3 rounded-lg border border-secondary-200">
+                <div key={entry.id} className="flex items-center justify-between text-sm p-3 rounded-lg border border-[var(--border)]">
                   <div className="flex items-center gap-2">
                     {entry.errors && Object.keys(entry.errors).length > 0
                       ? <AlertTriangle className="h-4 w-4 text-yellow-600" />
                       : <CheckCircle2 className="h-4 w-4 text-green-600" />}
                     <span className="font-medium">{entry.date}</span>
                   </div>
-                  <span className="text-secondary-500 text-xs">
+                  <span className="text-[var(--text-2)] text-xs">
                     {entry.fee_reminders_sent ?? 0} fees · {entry.library_reminders ?? 0} library · {entry.exam_transitions ?? 0} exams · {entry.absence_alerts_sent ?? 0} absences · {entry.birthday_shoutouts ?? 0} birthdays
                   </span>
                 </div>
@@ -164,7 +164,7 @@ export function SettingsPage() {
             <div className="grid md:grid-cols-2 gap-4">
               <div><Label>Current Session</Label><Input value={form.current_session} onChange={e => setForm({...form, current_session: e.target.value})} /></div>
               <div><Label>Current Term</Label>
-                <select value={form.current_term} onChange={e => setForm({...form, current_term: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+                <select value={form.current_term} onChange={e => setForm({...form, current_term: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                   <option>First Term</option><option>Second Term</option><option>Third Term</option>
                 </select>
               </div>

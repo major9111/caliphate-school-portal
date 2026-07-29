@@ -16,9 +16,9 @@ export function Pagination({ page, pageSize, total, onPageChange }: PaginationPr
   const end = Math.min(page * pageSize, total)
 
   return (
-    <div className="flex items-center justify-between pt-4 mt-4 border-t border-secondary-200">
-      <p className="text-sm text-secondary-500">
-        Showing <span className="font-medium">{start}</span>–<span className="font-medium">{end}</span> of <span className="font-medium">{total}</span>
+    <div className="flex items-center justify-between pt-4 mt-4 border-t border-[var(--border)]">
+      <p className="text-sm text-[var(--text-2)]">
+        Showing <span className="font-mono font-medium text-[var(--text)]">{start}</span>–<span className="font-mono font-medium text-[var(--text)]">{end}</span> of <span className="font-mono font-medium text-[var(--text)]">{total}</span>
       </p>
       <div className="flex items-center gap-2">
         <Button
@@ -29,7 +29,7 @@ export function Pagination({ page, pageSize, total, onPageChange }: PaginationPr
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="text-sm font-medium px-2">{page} / {totalPages}</span>
+        <span className="text-sm font-mono font-medium px-2 text-[var(--text)]">{page} / {totalPages}</span>
         <Button
           variant="outline"
           size="sm"

@@ -3,10 +3,11 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Lock, User, Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react'
+import { Lock, User, Loader2, Eye, EyeOff } from 'lucide-react'
 import { authApi } from '@/lib/api'
 import { getHomeRouteForRole } from '@/lib/utils'
 import { isAxiosError } from 'axios'
+import { AuthHeroPanel, AuthCard, AuthBackLink, AuthErrorBanner } from '@/components/auth/AuthShell'
 
 export function LoginPage() {
   const [login, setLogin] = useState('')
@@ -42,49 +43,35 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-secondary-50">
-      <div className="hidden lg:flex relative items-center justify-center bg-gradient-to-br from-primary-600 to-primary-900 p-12">
-        <div className="relative text-white max-w-md z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="h-12 w-12 rounded-full object-cover ring-2 ring-white/30" />
-            <div>
-              <h1 className="text-2xl font-bold">Caliphate Schools</h1>
-              <p className="text-sm text-blue-100">Portal Management System</p>
-            </div>
-          </div>
-          <h2 className="text-4xl font-bold mb-4">Welcome back</h2>
-          <p className="text-lg text-blue-100 mb-8">Manage students, track finances, and oversee academic excellence.</p>
-        </div>
-      </div>
+    <div className="min-h-screen grid lg:grid-cols-2">
+      <AuthHeroPanel title="Welcome back" subtitle="Manage students, track finances, and oversee academic excellence." />
 
       <div className="flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md">
-          <Link to="/" className="inline-flex items-center text-sm text-secondary-600 hover:text-primary-600 mb-6">
-            <ArrowLeft className="h-4 w-4 mr-1" /> Back to Home
-          </Link>
-          <div className="bg-white rounded-2xl shadow-soft border border-secondary-200 p-8">
+          <AuthBackLink to="/" label="Back to Home" />
+          <AuthCard>
             <div className="mb-6">
-              <h2 className="text-2xl font-bold">Sign in</h2>
-              <p className="text-secondary-500 mt-1">Enter your credentials</p>
+              <h2 className="text-2xl font-display font-bold text-[var(--text)]">Sign in</h2>
+              <p className="text-[var(--text-2)] mt-1">Enter your credentials</p>
             </div>
-            {error && <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>}
+            <AuthErrorBanner message={error} />
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label>Username or Email</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
                   <Input value={login} onChange={(e) => setLogin(e.target.value)} placeholder="Enter your username or email" className="pl-10" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <Label>Password</Label>
-                  <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700">Forgot?</Link>
+                  <Link to="/forgot-password" className="text-sm text-[var(--indigo)] hover:underline">Forgot?</Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
                   <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" className="pl-10 pr-10" required />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400">
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors" aria-label={showPassword ? 'Hide password' : 'Show password'}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
@@ -93,10 +80,10 @@ export function LoginPage() {
                 {isLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Signing in...</> : 'Sign In'}
               </Button>
             </form>
-            <p className="text-sm text-center text-secondary-600 mt-6">
-              Don't have an account? <Link to="/register" className="text-primary-600 font-medium">Sign up</Link>
+            <p className="text-sm text-center text-[var(--text-2)] mt-6">
+              Don't have an account? <Link to="/register" className="text-[var(--indigo)] font-medium hover:underline">Sign up</Link>
             </p>
-          </div>
+          </AuthCard>
         </div>
       </div>
     </div>

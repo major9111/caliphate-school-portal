@@ -92,7 +92,7 @@ export default function LibraryPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Library</h1><p className="text-secondary-500 mt-1">Manage books and borrowing</p></div>
+        <div><h1 className="text-3xl font-bold">Library</h1><p className="text-[var(--text-2)] mt-1">Manage books and borrowing</p></div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setIssueModalOpen(true)}>Issue Book</Button>
           <Button onClick={() => setBookModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Book</Button>
@@ -101,23 +101,23 @@ export default function LibraryPage() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Total Books</p><p className="text-2xl font-bold">{booksData?.total || 0}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Issued</p><p className="text-2xl font-bold">{transactions.filter(t => t.status === 'issued').length}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500 text-red-600">Overdue</p><p className="text-2xl font-bold text-red-600">{overdueData?.total || 0}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Total Fines</p><p className="text-2xl font-bold text-orange-600">₦{(overdueData?.total_fines || 0).toLocaleString()}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Total Books</p><p className="text-2xl font-bold">{booksData?.total || 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Issued</p><p className="text-2xl font-bold">{transactions.filter(t => t.status === 'issued').length}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)] text-red-600">Overdue</p><p className="text-2xl font-bold text-red-600">{overdueData?.total || 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Total Fines</p><p className="text-2xl font-bold text-orange-600">₦{(overdueData?.total_fines || 0).toLocaleString()}</p></CardContent></Card>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-2 border-b">
         {(['books', 'transactions', 'overdue'] as const).map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab === t ? 'border-primary-600 text-primary-600' : 'border-transparent text-secondary-500 hover:text-secondary-900'}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab === t ? 'border-primary-600 text-primary-600' : 'border-transparent text-[var(--text-2)] hover:text-[var(--text)]'}`}>{t}</button>
         ))}
       </div>
 
       {tab === 'books' && (
         <Card><CardContent className="p-6">
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
             <Input className="pl-10" placeholder="Search title, author, ISBN…" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} />
           </div>
           <DataTable
@@ -129,15 +129,15 @@ export default function LibraryPage() {
             emptyDescription="Add your first book to the library catalogue."
             emptyAction={{ label: 'Add Book', onClick: () => setBookModalOpen(true) }}
             columns={[
-              { key: 'title', header: 'Title', render: b => <button onClick={() => openEditBook(b)} className="text-left"><p className="font-medium hover:text-primary-600 transition-colors">{b.title}</p><p className="text-xs text-secondary-500">{b.author}</p></button> },
+              { key: 'title', header: 'Title', render: b => <button onClick={() => openEditBook(b)} className="text-left"><p className="font-medium hover:text-primary-600 transition-colors">{b.title}</p><p className="text-xs text-[var(--text-2)]">{b.author}</p></button> },
               { key: 'category', header: 'Category', render: b => b.category },
               { key: 'copies', header: 'Available / Total', render: b => <span className={b.available_copies === 0 ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>{b.available_copies} / {b.total_copies}</span> },
               { key: 'isbn', header: 'ISBN', render: b => <span className="font-mono text-xs">{b.isbn || '—'}</span> },
               { key: 'actions', header: '', render: b => (
                 <div className="flex items-center gap-1 justify-end">
                   <Button variant="outline" size="sm" onClick={() => setIssueForm({ ...issueForm, book_id: b.id })} disabled={b.available_copies === 0}>Issue</Button>
-                  <button onClick={() => openEditBook(b)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                  <button onClick={() => { if (confirm(`Remove "${b.title}" from the catalogue?`)) deleteBook.mutate(b.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => openEditBook(b)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => { if (confirm(`Remove "${b.title}" from the catalogue?`)) deleteBook.mutate(b.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button>
                 </div>
               )},
             ]}
@@ -249,7 +249,7 @@ export default function LibraryPage() {
             <div><Label>Category</Label><Input value={editBookForm.category} onChange={e => setEditBookForm({...editBookForm, category: e.target.value})} /></div>
             <div><Label>Total Copies</Label><Input type="number" min={1} value={editBookForm.total_copies} onChange={e => setEditBookForm({...editBookForm, total_copies: Number(e.target.value)})} /></div>
           </div>
-          <p className="text-xs text-secondary-500 bg-blue-50 rounded p-2">Reducing total copies below the number currently issued may make availability go negative until books are returned.</p>
+          <p className="text-xs text-[var(--text-2)] bg-blue-50 rounded p-2">Reducing total copies below the number currently issued may make availability go negative until books are returned.</p>
           <div className="flex justify-between gap-3 pt-4 border-t">
             <button
               type="button"

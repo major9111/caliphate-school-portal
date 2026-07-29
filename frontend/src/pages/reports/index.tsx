@@ -57,7 +57,7 @@ export function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="text-3xl font-bold">Reports</h1><p className="text-secondary-500 mt-1">Generate school reports</p></div>
+      <div><h1 className="text-3xl font-bold">Reports</h1><p className="text-[var(--text-2)] mt-1">Generate school reports</p></div>
 
       <div className="grid md:grid-cols-2 gap-6">
         {REPORTS.map((r) => (
@@ -66,7 +66,7 @@ export function ReportsPage() {
               <div className="flex justify-between items-start">
                 <div className="flex items-start gap-4">
                   <div className="h-12 w-12 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center flex-shrink-0"><r.icon className="h-6 w-6" /></div>
-                  <div><h3 className="font-bold">{r.title}</h3><p className="text-sm text-secondary-500">{r.desc}</p></div>
+                  <div><h3 className="font-bold">{r.title}</h3><p className="text-sm text-[var(--text-2)]">{r.desc}</p></div>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => handleGenerate(r.type)} disabled={generatingType === r.type}>
                   {generatingType === r.type ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
@@ -84,7 +84,7 @@ export function ReportsPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="font-bold text-lg">{lastReport.title}</h3>
-                <p className="text-xs text-secondary-500">Generated {new Date(lastReport.generated_at).toLocaleString()}</p>
+                <p className="text-xs text-[var(--text-2)]">Generated {new Date(lastReport.generated_at).toLocaleString()}</p>
               </div>
               <Button variant="outline" size="sm" onClick={() => downloadCsv(lastReport)}>
                 <FileDown className="h-4 w-4 mr-2" />Export Records (CSV)
@@ -95,11 +95,11 @@ export function ReportsPage() {
               {Object.entries(lastReport.summary).map(([key, value]) => {
                 if (value && typeof value === 'object') {
                   return (
-                    <div key={key} className="bg-secondary-50 rounded-lg p-4 sm:col-span-2 lg:col-span-3">
-                      <p className="text-sm font-medium text-secondary-500 mb-2">{formatLabel(key)}</p>
+                    <div key={key} className="bg-[var(--surface-2)] rounded-lg p-4 sm:col-span-2 lg:col-span-3">
+                      <p className="text-sm font-medium text-[var(--text-2)] mb-2">{formatLabel(key)}</p>
                       <div className="flex flex-wrap gap-3">
                         {Object.entries(value as Record<string, number>).map(([k, v]) => (
-                          <span key={k} className="text-sm bg-white rounded-md px-3 py-1 border border-secondary-200">
+                          <span key={k} className="text-sm bg-[var(--surface)] text-[var(--text)] rounded-md px-3 py-1 border border-[var(--border)]">
                             <strong>{formatLabel(k)}:</strong> {formatValue(v)}
                           </span>
                         ))}
@@ -108,15 +108,15 @@ export function ReportsPage() {
                   )
                 }
                 return (
-                  <div key={key} className="bg-secondary-50 rounded-lg p-4">
-                    <p className="text-sm text-secondary-500">{formatLabel(key)}</p>
+                  <div key={key} className="bg-[var(--surface-2)] rounded-lg p-4">
+                    <p className="text-sm text-[var(--text-2)]">{formatLabel(key)}</p>
                     <p className="text-2xl font-bold mt-1">{formatValue(value)}</p>
                   </div>
                 )
               })}
             </div>
 
-            <p className="text-xs text-secondary-400">
+            <p className="text-xs text-[var(--text-3)]">
               {lastReport.data.length} underlying record{lastReport.data.length === 1 ? '' : 's'} included
               {lastReport.data.length === 50 ? ' (showing first 50 — export for the full summary above, which covers all records)' : ''}
             </p>

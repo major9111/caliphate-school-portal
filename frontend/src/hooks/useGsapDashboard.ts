@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { gsap, prefersReducedMotion } from '@/lib/gsap'
+import { loadGsap, prefersReducedMotion } from '@/lib/gsap'
 
 /**
  * Subtle fade + tiny rise on mount. Re-runs whenever `depKey` changes
@@ -11,15 +11,21 @@ export function usePageTransition<T extends HTMLElement = HTMLDivElement>(depKey
   useEffect(() => {
     if (!ref.current || prefersReducedMotion) return
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ref.current,
-        { opacity: 0, y: 8 },
-        { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
-      )
+    let cancelled = false
+    let ctx: ReturnType<Awaited<ReturnType<typeof loadGsap>>['gsap']['context']> | undefined
+
+    loadGsap().then(({ gsap }) => {
+      if (cancelled || !ref.current) return
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          ref.current,
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
+        )
+      })
     })
 
-    return () => ctx.revert()
+    return () => { cancelled = true; ctx?.revert() }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [depKey])
 
@@ -38,15 +44,21 @@ export function useSubtleStagger(selector: string) {
     const targets = ref.current.querySelectorAll(selector)
     if (!targets.length) return
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        targets,
-        { opacity: 0, y: 6 },
-        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', stagger: 0.03 }
-      )
-    }, ref)
+    let cancelled = false
+    let ctx: ReturnType<Awaited<ReturnType<typeof loadGsap>>['gsap']['context']> | undefined
 
-    return () => ctx.revert()
+    loadGsap().then(({ gsap }) => {
+      if (cancelled || !ref.current) return
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          targets,
+          { opacity: 0, y: 6 },
+          { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', stagger: 0.03 }
+        )
+      }, ref)
+    })
+
+    return () => { cancelled = true; ctx?.revert() }
   }, [selector])
 
   return ref

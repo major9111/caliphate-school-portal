@@ -49,10 +49,10 @@ function SubjectPicker({ selected, onChange }: { selected: string[]; onChange: (
           ))}
         </div>
       )}
-      <div className="max-h-40 overflow-y-auto border border-secondary-200 rounded-lg p-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <div className="max-h-40 overflow-y-auto border border-[var(--border)] rounded-lg p-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
         {COMMON_SUBJECTS.map(s => (
           <label key={s} className="flex items-center gap-2 text-sm cursor-pointer">
-            <input type="checkbox" checked={selected.includes(s)} onChange={() => toggle(s)} className="rounded border-secondary-300" />
+            <input type="checkbox" checked={selected.includes(s)} onChange={() => toggle(s)} className="rounded border-[var(--border)]" />
             {s}
           </label>
         ))}
@@ -120,14 +120,14 @@ export default function TeachersPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Teachers</h1><p className="text-secondary-500 mt-1">Manage teaching staff ({data?.total || 0} total)</p></div>
+        <div><h1 className="text-3xl font-bold">Teachers</h1><p className="text-[var(--text-2)] mt-1">Manage teaching staff ({data?.total || 0} total)</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Teacher</Button>
       </div>
 
       <Card>
         <CardContent className="p-6">
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
             <Input className="pl-10" placeholder="Search by name or email…" value={search}
               onChange={e => { setSearch(e.target.value); setPage(1) }} />
           </div>
@@ -147,18 +147,18 @@ export default function TeachersPage() {
                   {t.subjects.length > 3 && <Badge variant="outline">+{t.subjects.length - 3} more</Badge>}
                 </div>
               ) : '—' },
-              { key: 'email', header: 'Email', render: t => <span className="text-secondary-500">{t.email}</span> },
+              { key: 'email', header: 'Email', render: t => <span className="text-[var(--text-2)]">{t.email}</span> },
               { key: 'phone', header: 'Phone', render: t => t.phone || '—' },
               { key: 'status', header: 'Status', render: t => <Badge variant={t.is_active ? 'success' : 'secondary'}>{t.is_active ? 'Active' : 'Inactive'}</Badge> },
               { key: 'actions', header: '', render: t => (
                 <div className="flex items-center gap-1 justify-end">
-                  <button onClick={() => openEdit(t)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit">
+                  <button onClick={() => openEdit(t)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit">
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => { if (confirm(`Remove ${t.full_name}?`)) del.mutate(t.id) }}
-                    className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                    title="Delete"
+                    className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors"
+                    aria-label="Delete" title="Delete"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -196,12 +196,12 @@ export default function TeachersPage() {
           <SubjectPicker selected={editForm.subjects} onChange={(subjects) => setEditForm({ ...editForm, subjects })} />
           <div><Label>Qualification</Label><Input value={editForm.qualification} onChange={e => setEditForm({ ...editForm, qualification: e.target.value })} /></div>
           {editingTeacher && (
-            <div className="flex items-center justify-between rounded-lg border border-secondary-200 p-3">
+            <div className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3">
               <span className="text-sm font-medium">Status</span>
               <select
                 value={editingTeacher.is_active ? 'active' : 'inactive'}
                 onChange={e => setEditingTeacher({ ...editingTeacher, is_active: e.target.value === 'active' })}
-                className="h-9 rounded-lg border border-secondary-300 bg-white px-3 text-sm"
+                className="h-9 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 text-sm"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>

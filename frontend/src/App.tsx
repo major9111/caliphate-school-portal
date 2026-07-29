@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Suspense, lazy, useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MotionConfig } from 'framer-motion'
 import { HelmetProvider } from 'react-helmet-async'
 import { Layout as AdminLayout } from '@/components/layout'
 import { PublicLayout } from '@/components/layout/PublicLayout'
@@ -68,10 +69,10 @@ const queryClient = new QueryClient({
 })
 
 const PageLoader = () => (
-  <div className="flex h-screen items-center justify-center bg-secondary-50">
+  <div className="flex h-screen items-center justify-center bg-[var(--bg)]">
     <div className="flex flex-col items-center gap-3">
-      <Loader2 className="h-10 w-10 animate-spin text-primary-600" />
-      <p className="text-sm text-secondary-500">Loading…</p>
+      <Loader2 className="h-10 w-10 animate-spin text-[var(--indigo)]" />
+      <p className="text-sm text-[var(--text-2)]">Loading…</p>
     </div>
   </div>
 )
@@ -117,11 +118,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <HelmetProvider>
-      <AmbientBackground />
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <BrowserRouter>
+    <MotionConfig reducedMotion="user">
+      <HelmetProvider>
+        <AmbientBackground />
+        <QueryClientProvider client={queryClient}>
+          <ToastProvider>
+            <BrowserRouter>
             <ErrorBoundary>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
@@ -185,5 +187,6 @@ export default function App() {
         </ToastProvider>
       </QueryClientProvider>
     </HelmetProvider>
+    </MotionConfig>
   )
 }

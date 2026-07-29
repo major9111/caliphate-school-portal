@@ -60,13 +60,13 @@ export default function EventsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Events</h1><p className="text-secondary-500 mt-1">School calendar and events</p></div>
+        <div><h1 className="text-3xl font-bold">Events</h1><p className="text-[var(--text-2)] mt-1">School calendar and events</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Event</Button>
       </div>
 
       <div className="flex gap-2 border-b">
         {(['all','upcoming','past'] as const).map(f => (
-          <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${filter===f?'border-primary-600 text-primary-600':'border-transparent text-secondary-500 hover:text-secondary-900'}`}>{f}</button>
+          <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${filter===f?'border-primary-600 text-primary-600':'border-transparent text-[var(--text-2)] hover:text-[var(--text)]'}`}>{f}</button>
         ))}
       </div>
 
@@ -83,13 +83,13 @@ export default function EventsPage() {
             { key: 'title', header: 'Event', render: e => (
               <button onClick={() => openEdit(e)} className="text-left">
                 <p className="font-medium hover:text-primary-600 transition-colors">{e.title}</p>
-                {e.description && <p className="text-xs text-secondary-500 line-clamp-1">{e.description}</p>}
+                {e.description && <p className="text-xs text-[var(--text-2)] line-clamp-1">{e.description}</p>}
               </button>
             )},
             { key: 'date', header: 'Date', render: e => (
               <div>
-                <p className={`font-medium ${e.event_date >= today ? 'text-primary-600' : 'text-secondary-500'}`}>{e.event_date}</p>
-                {e.event_time && <p className="text-xs text-secondary-500">{e.event_time}</p>}
+                <p className={`font-medium ${e.event_date >= today ? 'text-primary-600' : 'text-[var(--text-2)]'}`}>{e.event_date}</p>
+                {e.event_time && <p className="text-xs text-[var(--text-2)]">{e.event_time}</p>}
               </div>
             )},
             { key: 'type', header: 'Type', render: e => <Badge variant={(TYPE_COLORS[e.type] || 'secondary') as 'info'|'success'|'warning'|'secondary'}>{e.type}</Badge> },
@@ -98,8 +98,8 @@ export default function EventsPage() {
             { key: 'status', header: 'Status', render: e => e.event_date >= today ? <Badge variant="success">Upcoming</Badge> : <Badge variant="secondary">Past</Badge> },
             { key: 'del', header: '', render: e => (
               <div className="flex items-center gap-1 justify-end">
-                <button onClick={() => openEdit(e)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => { if(confirm('Delete event?')) del.mutate(e.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => openEdit(e)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => { if(confirm('Delete event?')) del.mutate(e.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button>
               </div>
             )},
           ]}
@@ -109,19 +109,19 @@ export default function EventsPage() {
       <Modal open={modalOpen} onOpenChange={setModalOpen} title="Add Event">
         <form onSubmit={(e) => { e.preventDefault(); create.mutate(form) }} className="space-y-4">
           <div><Label>Title</Label><Input value={form.title} onChange={e => setForm({...form, title: e.target.value})} required /></div>
-          <div><Label>Description</Label><textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="flex min-h-[80px] w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" /></div>
+          <div><Label>Description</Label><textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="flex min-h-[80px] w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Event Date</Label><Input type="date" value={form.event_date} onChange={e => setForm({...form, event_date: e.target.value})} required /></div>
             <div><Label>Time (optional)</Label><Input type="time" value={form.event_time} onChange={e => setForm({...form, event_time: e.target.value})} /></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Event Type</Label>
-              <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div><Label>Audience</Label>
-              <select value={form.audience} onChange={e => setForm({...form, audience: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.audience} onChange={e => setForm({...form, audience: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['all','students','teachers','parents','staff'].map(a => <option key={a} value={a}>{a}</option>)}
               </select>
             </div>
@@ -137,19 +137,19 @@ export default function EventsPage() {
       <Modal open={!!editingEvent} onOpenChange={(open) => { if (!open) setEditingEvent(null) }} title={`Edit — ${editingEvent?.title}`}>
         <form onSubmit={handleEditSubmit} className="space-y-4">
           <div><Label>Title</Label><Input value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} required /></div>
-          <div><Label>Description</Label><textarea value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} className="flex min-h-[80px] w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" /></div>
+          <div><Label>Description</Label><textarea value={editForm.description} onChange={e => setEditForm({...editForm, description: e.target.value})} className="flex min-h-[80px] w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Event Date</Label><Input type="date" value={editForm.event_date} onChange={e => setEditForm({...editForm, event_date: e.target.value})} required /></div>
             <div><Label>Time (optional)</Label><Input type="time" value={editForm.event_time} onChange={e => setEditForm({...editForm, event_time: e.target.value})} /></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Event Type</Label>
-              <select value={editForm.type} onChange={e => setEditForm({...editForm, type: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={editForm.type} onChange={e => setEditForm({...editForm, type: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {EVENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div><Label>Audience</Label>
-              <select value={editForm.audience} onChange={e => setEditForm({...editForm, audience: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={editForm.audience} onChange={e => setEditForm({...editForm, audience: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['all','students','teachers','parents','staff'].map(a => <option key={a} value={a}>{a}</option>)}
               </select>
             </div>

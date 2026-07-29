@@ -74,10 +74,10 @@ export default function FinancePage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Finance</h1><p className="text-secondary-500 mt-1">Track payments and expenses</p></div>
+        <div><h1 className="text-3xl font-bold">Finance</h1><p className="text-[var(--text-2)] mt-1">Track payments and expenses</p></div>
         <div className="flex gap-2">
-          <a href={exportsApi.paymentsExcel()} download className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-secondary-50"><FileDown className="h-4 w-4" />Excel</a>
-          <a href={exportsApi.paymentsCsv()} download className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-secondary-50"><FileDown className="h-4 w-4" />CSV</a>
+          <a href={exportsApi.paymentsExcel()} download className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-[var(--surface-2)]"><FileDown className="h-4 w-4" />Excel</a>
+          <a href={exportsApi.paymentsCsv()} download className="inline-flex items-center gap-2 px-3 py-2 border rounded-lg text-sm hover:bg-[var(--surface-2)]"><FileDown className="h-4 w-4" />CSV</a>
           <Button variant="outline" onClick={() => setExpenseModalOpen(true)}>+ Expense</Button>
           <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Record Payment</Button>
         </div>
@@ -93,7 +93,7 @@ export default function FinancePage() {
         ].map(({ icon: Icon, label, value, color }) => (
           <Card key={label}><CardContent className="p-5 flex items-center gap-4">
             <div className={`h-11 w-11 rounded-xl flex items-center justify-center ${color}`}><Icon className="h-5 w-5" /></div>
-            <div><p className="text-xs text-secondary-500">{label}</p><p className="text-xl font-bold">{value}</p></div>
+            <div><p className="text-xs text-[var(--text-2)]">{label}</p><p className="text-xl font-bold">{value}</p></div>
           </CardContent></Card>
         ))}
       </div>
@@ -101,7 +101,7 @@ export default function FinancePage() {
       {/* Tabs */}
       <div className="flex gap-2 border-b">
         {(['overview', 'payments', 'expenses'] as const).map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab === t ? 'border-primary-600 text-primary-600' : 'border-transparent text-secondary-500 hover:text-secondary-900'}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab === t ? 'border-primary-600 text-primary-600' : 'border-transparent text-[var(--text-2)] hover:text-[var(--text)]'}`}>{t}</button>
         ))}
       </div>
 
@@ -109,7 +109,7 @@ export default function FinancePage() {
         <Card><CardContent className="p-6">
           <div className="grid sm:grid-cols-2 gap-4 mb-4">
             <Input placeholder="Search by student name…" value={search} onChange={e => setS(e.target.value)} />
-            <select value={statusFilter} onChange={e => setFilter(e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm">
+            <select value={statusFilter} onChange={e => setFilter(e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm">
               <option value="">All Statuses</option><option value="paid">Paid</option><option value="pending">Pending</option>
             </select>
           </div>
@@ -130,7 +130,7 @@ export default function FinancePage() {
               { key: 'receipt', header: 'Receipt', render: p => <span className="text-xs font-mono">{p.receipt_number}</span> },
               { key: 'status', header: 'Status', render: p => <Badge variant={p.status === 'paid' ? 'success' : 'warning'}>{p.status}</Badge> },
               { key: 'pdf', header: '', render: p => <a href={exportsApi.receiptPdf(p.id)} download className="text-xs text-primary-600 hover:underline">PDF</a> },
-              { key: 'del', header: '', render: p => <button onClick={() => { if (confirm(`Delete payment of ₦${Number(p.amount).toLocaleString()} for ${p.student_name}?`)) deletePayment.mutate(p.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button> },
+              { key: 'del', header: '', render: p => <button onClick={() => { if (confirm(`Delete payment of ₦${Number(p.amount).toLocaleString()} for ${p.student_name}?`)) deletePayment.mutate(p.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button> },
             ]}
           />
           <Pagination page={page} pageSize={PAGE_SIZE} total={paymentsData?.total || 0} onPageChange={setPage} />
@@ -152,7 +152,7 @@ export default function FinancePage() {
               { key: 'cat', header: 'Category', render: e => <Badge variant="secondary">{e.category}</Badge> },
               { key: 'amount', header: 'Amount', render: e => <span className="font-bold text-red-600">₦{Number(e.amount).toLocaleString()}</span> },
               { key: 'date', header: 'Date', render: e => e.expense_date },
-              { key: 'del', header: '', render: e => <button onClick={() => { if (confirm(`Delete expense "${e.description}"?`)) deleteExpense.mutate(e.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button> },
+              { key: 'del', header: '', render: e => <button onClick={() => { if (confirm(`Delete expense "${e.description}"?`)) deleteExpense.mutate(e.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button> },
             ]}
           />
         </CardContent></Card>
@@ -168,19 +168,19 @@ export default function FinancePage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Fee Type</Label>
-              <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {FEE_TYPES.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
               </select>
             </div>
             <div><Label>Method</Label>
-              <select value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.method} onChange={e => setForm({ ...form, method: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {METHODS.map(m => <option key={m} value={m}>{m.replace(/_/g, ' ')}</option>)}
               </select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Term</Label>
-              <select value={form.term} onChange={e => setForm({ ...form, term: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.term} onChange={e => setForm({ ...form, term: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['First Term','Second Term','Third Term'].map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
@@ -200,7 +200,7 @@ export default function FinancePage() {
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Amount (₦)</Label><Input type="number" min={1} value={expForm.amount} onChange={e => setExpForm({ ...expForm, amount: e.target.value })} required /></div>
             <div><Label>Category</Label>
-              <select value={expForm.category} onChange={e => setExpForm({ ...expForm, category: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={expForm.category} onChange={e => setExpForm({ ...expForm, category: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['supplies','maintenance','utilities','salaries','events','transport','other'].map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>

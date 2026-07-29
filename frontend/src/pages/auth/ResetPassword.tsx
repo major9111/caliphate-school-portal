@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authApi } from '@/lib/api'
 import { isAxiosError } from 'axios'
-import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react'
+import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { AuthCard, AuthBackLink, AuthCenteredPage } from '@/components/auth/AuthShell'
 
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
@@ -28,23 +29,23 @@ export function ResetPasswordPage() {
 
   if (tokenStatus === 'checking') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-secondary-50 p-6">
-        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
-      </div>
+      <AuthCenteredPage>
+        <div className="flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-[var(--indigo)]" /></div>
+      </AuthCenteredPage>
     )
   }
 
   // No token, or the backend says it's invalid/expired — no point showing a form.
   if (tokenStatus === 'invalid') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-secondary-50 p-6">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-soft border border-secondary-200 p-8 text-center">
-          <AlertCircle className="h-12 w-12 mx-auto mb-4 text-red-600" />
-          <h2 className="text-2xl font-bold mb-2">Invalid or Expired Link</h2>
-          <p className="text-secondary-500 mb-6">This password reset link is invalid or has expired. Please request a new one.</p>
+      <AuthCenteredPage>
+        <AuthCard className="text-center">
+          <AlertCircle className="h-12 w-12 mx-auto mb-4 text-red-600 dark:text-red-400" />
+          <h2 className="text-2xl font-display font-bold text-[var(--text)] mb-2">Invalid or Expired Link</h2>
+          <p className="text-[var(--text-2)] mb-6">This password reset link is invalid or has expired. Please request a new one.</p>
           <Link to="/forgot-password"><Button className="w-full">Request New Link</Button></Link>
-        </div>
-      </div>
+        </AuthCard>
+      </AuthCenteredPage>
     )
   }
 
@@ -68,64 +69,60 @@ export function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-secondary-50 p-6">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-soft border border-secondary-200 p-8 text-center">
-          <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-600" />
-          <h2 className="text-2xl font-bold mb-2">Password Reset Successful</h2>
-          <p className="text-secondary-500 mb-6">Redirecting to login...</p>
+      <AuthCenteredPage>
+        <AuthCard className="text-center">
+          <CheckCircle className="h-12 w-12 mx-auto mb-4 text-success-600 dark:text-success-300" />
+          <h2 className="text-2xl font-display font-bold text-[var(--text)] mb-2">Password Reset Successful</h2>
+          <p className="text-[var(--text-2)] mb-6">Redirecting to login...</p>
           <Link to="/login"><Button className="w-full">Go to Login</Button></Link>
-        </div>
-      </div>
+        </AuthCard>
+      </AuthCenteredPage>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-secondary-50 p-6">
-      <div className="w-full max-w-md">
-        <Link to="/login" className="inline-flex items-center text-sm text-secondary-600 hover:text-primary-600 mb-6">
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back to Login
-        </Link>
-        <div className="bg-white rounded-2xl shadow-soft border border-secondary-200 p-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold">Create new password</h2>
-            <p className="text-secondary-500 mt-1">Enter your new password</p>
-          </div>
-          {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-              <span>
-                {error}
-                {error.toLowerCase().includes('expired') || error.toLowerCase().includes('invalid') ? (
-                  <> <Link to="/forgot-password" className="underline font-medium">Request a new link</Link>.</>
-                ) : null}
-              </span>
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label>New Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
-                <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 pr-10" required minLength={8} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400">
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Confirm Password</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
-                <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pl-10" required />
-              </div>
-            </div>
-            <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Resetting...</> : 'Reset Password'}
-            </Button>
-          </form>
+    <AuthCenteredPage>
+      <AuthBackLink to="/login" label="Back to Login" />
+      <AuthCard>
+        <div className="mb-6">
+          <h2 className="text-2xl font-display font-bold text-[var(--text)]">Create new password</h2>
+          <p className="text-[var(--text-2)] mt-1">Enter your new password</p>
         </div>
-      </div>
-    </div>
+        {error && (
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-sm flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <span>
+              {error}
+              {error.toLowerCase().includes('expired') || error.toLowerCase().includes('invalid') ? (
+                <> <Link to="/forgot-password" className="underline font-medium">Request a new link</Link>.</>
+              ) : null}
+            </span>
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label>New Password</Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
+              <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 pr-10" required minLength={8} />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors" aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Confirm Password</Label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
+              <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pl-10" required />
+            </div>
+          </div>
+          <Button type="submit" className="w-full h-11" disabled={isLoading}>
+            {isLoading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Resetting...</> : 'Reset Password'}
+          </Button>
+        </form>
+      </AuthCard>
+    </AuthCenteredPage>
   )
 }
 

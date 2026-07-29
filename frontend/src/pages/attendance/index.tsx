@@ -74,7 +74,7 @@ export function AttendancePage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Attendance</h1><p className="text-secondary-500 mt-1">Track and mark student attendance</p></div>
+        <div><h1 className="text-3xl font-bold">Attendance</h1><p className="text-[var(--text-2)] mt-1">Track and mark student attendance</p></div>
         <Button onClick={handleSave} disabled={markMutation.isPending || studentsLoading}>
           {markMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
           Save Attendance
@@ -82,28 +82,28 @@ export function AttendancePage() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <Card><CardContent className="p-6"><p className="text-sm text-secondary-500">Present Today</p><p className="text-2xl font-bold text-green-600">{statsLoading ? '...' : (stats?.present ?? 0)}</p></CardContent></Card>
-        <Card><CardContent className="p-6"><p className="text-sm text-secondary-500">Absent Today</p><p className="text-2xl font-bold text-red-600">{statsLoading ? '...' : (stats?.absent ?? 0)}</p></CardContent></Card>
-        <Card><CardContent className="p-6"><p className="text-sm text-secondary-500">Attendance Rate</p><p className="text-2xl font-bold">{statsLoading ? '...' : `${stats?.rate ?? 0}%`}</p></CardContent></Card>
+        <Card><CardContent className="p-6"><p className="text-sm text-[var(--text-2)]">Present Today</p><p className="text-2xl font-bold text-green-600">{statsLoading ? '...' : (stats?.present ?? 0)}</p></CardContent></Card>
+        <Card><CardContent className="p-6"><p className="text-sm text-[var(--text-2)]">Absent Today</p><p className="text-2xl font-bold text-red-600">{statsLoading ? '...' : (stats?.absent ?? 0)}</p></CardContent></Card>
+        <Card><CardContent className="p-6"><p className="text-sm text-[var(--text-2)]">Attendance Rate</p><p className="text-2xl font-bold">{statsLoading ? '...' : `${stats?.rate ?? 0}%`}</p></CardContent></Card>
       </div>
 
       <Card>
         <CardContent className="p-6">
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="text-sm font-medium text-secondary-700 mb-1 block">Date</label>
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" />
+              <label className="text-sm font-medium text-[var(--text)] mb-1 block">Date</label>
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-sm font-medium text-secondary-700 mb-1 block">Filter by Class / Search</label>
-              <input value={classFilter} onChange={(e) => setClassFilter(e.target.value)} placeholder="Search students..." className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" />
+              <label className="text-sm font-medium text-[var(--text)] mb-1 block">Filter by Class / Search</label>
+              <input value={classFilter} onChange={(e) => setClassFilter(e.target.value)} placeholder="Search students..." className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" />
             </div>
           </div>
 
           {studentsLoading || recordsLoading ? (
             <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
           ) : students.length === 0 ? (
-            <div className="text-center py-12 text-secondary-500">
+            <div className="text-center py-12 text-[var(--text-2)]">
               <CalendarCheck className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No students found</p>
             </div>
@@ -112,23 +112,23 @@ export function AttendancePage() {
               {students.map((s) => {
                 const status = marks[s.id] || 'present'
                 return (
-                  <div key={s.id} className="flex items-center justify-between p-3 border border-secondary-200 rounded-lg">
+                  <div key={s.id} className="flex items-center justify-between p-3 border border-[var(--border)] rounded-lg">
                     <div>
                       <p className="font-medium">{s.first_name} {s.last_name}</p>
-                      <p className="text-xs text-secondary-500">{s.admission_number} • {s.class_name}</p>
+                      <p className="text-xs text-[var(--text-2)]">{s.admission_number} • {s.class_name}</p>
                     </div>
                     <div className="flex gap-2">
                       <button
                         onClick={() => setMark(s.id, 'present')}
-                        className={cn('px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1 transition-colors', status === 'present' ? statusStyles.present : 'border-secondary-200 text-secondary-400 hover:border-green-300')}
+                        className={cn('px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1 transition-colors', status === 'present' ? statusStyles.present : 'border-[var(--border)] text-[var(--text-3)] hover:border-green-300')}
                       ><Check className="h-3 w-3" /> Present</button>
                       <button
                         onClick={() => setMark(s.id, 'late')}
-                        className={cn('px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1 transition-colors', status === 'late' ? statusStyles.late : 'border-secondary-200 text-secondary-400 hover:border-yellow-300')}
+                        className={cn('px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1 transition-colors', status === 'late' ? statusStyles.late : 'border-[var(--border)] text-[var(--text-3)] hover:border-yellow-300')}
                       ><ClockIcon className="h-3 w-3" /> Late</button>
                       <button
                         onClick={() => setMark(s.id, 'absent')}
-                        className={cn('px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1 transition-colors', status === 'absent' ? statusStyles.absent : 'border-secondary-200 text-secondary-400 hover:border-red-300')}
+                        className={cn('px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-1 transition-colors', status === 'absent' ? statusStyles.absent : 'border-[var(--border)] text-[var(--text-3)] hover:border-red-300')}
                       ><X className="h-3 w-3" /> Absent</button>
                     </div>
                   </div>
@@ -145,14 +145,14 @@ export function AttendancePage() {
             <h3 className="font-bold mb-4">Recent Records — {date}</h3>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead><tr className="border-b bg-secondary-50">
+                <thead><tr className="border-b bg-[var(--surface-2)]">
                   <th className="text-left p-3 text-xs uppercase">Student</th>
                   <th className="text-left p-3 text-xs uppercase">Class</th>
                   <th className="text-left p-3 text-xs uppercase">Status</th>
                 </tr></thead>
                 <tbody>
                   {recordsData!.items.map((r) => (
-                    <tr key={r.id} className="border-b hover:bg-secondary-50">
+                    <tr key={r.id} className="border-b hover:bg-[var(--surface-2)]">
                       <td className="p-3">{r.student_name}</td>
                       <td className="p-3 text-sm">{r.class_name}</td>
                       <td className="p-3"><Badge variant={r.status === 'present' ? 'success' : r.status === 'late' ? 'warning' : 'danger'}>{r.status}</Badge></td>

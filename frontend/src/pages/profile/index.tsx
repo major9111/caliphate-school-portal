@@ -69,7 +69,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <div><h1 className="text-3xl font-bold">My Profile</h1><p className="text-secondary-500 mt-1">Manage your account and security settings</p></div>
+      <div><h1 className="text-3xl font-bold">My Profile</h1><p className="text-[var(--text-2)] mt-1">Manage your account and security settings</p></div>
 
       {/* Avatar + basic info */}
       <Card>
@@ -96,8 +96,8 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-bold">{user?.full_name}</h2>
                 <Badge variant="secondary" className="capitalize">{user?.role}</Badge>
               </div>
-              <p className="text-secondary-500">{user?.email}</p>
-              {user?.phone && <p className="text-secondary-500 text-sm">{user?.phone}</p>}
+              <p className="text-[var(--text-2)]">{user?.email}</p>
+              {user?.phone && <p className="text-[var(--text-2)] text-sm">{user?.phone}</p>}
             </div>
             <Button variant="outline" onClick={() => { setForm({ full_name: user?.full_name || '', phone: user?.phone || '' }); setEditMode(true) }}>
               Edit Profile
@@ -112,26 +112,26 @@ export default function ProfilePage() {
           <h3 className="font-bold text-lg flex items-center gap-2"><Shield className="h-5 w-5 text-primary-600" />Security</h3>
           <div className="flex items-center justify-between py-3 border-b">
             <div className="flex items-center gap-3">
-              <Key className="h-5 w-5 text-secondary-500" />
-              <div><p className="font-medium">Password</p><p className="text-sm text-secondary-500">Change your login password</p></div>
+              <Key className="h-5 w-5 text-[var(--text-2)]" />
+              <div><p className="font-medium">Password</p><p className="text-sm text-[var(--text-2)]">Change your login password</p></div>
             </div>
             <Button variant="outline" size="sm" onClick={() => setPwModal(true)}>Change Password</Button>
           </div>
           <div className="flex items-center justify-between py-3">
             <div className="flex items-center gap-3">
-              <QrCode className="h-5 w-5 text-secondary-500" />
+              <QrCode className="h-5 w-5 text-[var(--text-2)]" />
               <div>
                 <p className="font-medium flex items-center gap-2">
                   Two-Factor Authentication
                   {(user as { two_fa_enabled?: boolean })?.two_fa_enabled && <CheckCircle className="h-4 w-4 text-green-600" />}
                 </p>
-                <p className="text-sm text-secondary-500">
+                <p className="text-sm text-[var(--text-2)]">
                   {(user as { two_fa_enabled?: boolean })?.two_fa_enabled ? 'Enabled — your account is protected' : 'Add an extra layer of security'}
                 </p>
               </div>
             </div>
             {(user as { two_fa_enabled?: boolean })?.two_fa_enabled ? (
-              <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50"
+              <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-500/10"
                 onClick={() => { setTfaStep('disable'); setTfaModal(true) }}>Disable 2FA</Button>
             ) : (
               <Button variant="outline" size="sm" onClick={() => { setTfaStep('setup'); setTfaModal(true) }}>Enable 2FA</Button>
@@ -158,13 +158,13 @@ export default function ProfilePage() {
           <div><Label>Current Password</Label>
             <div className="relative">
               <Input type={showCurrent ? 'text' : 'password'} value={pwForm.current_password} onChange={e => setPwForm({...pwForm, current_password: e.target.value})} required />
-              <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400">{showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+              <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-3)]">{showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
             </div>
           </div>
           <div><Label>New Password (min 8 chars)</Label>
             <div className="relative">
               <Input type={showNew ? 'text' : 'password'} value={pwForm.new_password} onChange={e => setPwForm({...pwForm, new_password: e.target.value})} required minLength={8} />
-              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400">{showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-3)]">{showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
             </div>
           </div>
           <div><Label>Confirm New Password</Label><Input type="password" value={pwForm.confirm} onChange={e => setPwForm({...pwForm, confirm: e.target.value})} required /></div>
@@ -180,17 +180,17 @@ export default function ProfilePage() {
         {tfaStep === 'setup' && (
           <div className="text-center py-4">
             <QrCode className="h-12 w-12 mx-auto mb-4 text-primary-600" />
-            <p className="text-secondary-600 mb-4">Protect your account with an authenticator app like Google Authenticator or Authy.</p>
+            <p className="text-[var(--text-2)] mb-4">Protect your account with an authenticator app like Google Authenticator or Authy.</p>
             <Button onClick={() => setup2FA.mutate()} disabled={setup2FA.isPending}>{setup2FA.isPending ? 'Setting up...' : 'Get QR Code'}</Button>
           </div>
         )}
         {tfaStep === 'confirm' && tfaData && (
           <div className="space-y-4">
-            <p className="text-sm text-secondary-600">Scan this QR code with your authenticator app:</p>
-            <div className="bg-secondary-50 p-4 rounded-lg text-center">
-              <p className="text-xs text-secondary-500 mb-2">Provisioning URI (copy to app if QR doesn't work):</p>
-              <code className="text-xs break-all bg-white border rounded p-2 block">{tfaData.provisioning_uri}</code>
-              <p className="text-xs text-secondary-500 mt-2 font-mono">Secret: <strong>{tfaData.secret}</strong></p>
+            <p className="text-sm text-[var(--text-2)]">Scan this QR code with your authenticator app:</p>
+            <div className="bg-[var(--surface-2)] p-4 rounded-lg text-center">
+              <p className="text-xs text-[var(--text-2)] mb-2">Provisioning URI (copy to app if QR doesn't work):</p>
+              <code className="text-xs break-all bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text)] rounded p-2 block">{tfaData.provisioning_uri}</code>
+              <p className="text-xs text-[var(--text-2)] mt-2 font-mono">Secret: <strong>{tfaData.secret}</strong></p>
             </div>
             <div><Label>Enter the 6-digit code from your app to confirm</Label><Input value={tfaCode} onChange={e => setTfaCode(e.target.value)} maxLength={6} placeholder="000000" className="text-center text-xl tracking-widest" /></div>
             <div className="flex justify-end gap-3 pt-4 border-t">
@@ -201,7 +201,7 @@ export default function ProfilePage() {
         )}
         {tfaStep === 'disable' && (
           <div className="space-y-4">
-            <p className="text-secondary-600">Enter your current authenticator code to disable 2FA.</p>
+            <p className="text-[var(--text-2)]">Enter your current authenticator code to disable 2FA.</p>
             <div><Label>6-digit code</Label><Input value={tfaCode} onChange={e => setTfaCode(e.target.value)} maxLength={6} placeholder="000000" className="text-center text-xl tracking-widest" /></div>
             <div className="flex justify-end gap-3 pt-4 border-t">
               <Button type="button" variant="outline" onClick={() => { setTfaModal(false); setTfaCode('') }}>Cancel</Button>

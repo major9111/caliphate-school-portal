@@ -38,18 +38,18 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div><h1 className="text-3xl font-bold">Notifications</h1><p className="text-secondary-500 mt-1">{data?.total || 0} notifications</p></div>
+        <div><h1 className="text-3xl font-bold">Notifications</h1><p className="text-[var(--text-2)] mt-1">{data?.total || 0} notifications</p></div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Send Notification</Button>
       </div>
 
       <Card><CardContent className="p-4 grid sm:grid-cols-2 gap-4">
         <div><Label>Audience</Label>
-          <select value={audience} onChange={e => setAudience(e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-1 text-sm">
+          <select value={audience} onChange={e => setAudience(e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-1 text-sm">
             <option value="">All</option>{['students','teachers','parents','staff'].map(a => <option key={a} value={a}>{a}</option>)}
           </select>
         </div>
         <div><Label>Type</Label>
-          <select value={type} onChange={e => setType(e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-1 text-sm">
+          <select value={type} onChange={e => setType(e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-1 text-sm">
             <option value="">All Types</option>{['info','warning','success','danger'].map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
@@ -66,11 +66,11 @@ export default function NotificationsPage() {
           emptyAction={{ label: 'Send Notification', onClick: () => setModalOpen(true) }}
           columns={[
             { key: 'title', header: 'Title', render: n => <p className="font-medium">{n.title}</p> },
-            { key: 'msg', header: 'Message', render: n => <p className="text-sm text-secondary-600 line-clamp-2">{n.message}</p> },
+            { key: 'msg', header: 'Message', render: n => <p className="text-sm text-[var(--text-2)] line-clamp-2">{n.message}</p> },
             { key: 'audience', header: 'Audience', render: n => <Badge variant="secondary">{n.audience}</Badge> },
             { key: 'type', header: 'Type', render: n => <Badge variant={(TYPE_VARIANT[n.type] || 'secondary') as 'info'|'warning'|'success'|'danger'}>{n.type}</Badge> },
-            { key: 'date', header: 'Sent', render: n => <span className="text-xs text-secondary-500">{new Date(n.created_at).toLocaleDateString()}</span> },
-            { key: 'del', header: '', render: n => <button onClick={() => { if (confirm('Delete this notification?')) del.mutate(n.id) }} className="text-secondary-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></button> },
+            { key: 'date', header: 'Sent', render: n => <span className="text-xs text-[var(--text-2)]">{new Date(n.created_at).toLocaleDateString()}</span> },
+            { key: 'del', header: '', render: n => <button onClick={() => { if (confirm('Delete this notification?')) del.mutate(n.id) }} className="text-[var(--text-3)] hover:text-red-600"><Trash2 className="h-4 w-4" /></button> },
           ]}
         />
       </CardContent></Card>
@@ -78,15 +78,15 @@ export default function NotificationsPage() {
       <Modal open={modalOpen} onOpenChange={setModalOpen} title="Send Notification">
         <form onSubmit={(e) => { e.preventDefault(); create.mutate(form) }} className="space-y-4">
           <div><Label>Title</Label><Input value={form.title} onChange={e => setForm({...form, title: e.target.value})} required /></div>
-          <div><Label>Message</Label><textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="flex min-h-[80px] w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm" required /></div>
+          <div><Label>Message</Label><textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="flex min-h-[80px] w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm" required /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Send To</Label>
-              <select value={form.audience} onChange={e => setForm({...form, audience: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.audience} onChange={e => setForm({...form, audience: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['all','students','teachers','parents','staff'].map(a => <option key={a} value={a}>{a}</option>)}
               </select>
             </div>
             <div><Label>Type</Label>
-              <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['info','warning','success','danger'].map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>

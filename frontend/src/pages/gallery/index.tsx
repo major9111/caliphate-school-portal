@@ -89,7 +89,7 @@ export function GalleryPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Gallery</h1>
-          <p className="text-secondary-500 mt-1">Photos shown on the public gallery page</p>
+          <p className="text-[var(--text-2)] mt-1">Photos shown on the public gallery page</p>
         </div>
         <Button onClick={() => setUploadOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Photo</Button>
       </div>
@@ -99,14 +99,14 @@ export function GalleryPage() {
           {isLoading ? (
             <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
           ) : items.length === 0 ? (
-            <div className="text-center py-12 text-secondary-500">
-              <ImageIcon className="h-10 w-10 mx-auto mb-3 text-secondary-300" />
+            <div className="text-center py-12 text-[var(--text-2)]">
+              <ImageIcon className="h-10 w-10 mx-auto mb-3 text-[var(--text-3)]" />
               <p>No photos yet. Add the first one.</p>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {items.map((item) => (
-                <div key={item.id} className="group relative rounded-xl overflow-hidden border border-secondary-200 aspect-[4/3]">
+                <div key={item.id} className="group relative rounded-xl overflow-hidden border border-[var(--border)] aspect-[4/3]">
                   <img src={item.url} alt={item.caption || 'Gallery photo'} className="h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-end p-3 opacity-0 group-hover:opacity-100">
                     <div className="flex gap-2 ml-auto">
@@ -115,12 +115,12 @@ export function GalleryPage() {
                         className="h-8 w-8 rounded-lg bg-white/90 hover:bg-white flex items-center justify-center"
                         title="Edit caption / note"
                       >
-                        <Edit className="h-4 w-4 text-secondary-700" />
+                        <Edit className="h-4 w-4 text-[var(--text)]" />
                       </button>
                       <button
                         onClick={() => { if (confirm('Remove this photo from the gallery?')) del.mutate(item.id) }}
                         className="h-8 w-8 rounded-lg bg-white/90 hover:bg-white flex items-center justify-center"
-                        title="Delete"
+                        aria-label="Delete" title="Delete"
                       >
                         <Trash2 className="h-4 w-4 text-red-600" />
                       </button>
@@ -144,7 +144,7 @@ export function GalleryPage() {
           <div className="space-y-2">
             <Label>Photo</Label>
             {previewUrl ? (
-              <div className="relative rounded-lg overflow-hidden border border-secondary-200 aspect-video">
+              <div className="relative rounded-lg overflow-hidden border border-[var(--border)] aspect-video">
                 <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
                 <button
                   type="button"
@@ -158,7 +158,7 @@ export function GalleryPage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full aspect-video rounded-lg border-2 border-dashed border-secondary-300 flex flex-col items-center justify-center gap-2 text-secondary-500 hover:border-primary-400 hover:text-primary-600 transition-colors"
+                className="w-full aspect-video rounded-lg border-2 border-dashed border-[var(--border)] flex flex-col items-center justify-center gap-2 text-[var(--text-2)] hover:border-primary-400 hover:text-primary-600 transition-colors"
               >
                 <Upload className="h-6 w-6" />
                 <span className="text-sm">Click to choose a photo</span>
@@ -185,13 +185,13 @@ export function GalleryPage() {
               onChange={(e) => setNote(e.target.value)}
               rows={3}
               placeholder="Optional longer note about this photo"
-              className="flex w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm"
+              className="flex w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm"
             />
           </div>
 
           <div className="space-y-2">
             <Label>Category</Label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm capitalize">
+            <select value={category} onChange={(e) => setCategory(e.target.value)} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm capitalize">
               {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
@@ -206,7 +206,7 @@ export function GalleryPage() {
       <Modal open={!!editingItem} onOpenChange={(open) => { if (!open) setEditingItem(null) }} title="Edit Photo" description="Update the caption, note, or category">
         {editingItem && (
           <form onSubmit={handleEditSubmit} className="space-y-4">
-            <img src={editingItem.url} alt={editingItem.caption || 'Gallery photo'} className="w-full aspect-video object-cover rounded-lg border border-secondary-200" />
+            <img src={editingItem.url} alt={editingItem.caption || 'Gallery photo'} className="w-full aspect-video object-cover rounded-lg border border-[var(--border)]" />
             <div className="space-y-2">
               <Label>Caption</Label>
               <Input value={editingItem.caption} onChange={(e) => setEditingItem({ ...editingItem, caption: e.target.value })} />
@@ -217,12 +217,12 @@ export function GalleryPage() {
                 value={editingItem.note}
                 onChange={(e) => setEditingItem({ ...editingItem, note: e.target.value })}
                 rows={3}
-                className="flex w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm"
+                className="flex w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm"
               />
             </div>
             <div className="space-y-2">
               <Label>Category</Label>
-              <select value={editingItem.category} onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm capitalize">
+              <select value={editingItem.category} onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm capitalize">
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>

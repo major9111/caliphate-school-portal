@@ -79,11 +79,11 @@ export default function PromotionPage() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="text-3xl font-bold">Class Promotion</h1><p className="text-secondary-500 mt-1">Move students to the next class at end of session — {settings?.current_term} · {settings?.current_session}</p></div>
+      <div><h1 className="text-3xl font-bold">Class Promotion</h1><p className="text-[var(--text-2)] mt-1">Move students to the next class at end of session — {settings?.current_term} · {settings?.current_session}</p></div>
 
       <Card><CardContent className="p-6">
         <Label>Select a class to review</Label>
-        <select value={selectedClass} onChange={e => { setSelectedClass(e.target.value); setDecisions({}) }} className="flex h-10 w-full max-w-sm rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-2">
+        <select value={selectedClass} onChange={e => { setSelectedClass(e.target.value); setDecisions({}) }} className="flex h-10 w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-2">
           <option value="">Choose a class…</option>
           {classes.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
         </select>
@@ -94,14 +94,14 @@ export default function PromotionPage() {
           {previewLoading ? (
             <div className="flex justify-center py-8"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>
           ) : students.length === 0 ? (
-            <p className="text-center py-8 text-secondary-500">No students found in {selectedClass}.</p>
+            <p className="text-center py-8 text-[var(--text-2)]">No students found in {selectedClass}.</p>
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-3 mb-4 pb-4 border-b">
                 <Button variant="outline" size="sm" onClick={applySuggestedToAll}><TrendingUp className="h-4 w-4 mr-2" />Apply Suggested to All</Button>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-secondary-500">Promote everyone to:</span>
-                  <select onChange={e => e.target.value && promoteAllTo(e.target.value)} defaultValue="" className="h-9 rounded-lg border border-secondary-300 bg-white px-2 text-sm">
+                  <span className="text-sm text-[var(--text-2)]">Promote everyone to:</span>
+                  <select onChange={e => e.target.value && promoteAllTo(e.target.value)} defaultValue="" className="h-9 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-2 text-sm">
                     <option value="">Choose class…</option>
                     {classes.filter(c => c.name !== selectedClass).map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                     <option value="__graduate__">Graduate (final class)</option>
@@ -113,10 +113,10 @@ export default function PromotionPage() {
                 {students.map(s => {
                   const d = decisionFor(s)
                   return (
-                    <div key={s.id} className="flex items-center gap-4 p-3 rounded-lg border border-secondary-200 flex-wrap">
+                    <div key={s.id} className="flex items-center gap-4 p-3 rounded-lg border border-[var(--border)] flex-wrap">
                       <div className="flex-1 min-w-[160px]">
                         <p className="font-medium">{s.name}</p>
-                        <p className="text-xs text-secondary-500 font-mono">{s.admission_number}</p>
+                        <p className="text-xs text-[var(--text-2)] font-mono">{s.admission_number}</p>
                       </div>
                       <div className="w-24 text-center">
                         {s.has_data ? (
@@ -132,7 +132,7 @@ export default function PromotionPage() {
                           if (v === '__graduate__') setDecision(s.id, { action: 'graduate', target_class: '' })
                           else setDecision(s.id, { action: v as Decision['action'], target_class: v === 'promote' ? d.target_class : '' })
                         }}
-                        className="h-9 rounded-lg border border-secondary-300 bg-white px-2 text-sm"
+                        className="h-9 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-2 text-sm"
                       >
                         <option value="promote">Promote</option>
                         <option value="repeat">Repeat class</option>
@@ -142,7 +142,7 @@ export default function PromotionPage() {
                         <select
                           value={d.target_class}
                           onChange={e => setDecision(s.id, { target_class: e.target.value })}
-                          className={`h-9 rounded-lg border bg-white px-2 text-sm ${!d.target_class ? 'border-red-300' : 'border-secondary-300'}`}
+                          className={`h-9 rounded-xl border bg-[var(--surface)] text-[var(--text)] px-2 text-sm transition-shadow focus-visible:outline-none focus-visible:ring-4 ${!d.target_class ? 'border-red-400 dark:border-red-500/60 focus-visible:ring-red-500/10' : 'border-[var(--border)] focus-visible:border-primary-500 focus-visible:ring-primary-500/10'}`}
                         >
                           <option value="">Select target class…</option>
                           {classes.filter(c => c.name !== selectedClass).map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
@@ -166,13 +166,13 @@ export default function PromotionPage() {
 
       {history && history.items.length > 0 && (
         <Card><CardContent className="p-6">
-          <div className="flex items-center gap-2 mb-4"><History className="h-5 w-5 text-secondary-400" /><h2 className="font-bold">Promotion History</h2></div>
+          <div className="flex items-center gap-2 mb-4"><History className="h-5 w-5 text-[var(--text-3)]" /><h2 className="font-bold">Promotion History</h2></div>
           <div className="space-y-2">
             {history.items.map(h => (
-              <div key={h.id} className="flex items-center justify-between text-sm p-3 rounded-lg bg-secondary-50">
-                <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-600" /><span className="font-medium">{h.from_class}</span><span className="text-secondary-400">→ {h.session}</span></div>
-                <div className="text-secondary-500">{h.counts.promoted} promoted · {h.counts.repeated} repeated · {h.counts.graduated} graduated</div>
-                <div className="text-xs text-secondary-400">{h.executed_by} · {new Date(h.executed_at).toLocaleDateString()}</div>
+              <div key={h.id} className="flex items-center justify-between text-sm p-3 rounded-lg bg-[var(--surface-2)]">
+                <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-600" /><span className="font-medium">{h.from_class}</span><span className="text-[var(--text-3)]">→ {h.session}</span></div>
+                <div className="text-[var(--text-2)]">{h.counts.promoted} promoted · {h.counts.repeated} repeated · {h.counts.graduated} graduated</div>
+                <div className="text-xs text-[var(--text-3)]">{h.executed_by} · {new Date(h.executed_at).toLocaleDateString()}</div>
               </div>
             ))}
           </div>

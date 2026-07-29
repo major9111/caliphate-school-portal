@@ -66,7 +66,7 @@ export default function TransportPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Transport</h1><p className="text-secondary-500 mt-1">{routes.length} routes configured</p></div>
+        <div><h1 className="text-3xl font-bold">Transport</h1><p className="text-[var(--text-2)] mt-1">{routes.length} routes configured</p></div>
         <div className="flex gap-2">
           {tab === 'routes' && <Button onClick={() => setRouteModal(true)}><Plus className="h-4 w-4 mr-2" />Add Route</Button>}
           {tab === 'students' && <Button onClick={() => setStudentModal(true)}><Plus className="h-4 w-4 mr-2" />Assign Student</Button>}
@@ -75,7 +75,7 @@ export default function TransportPage() {
 
       <div className="flex gap-2 border-b">
         {(['routes','students'] as const).map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab===t?'border-primary-600 text-primary-600':'border-transparent text-secondary-500 hover:text-secondary-900'}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 text-sm font-medium capitalize border-b-2 transition-colors ${tab===t?'border-primary-600 text-primary-600':'border-transparent text-[var(--text-2)] hover:text-[var(--text)]'}`}>{t}</button>
         ))}
       </div>
 
@@ -92,13 +92,13 @@ export default function TransportPage() {
             columns={[
               { key: 'route', header: 'Route Name', render: r => <button onClick={() => openEditRoute(r)} className="font-medium text-left hover:text-primary-600 transition-colors">{r.route_name}</button> },
               { key: 'bus', header: 'Bus No.', render: r => <span className="font-mono">{r.bus_number}</span> },
-              { key: 'driver', header: 'Driver', render: r => <div><p>{r.driver_name}</p><p className="text-xs text-secondary-500">{r.driver_phone}</p></div> },
+              { key: 'driver', header: 'Driver', render: r => <div><p>{r.driver_name}</p><p className="text-xs text-[var(--text-2)]">{r.driver_phone}</p></div> },
               { key: 'conductor', header: 'Conductor', render: r => r.conductor_name || '—' },
               { key: 'fee', header: 'Monthly Fee', render: r => `₦${Number(r.fee).toLocaleString()}` },
               { key: 'del', header: '', render: r => (
                 <div className="flex items-center gap-1 justify-end">
-                  <button onClick={() => openEditRoute(r)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                  <button onClick={() => { if(confirm('Delete route?')) delRoute.mutate(r.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => openEditRoute(r)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => { if(confirm('Delete route?')) delRoute.mutate(r.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button>
                 </div>
               )},
             ]}
@@ -122,7 +122,7 @@ export default function TransportPage() {
               { key: 'pickup', header: 'Pickup Stop', render: s => s.pickup_stop },
               { key: 'dropoff', header: 'Drop-off', render: s => s.dropoff_stop },
               { key: 'fee', header: 'Fee', render: s => `₦${Number(s.monthly_fee).toLocaleString()}` },
-              { key: 'del', header: '', render: s => <button onClick={() => removeStudent.mutate(s.id)} className="text-secondary-400 hover:text-red-600 text-xs">Remove</button> },
+              { key: 'del', header: '', render: s => <button onClick={() => removeStudent.mutate(s.id)} className="text-[var(--text-3)] hover:text-red-600 text-xs">Remove</button> },
             ]}
           />
         </CardContent></Card>
@@ -150,7 +150,7 @@ export default function TransportPage() {
       <Modal open={studentModal} onOpenChange={setStudentModal} title="Assign Student to Route">
         <form onSubmit={(e) => { e.preventDefault(); assignStudent.mutate(sForm) }} className="space-y-4">
           <div><Label>Route</Label>
-            <select value={sForm.route_id} onChange={e => setSForm({...sForm, route_id: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2" required>
+            <select value={sForm.route_id} onChange={e => setSForm({...sForm, route_id: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2" required>
               <option value="">Select route…</option>{routes.map(r => <option key={r.id} value={r.id}>{r.route_name}</option>)}
             </select>
           </div>

@@ -67,29 +67,29 @@ export default function InventoryPage() {
       <div className="flex justify-between items-center flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-bold">Inventory</h1>
-          <p className="text-secondary-500 mt-1">{data?.total || 0} items tracked {lowCount > 0 && `· ${lowCount} low stock`}</p>
+          <p className="text-[var(--text-2)] mt-1">{data?.total || 0} items tracked {lowCount > 0 && `· ${lowCount} low stock`}</p>
         </div>
         <Button onClick={() => setModalOpen(true)}><Plus className="h-4 w-4 mr-2" />Add Item</Button>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Total Items</p><p className="text-2xl font-bold">{data?.total || 0}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500 text-orange-600">Low Stock</p><p className="text-2xl font-bold text-orange-600">{lowCount}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-secondary-500">Categories</p><p className="text-2xl font-bold">{[...new Set(items.map(i => i.category))].length}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Total Items</p><p className="text-2xl font-bold">{data?.total || 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)] text-orange-600">Low Stock</p><p className="text-2xl font-bold text-orange-600">{lowCount}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-xs text-[var(--text-2)]">Categories</p><p className="text-2xl font-bold">{[...new Set(items.map(i => i.category))].length}</p></CardContent></Card>
       </div>
 
       {/* Filters */}
       <Card><CardContent className="p-4 flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-48 relative">
           <Label>Search</Label>
-          <div className="relative mt-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-400" />
+          <div className="relative mt-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-3)]" />
             <Input className="pl-10" placeholder="Search items…" value={search} onChange={e => setF(() => setSearch(e.target.value))} />
           </div>
         </div>
         <div className="min-w-40">
           <Label>Category</Label>
-          <select value={category} onChange={e => setF(() => setCategory(e.target.value))} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2 mt-1 text-sm">
+          <select value={category} onChange={e => setF(() => setCategory(e.target.value))} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 mt-1 text-sm">
             <option value="">All</option>{CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
@@ -114,11 +114,11 @@ export default function InventoryPage() {
             { key: 'qty', header: 'Quantity', render: i => (
               <div className="flex items-center gap-2">
                 <span className={`font-bold ${i.quantity <= i.min_quantity ? 'text-red-600' : 'text-green-600'}`}>{i.quantity}</span>
-                <span className="text-xs text-secondary-400">{i.unit}</span>
+                <span className="text-xs text-[var(--text-3)]">{i.unit}</span>
                 {i.quantity <= i.min_quantity && <AlertTriangle className="h-3 w-3 text-orange-500" />}
               </div>
             )},
-            { key: 'min', header: 'Min Level', render: i => <span className="text-secondary-500">{i.min_quantity} {i.unit}</span> },
+            { key: 'min', header: 'Min Level', render: i => <span className="text-[var(--text-2)]">{i.min_quantity} {i.unit}</span> },
             { key: 'loc', header: 'Location', render: i => (i as { location?: string }).location || '—' },
             { key: 'status', header: 'Status', render: i => (
               <Badge variant={i.quantity === 0 ? 'danger' : i.quantity <= i.min_quantity ? 'warning' : 'success'}>
@@ -127,8 +127,8 @@ export default function InventoryPage() {
             )},
             { key: 'del', header: '', render: i => (
               <div className="flex items-center gap-1 justify-end">
-                <button onClick={() => openEdit(i)} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-primary-600 hover:bg-primary-50 transition-colors" title="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => { if(confirm(`Delete ${i.name}?`)) del.mutate(i.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-secondary-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => openEdit(i)} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-primary-600 hover:bg-primary-500/10 transition-colors" aria-label="Edit" title="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => { if(confirm(`Delete ${i.name}?`)) del.mutate(i.id) }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--text-3)] hover:text-red-600 hover:bg-red-500/10 transition-colors" aria-label="Delete" title="Delete"><Trash2 className="h-4 w-4" /></button>
               </div>
             )},
           ]}
@@ -141,12 +141,12 @@ export default function InventoryPage() {
           <div><Label>Item Name</Label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} required /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Category</Label>
-              <select value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div><Label>Unit</Label>
-              <select value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['pcs','boxes','reams','litres','kg','sets','rolls','cartons'].map(u => <option key={u} value={u}>{u}</option>)}
               </select>
             </div>
@@ -167,12 +167,12 @@ export default function InventoryPage() {
           <div><Label>Item Name</Label><Input value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} required /></div>
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Category</Label>
-              <select value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div><Label>Unit</Label>
-              <select value={editForm.unit} onChange={e => setEditForm({...editForm, unit: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={editForm.unit} onChange={e => setEditForm({...editForm, unit: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {['pcs','boxes','reams','litres','kg','sets','rolls','cartons'].map(u => <option key={u} value={u}>{u}</option>)}
               </select>
             </div>

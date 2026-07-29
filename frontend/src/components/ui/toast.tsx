@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext, useCallback, type ReactNode } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle2, AlertCircle, Info, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -71,46 +72,55 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     warning: AlertTriangle,
   }
 
-  const styles: Record<ToastType, string> = {
-    success: 'bg-green-50/70 backdrop-blur-xl border-green-200/60 text-green-800',
-    error:   'bg-red-50/70 backdrop-blur-xl border-red-200/60 text-red-800',
-    info:    'bg-blue-50/70 backdrop-blur-xl border-blue-200/60 text-blue-800',
-    warning: 'bg-yellow-50/70 backdrop-blur-xl border-yellow-200/60 text-yellow-800',
+  // Neutral glass surface with a colored left accent + icon — reads calmer
+  // and more premium than a fully-tinted background per type.
+  const accentBorder: Record<ToastType, string> = {
+    success: 'border-l-success-500',
+    error: 'border-l-red-500',
+    info: 'border-l-primary-500',
+    warning: 'border-l-warn-500',
   }
 
   const iconStyles: Record<ToastType, string> = {
-    success: 'text-green-500',
-    error:   'text-red-500',
-    info:    'text-blue-500',
-    warning: 'text-yellow-500',
+    success: 'text-success-600 dark:text-success-300',
+    error: 'text-red-600 dark:text-red-400',
+    info: 'text-primary-600 dark:text-primary-300',
+    warning: 'text-warn-600 dark:text-warn-300',
   }
 
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
       <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)] pointer-events-none">
-        {toasts.map((t) => {
-          const Icon = icons[t.type]
-          return (
-            <div
-              key={t.id}
-              className={cn(
-                'flex items-start gap-3 p-4 rounded-xl shadow-lg border pointer-events-auto',
-                'animate-in slide-in-from-right-4 fade-in duration-200',
-                styles[t.type]
-              )}
-            >
-              <Icon className={cn('h-5 w-5 flex-shrink-0 mt-0.5', iconStyles[t.type])} />
-              <span className="text-sm font-medium flex-1">{t.message}</span>
-              <button
-                onClick={() => removeToast(t.id)}
-                className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity"
+        <AnimatePresence>
+          {toasts.map((t) => {
+            const Icon = icons[t.type]
+            return (
+              <motion.div
+                key={t.id}
+                layout
+                initial={{ opacity: 0, x: 40, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 40, scale: 0.95, transition: { duration: 0.15 } }}
+                transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
+                className={cn(
+                  'glass-panel flex items-start gap-3 p-4 rounded-xl border-l-4 pointer-events-auto',
+                  accentBorder[t.type]
+                )}
               >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          )
-        })}
+                <Icon className={cn('h-5 w-5 flex-shrink-0 mt-0.5', iconStyles[t.type])} />
+                <span className="text-sm font-medium flex-1 text-[var(--text)]">{t.message}</span>
+                <button
+                  onClick={() => removeToast(t.id)}
+                  aria-label="Dismiss notification"
+                  className="flex-shrink-0 text-[var(--text-3)] hover:text-[var(--text)] transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </motion.div>
+            )
+          })}
+        </AnimatePresence>
       </div>
     </ToastContext.Provider>
   )

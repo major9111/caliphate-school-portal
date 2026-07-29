@@ -63,7 +63,7 @@ export function SchedulePage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-3">
-        <div><h1 className="text-3xl font-bold">Timetable</h1><p className="text-secondary-500 mt-1">Visual schedule grid</p></div>
+        <div><h1 className="text-3xl font-bold">Timetable</h1><p className="text-[var(--text-2)] mt-1">Visual schedule grid</p></div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}>
             {viewMode === 'grid' ? 'List View' : 'Grid View'}
@@ -75,7 +75,7 @@ export function SchedulePage() {
       {/* Filter */}
       <Card><CardContent className="p-4 flex items-center gap-4">
         <Label className="flex-shrink-0">Filter by class:</Label>
-        <select value={classFilter} onChange={e => setClassFilter(e.target.value)} className="flex h-9 rounded-lg border border-secondary-300 bg-white px-3 py-2 text-sm">
+        <select value={classFilter} onChange={e => setClassFilter(e.target.value)} className="flex h-9 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2 text-sm">
           <option value="">All Classes</option>
           {classes.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
@@ -97,8 +97,8 @@ export function SchedulePage() {
             </thead>
             <tbody>
               {PERIODS.map((period, pi) => (
-                <tr key={period} className={cn('border-b', pi % 2 === 0 ? 'bg-white' : 'bg-secondary-50')}>
-                  <td className="p-3 text-xs font-mono text-secondary-600 whitespace-nowrap">{period}</td>
+                <tr key={period} className={cn('border-b border-[var(--border)]', pi % 2 === 0 ? 'bg-[var(--surface)]' : 'bg-[var(--surface-2)]')}>
+                  <td className="p-3 text-xs font-mono text-[var(--text-2)] whitespace-nowrap">{period}</td>
                   {DAYS.map(day => {
                     const cells = getCell(day, period)
                     return (
@@ -127,9 +127,9 @@ export function SchedulePage() {
         </CardContent></Card>
       ) : (
         <Card><CardContent className="p-0">
-          {filtered.length === 0 ? <p className="text-center py-12 text-secondary-500">No schedule entries yet</p> : (
+          {filtered.length === 0 ? <p className="text-center py-12 text-[var(--text-2)]">No schedule entries yet</p> : (
             <table className="w-full">
-              <thead><tr className="bg-secondary-50 border-b">
+              <thead><tr className="bg-[var(--surface-2)] border-b">
                 <th className="p-3 text-left text-xs uppercase">Day</th>
                 <th className="p-3 text-left text-xs uppercase">Time</th>
                 <th className="p-3 text-left text-xs uppercase">Subject</th>
@@ -140,14 +140,14 @@ export function SchedulePage() {
               </tr></thead>
               <tbody>
                 {filtered.map(s => (
-                  <tr key={s.id} className="border-b hover:bg-secondary-50">
+                  <tr key={s.id} className="border-b hover:bg-[var(--surface-2)]">
                     <td className="p-3 font-medium">{s.day}</td>
                     <td className="p-3 text-sm font-mono">{s.time}</td>
                     <td className="p-3"><span className={cn('px-2 py-1 rounded-md text-xs font-medium', subjectColor(s.subject))}>{s.subject}</span></td>
                     <td className="p-3 text-sm">{s.teacher_name}</td>
                     <td className="p-3 text-sm">{s.class_name}</td>
                     <td className="p-3 text-sm">{s.room}</td>
-                    <td className="p-3"><button onClick={() => { if (confirm('Remove this period?')) del.mutate(s.id) }} className="text-secondary-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></button></td>
+                    <td className="p-3"><button onClick={() => { if (confirm('Remove this period?')) del.mutate(s.id) }} className="text-[var(--text-3)] hover:text-red-600"><Trash2 className="h-4 w-4" /></button></td>
                   </tr>
                 ))}
               </tbody>
@@ -160,12 +160,12 @@ export function SchedulePage() {
         <form onSubmit={(e) => { e.preventDefault(); create.mutate(form) }} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div><Label>Day</Label>
-              <select value={form.day} onChange={e => setForm({...form, day: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.day} onChange={e => setForm({...form, day: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             </div>
             <div><Label>Time Period</Label>
-              <select value={form.time} onChange={e => setForm({...form, time: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2">
+              <select value={form.time} onChange={e => setForm({...form, time: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2">
                 {PERIODS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
@@ -174,7 +174,7 @@ export function SchedulePage() {
             <select
               value={form.teacher_id}
               onChange={e => setForm({ ...form, teacher_id: e.target.value, subject: '' })}
-              className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2"
+              className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2"
               required
             >
               <option value="">Select a teacher…</option>
@@ -183,14 +183,14 @@ export function SchedulePage() {
           </div>
           <div><Label>Subject</Label>
             {selectedTeacher && selectedTeacher.subjects.length > 0 ? (
-              <select value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} className="flex h-10 w-full rounded-lg border border-secondary-300 bg-white px-3 py-2" required>
+              <select value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} className="flex h-10 w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] placeholder:text-[var(--text-3)] transition-shadow focus-visible:outline-none focus-visible:border-primary-500 focus-visible:ring-4 focus-visible:ring-primary-500/10 px-3 py-2" required>
                 <option value="">Select a subject…</option>
                 {selectedTeacher.subjects.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             ) : (
               <>
                 <Input value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} placeholder={form.teacher_id ? "This teacher has no subjects assigned yet — type one" : "Select a teacher first"} required />
-                {form.teacher_id && <p className="text-xs text-secondary-500 mt-1">Tip: assign subjects to this teacher on the Teachers page for a dropdown here next time.</p>}
+                {form.teacher_id && <p className="text-xs text-[var(--text-2)] mt-1">Tip: assign subjects to this teacher on the Teachers page for a dropdown here next time.</p>}
               </>
             )}
           </div>

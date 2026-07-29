@@ -31,7 +31,7 @@ export default function StudentPortalPage() {
             <div className="text-center mb-6">
               <BookOpen className="h-12 w-12 mx-auto mb-4 text-primary-600" />
               <h2 className="text-2xl font-bold mb-2">Student Portal</h2>
-              <p className="text-secondary-500">Access your academic information</p>
+              <p className="text-[var(--text-2)]">Access your academic information</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div><Label>Student ID *</Label><Input value={studentId} onChange={e => setStudentId(e.target.value)} placeholder="Enter your student ID" required /></div>
@@ -47,12 +47,12 @@ export default function StudentPortalPage() {
 
   return (
     <div className="space-y-6">
-      <div><h1 className="text-3xl font-bold">Student Portal</h1><p className="text-secondary-500 mt-1">Welcome, Student</p></div>
+      <div><h1 className="text-3xl font-bold">Student Portal</h1><p className="text-[var(--text-2)] mt-1">Welcome, Student</p></div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <Card><CardContent className="p-6 flex items-center gap-4"><FileText className="h-8 w-8 text-blue-600" /><div><p className="text-sm text-secondary-500">Total Results</p><p className="text-2xl font-bold">{data?.results?.length || 0}</p></div></CardContent></Card>
-        <Card><CardContent className="p-6 flex items-center gap-4"><Clock className="h-8 w-8 text-orange-600" /><div><p className="text-sm text-secondary-500">Active Homework</p><p className="text-2xl font-bold">{data?.homework?.filter((h: { status: string }) => h.status === 'active').length || 0}</p></div></CardContent></Card>
-        <Card><CardContent className="p-6 flex items-center gap-4"><CheckCircle className="h-8 w-8 text-green-600" /><div><p className="text-sm text-secondary-500">Recent Payments</p><p className="text-2xl font-bold">{data?.payments?.length || 0}</p></div></CardContent></Card>
+        <Card><CardContent className="p-6 flex items-center gap-4"><FileText className="h-8 w-8 text-blue-600" /><div><p className="text-sm text-[var(--text-2)]">Total Results</p><p className="text-2xl font-bold">{data?.results?.length || 0}</p></div></CardContent></Card>
+        <Card><CardContent className="p-6 flex items-center gap-4"><Clock className="h-8 w-8 text-orange-600" /><div><p className="text-sm text-[var(--text-2)]">Active Homework</p><p className="text-2xl font-bold">{data?.homework?.filter((h: { status: string }) => h.status === 'active').length || 0}</p></div></CardContent></Card>
+        <Card><CardContent className="p-6 flex items-center gap-4"><CheckCircle className="h-8 w-8 text-green-600" /><div><p className="text-sm text-[var(--text-2)]">Recent Payments</p><p className="text-2xl font-bold">{data?.payments?.length || 0}</p></div></CardContent></Card>
       </div>
 
       {data?.results && data.results.length > 0 && (
@@ -61,7 +61,7 @@ export default function StudentPortalPage() {
             <h3 className="text-xl font-bold mb-4">My Results</h3>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead><tr className="border-b bg-secondary-50"><th className="text-left p-3 text-xs uppercase">Subject</th><th className="text-left p-3 text-xs uppercase">Class</th><th className="text-left p-3 text-xs uppercase">CA</th><th className="text-left p-3 text-xs uppercase">Exam</th><th className="text-left p-3 text-xs uppercase">Total</th><th className="text-left p-3 text-xs uppercase">Grade</th><th className="text-left p-3 text-xs uppercase">Remark</th></tr></thead>
+                <thead><tr className="border-b bg-[var(--surface-2)]"><th className="text-left p-3 text-xs uppercase">Subject</th><th className="text-left p-3 text-xs uppercase">Class</th><th className="text-left p-3 text-xs uppercase">CA</th><th className="text-left p-3 text-xs uppercase">Exam</th><th className="text-left p-3 text-xs uppercase">Total</th><th className="text-left p-3 text-xs uppercase">Grade</th><th className="text-left p-3 text-xs uppercase">Remark</th></tr></thead>
                 <tbody>
                   {data.results.map((r, i: number) => (
                     <tr key={i} className="border-b">
@@ -71,7 +71,7 @@ export default function StudentPortalPage() {
                       <td className="p-3 text-sm">{r.exam_score}</td>
                       <td className="p-3 font-semibold">{r.total}</td>
                       <td className="p-3"><Badge>{r.grade}</Badge></td>
-                      <td className="p-3 text-sm text-secondary-600">{r.remark}</td>
+                      <td className="p-3 text-sm text-[var(--text-2)]">{r.remark}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -91,8 +91,8 @@ export default function StudentPortalPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="font-semibold">{h.title}</h4>
-                      <p className="text-sm text-secondary-600 mt-1">{h.description}</p>
-                      <div className="flex gap-4 text-xs text-secondary-500 mt-2">
+                      <p className="text-sm text-[var(--text-2)] mt-1">{h.description}</p>
+                      <div className="flex gap-4 text-xs text-[var(--text-2)] mt-2">
                         <span>Class: {h.class_name}</span>
                         <span>Subject: {h.subject}</span>
                         <span>Due: {h.due_date}</span>
