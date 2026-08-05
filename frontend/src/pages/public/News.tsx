@@ -1,5 +1,5 @@
 import { useScrollReveal, useScrollStagger } from '@/hooks/useGsapPublic'
-import { Card } from '@/components/ui/card'
+import { Blobs, GeoPattern } from '@/components/public/PublicUI'
 
 export function PublicNews() {
   const news = [
@@ -8,31 +8,43 @@ export function PublicNews() {
     { title: 'Quranic Recitation Competition', date: 'November 20, 2026', excerpt: 'Students demonstrate their memorization skills.' },
   ]
 
-  const headingRef = useScrollReveal<HTMLDivElement>()
-  const listRef = useScrollStagger()
+  const heroRef = useScrollReveal<HTMLDivElement>()
+  const listRef = useScrollStagger<HTMLDivElement>()
 
   return (
-    <div className="py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div ref={headingRef}>
-            <h1 className="font-display font-bold text-4xl md:text-5xl mb-6 text-[var(--text)]">News & Events</h1>
-            <p className="text-lg text-[var(--text-2)] mb-12">Stay updated with the latest happenings at Caliphate Schools.</p>
-          </div>
-          <div ref={listRef} className="space-y-6">
-            {news.map((item, i) => (
-              <div key={i} data-reveal-item>
-                <Card className="p-6">
-                  <p className="text-sm text-[var(--indigo)] font-medium mb-2">{item.date}</p>
-                  <h2 className="font-display font-bold text-2xl mb-3 text-[var(--text)]">{item.title}</h2>
-                  <p className="text-[var(--text-2)]">{item.excerpt}</p>
-                </Card>
+    <div>
+      <section ref={heroRef} className="pub-hero" style={{ padding: '60px 0 48px', textAlign: 'center' }}>
+        <Blobs />
+        <GeoPattern />
+        <div className="wrap max-w-[720px] mx-auto px-4 relative">
+          <span data-reveal className="pub-eyebrow light" style={{ justifyContent: 'center' }}><StarSvg color="#E7CD8C" /> Stay Informed</span>
+          <h1 data-reveal className="pub-hero-title" style={{ fontSize: 'clamp(30px,4.5vw,46px)' }}>News &amp; Events</h1>
+          <p data-reveal className="pub-hero-sub" style={{ margin: '0 auto' }}>Stay updated with the latest happenings at Caliphate International Schools.</p>
+        </div>
+      </section>
+
+      <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
+        <div className="max-w-3xl mx-auto px-4">
+          <div ref={listRef} className="space-y-5">
+            {news.map((item) => (
+              <div key={item.title} data-reveal-item className="pub-bento-card" style={{ minHeight: 0, padding: 30 }}>
+                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--pub-sapphire)', marginBottom: 8 }}>{item.date}</p>
+                <h2 style={{ fontSize: 22, marginBottom: 8, color: 'var(--pub-ink)' }}>{item.title}</h2>
+                <p style={{ color: 'var(--pub-slate)' }}>{item.excerpt}</p>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
     </div>
+  )
+}
+
+function StarSvg({ color = '#1D4ED8' }: { color?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="12" height="12">
+      <path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z" fill={color} />
+    </svg>
   )
 }
 

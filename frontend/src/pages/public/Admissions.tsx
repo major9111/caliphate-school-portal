@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
-import { Card } from '@/components/ui/card'
 import { toast } from '@/components/ui/toast'
 import { CheckCircle, Loader2 } from 'lucide-react'
 import api from '@/lib/api'
-import { useHeroReveal, useScrollReveal } from '@/hooks/useGsapPublic'
+import { useHeroReveal, useScrollReveal, useScrollStagger } from '@/hooks/useGsapPublic'
+import { SectionHead, Blobs, GeoPattern } from '@/components/public/PublicUI'
 
 interface FormState {
   applicant_name: string; email: string; phone: string; class_applying: string
@@ -18,8 +18,16 @@ interface FormState {
 const CLASSES = ['Nursery 1','Nursery 2','Primary 1','Primary 2','Primary 3','Primary 4','Primary 5','Primary 6',
   'JSS 1','JSS 2','JSS 3','SSS 1','SSS 2','SSS 3']
 
+const steps = [
+  { tag: 'Step 1', title: 'Submit application', desc: 'Complete the online form below with applicant and parent/guardian details.' },
+  { tag: 'Step 2', title: 'Entrance assessment', desc: 'Shortlisted applicants are invited for a short subject-appropriate assessment.' },
+  { tag: 'Step 3', title: 'Parent interview', desc: 'A brief conversation with school leadership to understand your child\u2019s needs.' },
+  { tag: 'Step 4', title: 'Offer & enrollment', desc: 'Successful applicants receive an offer letter and complete enrollment.' },
+]
+
 export default function PublicAdmissions() {
   const heroRef = useHeroReveal()
+  const timelineRef = useScrollStagger<HTMLDivElement>()
   const formRef = useScrollReveal<HTMLDivElement>()
   const [form, setForm] = useState<FormState>({ applicant_name: '', email: '', phone: '', class_applying: 'JSS 1', date_of_birth: '', gender: '', parent_name: '', parent_phone: '', address: '' })
   const [loading, setLoading] = useState(false)
@@ -34,7 +42,7 @@ export default function PublicAdmissions() {
     if (!form.applicant_name || !form.email || !form.parent_name) { setError('Please fill in all required fields.'); return }
     setLoading(true)
     try {
-      const res = await api.post('/admin/admissions', form)
+      const res = await api.post('/public/admissions', form)
       setSubmitted(res.data)
       toast('Application submitted successfully!', 'success')
     } catch (err: unknown) {
@@ -47,52 +55,65 @@ export default function PublicAdmissions() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md w-full p-8 text-center">
-          <div className="h-16 w-16 rounded-full bg-success-500/10 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="h-8 w-8 text-success-600 dark:text-success-300" />
+      <div className="pub min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--pub-paper)' }}>
+        <div className="max-w-md w-full text-center pub-bento-card" style={{ minHeight: 0, padding: 40 }}>
+          <div className="h-16 w-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(29,78,216,.08)' }}>
+            <CheckCircle className="h-8 w-8" style={{ color: 'var(--pub-sapphire)' }} />
           </div>
-          <h2 className="font-display font-bold text-2xl mb-2 text-[var(--text)]">Application Submitted!</h2>
-          <p className="text-[var(--text-2)] mb-4">Your application has been received. Keep this reference number for follow-up.</p>
-          <div className="bg-[var(--surface-2)] rounded-xl p-4 mb-6">
-            <p className="text-sm text-[var(--text-3)]">Application Number</p>
-            <p className="text-2xl font-bold font-mono text-[var(--indigo)]">{submitted.application_number}</p>
+          <h2 style={{ fontSize: 24, color: 'var(--pub-ink)', marginBottom: 8 }}>Application Submitted!</h2>
+          <p style={{ color: 'var(--pub-slate)', marginBottom: 16 }}>Your application has been received. Keep this reference number for follow-up.</p>
+          <div style={{ background: 'var(--pub-paper)', borderRadius: 14, padding: 16, marginBottom: 22 }}>
+            <p style={{ fontSize: 12.5, color: 'var(--pub-slate)' }}>Application Number</p>
+            <p style={{ fontSize: 22, fontWeight: 700, color: 'var(--pub-sapphire)', fontFamily: 'monospace' }}>{submitted.application_number}</p>
           </div>
-          <p className="text-sm text-[var(--text-3)] mb-6">We will contact you by email regarding the next steps, including entrance assessment dates.</p>
+          <p style={{ fontSize: 13, color: 'var(--pub-slate)', marginBottom: 22 }}>We will contact you by email regarding the next steps, including entrance assessment dates.</p>
           <Link to="/"><Button className="w-full">Return to Home</Button></Link>
-        </Card>
+        </div>
       </div>
     )
   }
 
   return (
     <div>
-      {/* Hero */}
-      <div ref={heroRef} className="relative overflow-hidden py-16 text-center px-4 text-white" style={{ background: 'linear-gradient(135deg, #1B1F3B 0%, #12162A 55%, #0B0F14 100%)' }}>
-        <div
-          className="absolute inset-0 opacity-55"
-          style={{
-            background:
-              'radial-gradient(circle at 15% 20%, rgba(79,70,229,.55), transparent 45%), radial-gradient(circle at 85% 15%, rgba(6,182,212,.35), transparent 40%), radial-gradient(circle at 60% 90%, rgba(16,185,129,.25), transparent 45%)',
-          }}
-        />
-        <div className="relative">
-          <h1 data-reveal className="font-display font-bold text-4xl mb-3">Apply for Admission</h1>
-          <p data-reveal className="text-white/70 text-lg max-w-xl mx-auto">Join our community of learners. Complete the form below to begin your application to Caliphate International Schools.</p>
+      <section ref={heroRef} className="pub-hero" style={{ padding: '64px 0 56px', textAlign: 'center' }}>
+        <Blobs />
+        <GeoPattern />
+        <div className="wrap max-w-[900px] mx-auto px-4 relative">
+          <span data-reveal className="pub-eyebrow light" style={{ justifyContent: 'center' }}><StarSvg color="#E7CD8C" /> Admissions Open for 2026/2027</span>
+          <h1 data-reveal className="pub-hero-title" style={{ fontSize: 'clamp(32px,5vw,50px)' }}>Apply for Admission</h1>
+          <p data-reveal className="pub-hero-sub" style={{ margin: '0 auto' }}>
+            Join our community of learners. Complete the form below to begin your child's application to
+            Caliphate International Schools.
+          </p>
         </div>
-      </div>
+      </section>
 
-      {/* Form */}
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        <div ref={formRef}>
-          <Card className="p-8">
-            <h2 className="font-display font-bold text-xl mb-6 text-[var(--text)]">Admission Application Form</h2>
+      <section className="pub-section-pad pub-timeline-section">
+        <div className="wrap max-w-[1240px] mx-auto px-4">
+          <SectionHead light eyebrow="How It Works" title="A simple, four-step path to enrollment." />
+          <div ref={timelineRef} className="pub-tl">
+            {steps.map((s) => (
+              <div key={s.tag} className="pub-tl-item" data-reveal-item>
+                <div className="pub-tl-dot" />
+                <span className="pub-tl-tag">{s.tag}</span>
+                <h4>{s.title}</h4>
+                <p>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {error && <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-xl p-4 mb-6 text-sm">{error}</div>}
+      <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
+        <div className="max-w-2xl mx-auto px-4">
+          <div ref={formRef} className="pub-bento-card" style={{ minHeight: 0, padding: 32 }}>
+            <h2 style={{ fontSize: 22, marginBottom: 20, color: 'var(--pub-ink)' }}>Admission Application Form</h2>
+
+            {error && <div className="bg-red-500/10 border border-red-500/20 text-red-600 rounded-xl p-4 mb-6 text-sm">{error}</div>}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <h3 className="font-display font-semibold text-[var(--text)] mb-3 pb-2 border-b border-[var(--border)]">Applicant Information</h3>
+                <h3 className="font-semibold mb-3 pb-2 border-b" style={{ color: 'var(--pub-ink)', borderColor: 'var(--pub-mist)' }}>Applicant Information</h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2"><Label>Full Name of Applicant <span className="text-red-500">*</span></Label><Input value={form.applicant_name} onChange={e => f('applicant_name', e.target.value)} placeholder="First name and surname" required /></div>
                   <div><Label>Date of Birth</Label><Input type="date" value={form.date_of_birth} onChange={e => f('date_of_birth', e.target.value)} /></div>
@@ -112,7 +133,7 @@ export default function PublicAdmissions() {
               </div>
 
               <div>
-                <h3 className="font-display font-semibold text-[var(--text)] mb-3 pb-2 border-b border-[var(--border)]">Parent / Guardian Information</h3>
+                <h3 className="font-semibold mb-3 pb-2 border-b" style={{ color: 'var(--pub-ink)', borderColor: 'var(--pub-mist)' }}>Parent / Guardian Information</h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2"><Label>Parent / Guardian Full Name <span className="text-red-500">*</span></Label><Input value={form.parent_name} onChange={e => f('parent_name', e.target.value)} required /></div>
                   <div><Label>Parent Phone</Label><Input value={form.parent_phone} onChange={e => f('parent_phone', e.target.value)} /></div>
@@ -124,12 +145,20 @@ export default function PublicAdmissions() {
                 <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
                   {loading ? <><Loader2 className="h-5 w-5 mr-2 animate-spin" />Submitting…</> : 'Submit Application'}
                 </Button>
-                <p className="text-xs text-[var(--text-3)] text-center mt-3">By submitting, you agree to our terms and conditions. You will be contacted within 3 working days.</p>
+                <p style={{ fontSize: 12, color: 'var(--pub-slate)', textAlign: 'center', marginTop: 12 }}>By submitting, you agree to our terms and conditions. You will be contacted within 3 working days.</p>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
+  )
+}
+
+function StarSvg({ color = '#1D4ED8' }: { color?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="12" height="12">
+      <path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2z" fill={color} />
+    </svg>
   )
 }

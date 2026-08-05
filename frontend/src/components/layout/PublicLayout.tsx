@@ -1,12 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Phone, Mail, MapPin, Sun, Moon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Phone, Mail, MapPin, X } from 'lucide-react'
 import { ChatBot } from '@/components/ChatBot'
 import { cn } from '@/lib/utils'
-import { useHeroReveal } from '@/hooks/useGsapPublic'
-import { useDarkMode } from '@/hooks/useDarkMode'
+import '@/styles/public-theme.css'
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -19,142 +16,137 @@ const navLinks = [
 
 export function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
-  const headerRef = useHeroReveal()
-  const { isDark, toggle: toggleDark } = useDarkMode()
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [location.pathname])
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] flex flex-col">
-      <div className="border-b border-[var(--border)] text-xs py-2 hidden md:block">
-        <div className="container mx-auto px-4 flex justify-between items-center text-[var(--text-3)]">
-          <div className="flex gap-6">
-            <span className="flex items-center gap-2"><Phone className="h-3 w-3" /> +234 800 000 0000</span>
-            <span className="flex items-center gap-2"><Mail className="h-3 w-3" /> info@caliphateschools.edu.ng</span>
-          </div>
-          <div className="flex gap-4">
-            <Link to="/login" className="hover:text-[var(--text)] transition-colors">Staff Portal</Link>
-            <Link to="/login" className="hover:text-[var(--text)] transition-colors">Student Portal</Link>
-          </div>
-        </div>
-      </div>
-
-      <header ref={headerRef} className="glass-nav sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
-          <Link to="/" data-reveal className="flex items-center gap-3">
-            <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="h-10 w-10 md:h-12 md:w-12 rounded-xl object-cover ring-1 ring-[var(--border)]" />
-            <div>
-              <h1 className="text-sm md:text-lg font-display font-semibold text-[var(--text)] leading-tight">Caliphate Schools</h1>
-              <p className="text-xs text-[var(--text-3)] leading-tight hidden sm:block">Excellence in Education</p>
-            </div>
+    <div className="pub min-h-screen flex flex-col">
+      <nav className={cn('pub-navbar', scrolled && 'pub-scrolled')}>
+        <div className="pub-navbar-bar wrap max-w-[1240px] mx-auto px-3">
+          <Link to="/" className="pub-nav-brand">
+            <img src="/images/logo.jpg" alt="Caliphate International Schools logo" />
+            <span>Caliphate<br />International Schools</span>
           </Link>
 
-          <nav data-reveal className="hidden lg:flex items-center gap-6 md:gap-8">
+          <div className="pub-nav-links hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.href}
-                className={cn(
-                  'relative text-sm font-medium transition-colors hover:text-[var(--text)] pb-1',
-                  location.pathname === link.href
-                    ? "text-[var(--text)] after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-[1px] after:h-[2px] after:rounded-full after:bg-[var(--indigo)]"
-                    : 'text-[var(--text-2)]'
-                )}
-              >
+              <Link key={link.name} to={link.href} className={location.pathname === link.href ? 'active' : ''}>
                 {link.name}
               </Link>
             ))}
-          </nav>
-
-          <div data-reveal className="hidden lg:flex items-center gap-2 md:gap-3">
-            <button onClick={toggleDark} className="h-9 w-9 rounded-xl flex items-center justify-center hover:bg-[var(--surface-2)] transition-colors" aria-label="Toggle dark mode">
-              {isDark ? <Sun className="h-[18px] w-[18px] text-[var(--text-2)]" /> : <Moon className="h-[18px] w-[18px] text-[var(--text-2)]" />}
-            </button>
-            <Link to="/login"><Button variant="outline" size="sm">Portal Login</Button></Link>
-            <Link to="/register"><Button size="sm">Sign Up</Button></Link>
           </div>
 
-          <button className="lg:hidden p-2 text-[var(--text)]" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <div className="hidden lg:flex items-center gap-5">
+            <Link to="/login" className="text-[13.5px] font-medium text-white/70 hover:text-white transition-colors">
+              Portal Login
+            </Link>
+            <Link to="/admissions" className="pub-nav-cta">Apply Now</Link>
+          </div>
+
+          <button
+            className="pub-nav-toggle lg:hidden"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6 text-white" />
+            ) : (
+              <>
+                <span /><span /><span />
+              </>
+            )}
           </button>
         </div>
+      </nav>
 
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
-              className="lg:hidden border-t border-[var(--border)] overflow-hidden"
-            >
-              <div className="p-4 space-y-4">
-                {navLinks.map((link) => (
-                  <Link key={link.name} to={link.href} onClick={() => setMobileMenuOpen(false)} className="block text-base font-medium text-[var(--text-2)] hover:text-[var(--indigo)] transition-colors">
-                    {link.name}
-                  </Link>
-                ))}
-                <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
-                  <span className="text-sm font-medium text-[var(--text-2)]">Theme</span>
-                  <button onClick={toggleDark} className="h-9 w-9 rounded-xl flex items-center justify-center hover:bg-[var(--surface-2)] transition-colors" aria-label="Toggle dark mode">
-                    {isDark ? <Sun className="h-[18px] w-[18px] text-[var(--text-2)]" /> : <Moon className="h-[18px] w-[18px] text-[var(--text-2)]" />}
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  <Link to="/login" className="block w-full"><Button variant="outline" className="w-full">Portal Login</Button></Link>
-                  <Link to="/register" className="block w-full"><Button className="w-full">Sign Up</Button></Link>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </header>
+      <div className={cn('pub-menu-backdrop', mobileMenuOpen && 'pub-open')} onClick={() => setMobileMenuOpen(false)} />
+      <div className={cn('pub-mobile-menu', mobileMenuOpen && 'pub-open')} role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <button
+          onClick={() => setMobileMenuOpen(false)}
+          aria-label="Close menu"
+          style={{ position: 'absolute', top: 28, right: 26, background: 'none', border: 'none', cursor: 'pointer' }}
+        >
+          <X className="h-6 w-6" style={{ color: '#fff' }} />
+        </button>
+        {navLinks.map((link) => (
+          <Link key={link.name} to={link.href} onClick={() => setMobileMenuOpen(false)}>
+            {link.name}
+          </Link>
+        ))}
+        <Link to="/login" onClick={() => setMobileMenuOpen(false)} style={{ color: 'rgba(255,255,255,.7)', fontSize: 15 }}>
+          Portal Login
+        </Link>
+        <Link to="/admissions" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--pub-gold-soft)' }}>
+          Apply Now &rarr;
+        </Link>
+      </div>
 
       <main className="flex-1"><Outlet /></main>
 
-      <footer className="border-t border-[var(--border)] bg-[var(--surface-2)] py-8 md:py-12">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="h-10 w-10 md:h-12 md:w-12 rounded-xl object-cover ring-1 ring-[var(--border)]" />
-              <h3 className="text-[var(--text)] font-display font-semibold text-base md:text-lg">Caliphate Schools</h3>
+      <footer className="pub-footer">
+        <div className="wrap max-w-[1240px] mx-auto px-4">
+          <div className="pub-foot-grid">
+            <div>
+              <div className="pub-foot-brand">
+                <img src="/images/logo.jpg" alt="Caliphate International Schools logo" className="pub-foot-brand-mark" />
+                <span>Caliphate International Schools</span>
+              </div>
+              <p style={{ fontSize: 13.5, lineHeight: 1.6, maxWidth: 280 }}>
+                Quality Islamic and Western education in Gusau, Zamfara State — since 2013.
+              </p>
             </div>
-            <p className="text-xs md:text-sm text-[var(--text-2)] mb-4">Providing quality Islamic and Western education in Gusau, Zamfara State since 2013.</p>
-            <div className="space-y-2 text-xs md:text-sm text-[var(--text-2)]">
-              <p className="flex items-center gap-2"><MapPin className="h-3 w-3 md:h-4 md:w-4 text-[var(--indigo)]" /> No. 3, Eastern Bypass, Gusau</p>
-              <p className="flex items-center gap-2"><Phone className="h-3 w-3 md:h-4 md:w-4 text-[var(--indigo)]" /> +234 800 000 0000</p>
-              <p className="flex items-center gap-2"><Mail className="h-3 w-3 md:h-4 md:w-4 text-[var(--indigo)]" /> info@caliphateschools.edu.ng</p>
+            <div>
+              <h5>Explore</h5>
+              <ul>
+                <li><Link to="/about">About Us</Link></li>
+                <li><Link to="/admissions">Admissions</Link></li>
+                <li><Link to="/news">News &amp; Events</Link></li>
+                <li><Link to="/gallery">Campus Life</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h5>Programs</h5>
+              <ul>
+                <li><Link to="/about">Nursery Section</Link></li>
+                <li><Link to="/about">Primary Section</Link></li>
+                <li><Link to="/about">Secondary Section</Link></li>
+                <li><Link to="/login">Portals</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h5>Contact</h5>
+              <div className="pub-foot-contact">
+                <MapPin className="h-[15px] w-[15px]" />
+                <Link to="/contact">No. 3, Eastern Bypass, Gusau, Zamfara State</Link>
+              </div>
+              <div className="pub-foot-contact">
+                <Phone className="h-[15px] w-[15px]" />
+                <a href="tel:+2348000000000">+234 800 000 0000</a>
+              </div>
+              <div className="pub-foot-contact">
+                <Mail className="h-[15px] w-[15px]" />
+                <a href="mailto:info@caliphateschools.edu.ng">info@caliphateschools.edu.ng</a>
+              </div>
             </div>
           </div>
-          <div>
-            <h4 className="text-[var(--text)] font-display font-semibold mb-4 text-sm md:text-base">Quick Links</h4>
-            <ul className="space-y-2 text-xs md:text-sm text-[var(--text-2)]">
-              <li><Link to="/about" className="hover:text-[var(--indigo)] transition-colors">About Us</Link></li>
-              <li><Link to="/admissions" className="hover:text-[var(--indigo)] transition-colors">Admissions</Link></li>
-              <li><Link to="/news" className="hover:text-[var(--indigo)] transition-colors">News & Events</Link></li>
-              <li><Link to="/contact" className="hover:text-[var(--indigo)] transition-colors">Contact Us</Link></li>
-            </ul>
+          <div className="pub-foot-bottom">
+            <span>&copy; {new Date().getFullYear()} Caliphate International Schools Gusau Ltd. All rights reserved.</span>
+            <span>
+              <Link to="/login" style={{ color: 'rgba(255,255,255,.6)' }}>Staff / Student Portal</Link>
+            </span>
           </div>
-          <div>
-            <h4 className="text-[var(--text)] font-display font-semibold mb-4 text-sm md:text-base">Academics</h4>
-            <ul className="space-y-2 text-xs md:text-sm text-[var(--text-2)]">
-              <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Nursery Section</a></li>
-              <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Primary Section</a></li>
-              <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Secondary Section</a></li>
-              <li><a href="#" className="hover:text-[var(--indigo)] transition-colors">Curriculum</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-[var(--text)] font-display font-semibold mb-4 text-sm md:text-base">Portals</h4>
-            <ul className="space-y-2 text-xs md:text-sm text-[var(--text-2)]">
-              <li><Link to="/login" className="hover:text-[var(--indigo)] transition-colors">Staff Login</Link></li>
-              <li><Link to="/login" className="hover:text-[var(--indigo)] transition-colors">Student Login</Link></li>
-              <li><Link to="/login" className="hover:text-[var(--indigo)] transition-colors">Parent Login</Link></li>
-              <li><Link to="/register" className="hover:text-[var(--indigo)] transition-colors">Register</Link></li>
-            </ul>
-          </div>
-        </div>
-        <div className="container mx-auto px-4 mt-8 md:mt-12 pt-6 md:pt-8 border-t border-[var(--border)] text-center text-xs text-[var(--text-3)]">
-          2026 Caliphate International Schools Gusau Ltd. All rights reserved.
         </div>
       </footer>
 
@@ -162,3 +154,5 @@ export function PublicLayout() {
     </div>
   )
 }
+
+export default PublicLayout
