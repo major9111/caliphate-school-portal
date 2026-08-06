@@ -32,7 +32,7 @@ export function PublicAbout() {
       <section ref={heroRef} className="pub-hero" style={{ paddingBottom: 60 }}>
         <Blobs />
         <GeoPattern />
-        <div className="wrap max-w-[1240px] mx-auto px-4 relative">
+        <div className="wrap max-w-[1360px] mx-auto px-4 relative">
           <div className="grid gap-14 lg:grid-cols-2 items-center">
             <div>
               <span data-reveal className="pub-eyebrow light"><StarSvg color="#E7CD8C" /> Our Story</span>
@@ -51,7 +51,7 @@ export function PublicAbout() {
       </section>
 
       <section className="pub-section-pad">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead eyebrow="What Guides Us" title="Mission, vision, and values built into every school day." />
           <div ref={cardsRef} className="grid sm:grid-cols-2 gap-5">
             {values.map((item) => (
@@ -66,7 +66,7 @@ export function PublicAbout() {
       </section>
 
       <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead center eyebrow="Our People" title="Guided by experienced section leaders." body="Each stage of school life is overseen by a dedicated coordinator who knows every student by name." />
           <div className="pub-faculty-grid">
             {faculty.map((item) => (
@@ -83,7 +83,7 @@ export function PublicAbout() {
 
       <section className="pub-section-pad pub-academics" style={{ position: 'relative' }}>
         <GeoPattern />
-        <div className="wrap max-w-[1240px] mx-auto px-4 relative">
+        <div className="wrap max-w-[1360px] mx-auto px-4 relative">
           <SectionHead light eyebrow="The Academic Journey" title="One continuous path, from a child's first steps to their final exams." />
           <div ref={journeyRef} className="pub-journey-row">
             {stages.map((s) => (
@@ -98,7 +98,7 @@ export function PublicAbout() {
       </section>
 
       <section className="pub-section-pad">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <div className="pub-principal-grid">
             <div data-reveal>
               <span className="pub-eyebrow"><StarSvg /> Our Commitment</span>

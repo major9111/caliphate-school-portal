@@ -42,7 +42,7 @@ export function PublicContact() {
       {/* ================= VISIT US ================= */}
       <section className="pub-section-pad pub-visit" style={{ position: 'relative' }}>
         <GeoPattern />
-        <div className="wrap max-w-[1240px] mx-auto px-4 relative">
+        <div className="wrap max-w-[1360px] mx-auto px-4 relative">
           <SectionHead light eyebrow="Come See Us" title="Visit our campus in Gusau." />
           <div ref={visitRef} className="pub-visit-grid">
             <div className="pub-visit-map" data-reveal-item>

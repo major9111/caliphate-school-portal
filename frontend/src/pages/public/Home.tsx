@@ -50,7 +50,7 @@ export function PublicHome() {
       <section ref={heroRef} className="pub-hero">
         <Blobs />
         <GeoPattern />
-        <div className="wrap max-w-[1240px] mx-auto px-4 relative">
+        <div className="wrap max-w-[1360px] mx-auto px-4 relative">
           <div className="grid gap-14 lg:grid-cols-[1.05fr_.95fr] items-center">
             <div>
               <div data-reveal className="pub-badge-pill">
@@ -119,7 +119,7 @@ export function PublicHome() {
 
       {/* ================= TRUST STATS ================= */}
       <section className="pub-trust">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <div ref={trustRef} className="pub-trust-grid">
             <div className="pub-trust-item" data-reveal-item>
               <div className="pub-trust-num">{YEAR_FOUNDED}</div>
@@ -137,7 +137,7 @@ export function PublicHome() {
 
       {/* ================= LEADERSHIP MESSAGE ================= */}
       <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <div ref={leadershipRef} className="pub-principal-grid">
             <div className="pub-principal-photo" data-reveal>
               <img src="/images/classroom-3.jpg" alt="A classroom at Caliphate International Schools" />
@@ -161,7 +161,7 @@ export function PublicHome() {
 
       {/* ================= WHY CHOOSE (BENTO) ================= */}
       <section className="pub-section-pad">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead eyebrow="Why Families Choose Us" title="A learning environment built on faith, rigor, and genuine care." />
           <div ref={bentoRef} className="pub-bento">
             <div className="pub-bento-card pub-b1" data-reveal-item>
@@ -214,7 +214,7 @@ export function PublicHome() {
       {/* ================= ACADEMIC JOURNEY ================= */}
       <section className="pub-section-pad pub-academics" style={{ position: 'relative' }}>
         <GeoPattern />
-        <div className="wrap max-w-[1240px] mx-auto px-4 relative">
+        <div className="wrap max-w-[1360px] mx-auto px-4 relative">
           <SectionHead light eyebrow="The Academic Journey" title="One continuous path, from a child's first steps to their final exams." />
           <div ref={journeyRef} className="pub-journey-row">
             <div className="pub-journey-card" data-reveal-item>
@@ -253,7 +253,7 @@ export function PublicHome() {
 
       {/* ================= FACILITIES ================= */}
       <section className="pub-section-pad">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead eyebrow="Our Campus" title="Spaces designed for children to learn, play, and grow safely." />
           <div ref={facilitiesRef} className="pub-fac-grid" data-reveal>
             <div className="pub-fac-main">
@@ -281,7 +281,7 @@ export function PublicHome() {
 
       {/* ================= GALLERY PREVIEW ================= */}
       <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead center eyebrow="Life at Caliphate" title="A glimpse into our classrooms and campus life." />
           <div ref={galleryRef} className="pub-gal-grid">
             {galleryPreview.map((img) => (
@@ -300,7 +300,7 @@ export function PublicHome() {
 
       {/* ================= TESTIMONIALS ================= */}
       <section className="pub-section-pad">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead eyebrow="Parent Voices" title="Trusted by families across Gusau and beyond." />
           <div ref={testiRef} className="pub-testi-track" data-reveal>
             {testimonials.map((t) => (
@@ -319,7 +319,7 @@ export function PublicHome() {
 
       {/* ================= CTA BANNER ================= */}
       <section className="pub-section-pad">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <div ref={ctaRef} className="pub-cta-box" data-reveal>
             <div className="pub-blob pub-blob-1" style={{ opacity: 0.25 }} />
             <div className="pub-blob pub-blob-2" style={{ opacity: 0.2 }} />

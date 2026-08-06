@@ -33,7 +33,7 @@ export function PublicLayout() {
   return (
     <div className="pub min-h-screen flex flex-col">
       <nav className={cn('pub-navbar', scrolled && 'pub-scrolled')}>
-        <div className="pub-navbar-bar wrap max-w-[1240px] mx-auto px-3">
+        <div className="pub-navbar-bar wrap max-w-[1360px] mx-auto px-3">
           <Link to="/" className="pub-nav-brand">
             <img src="/images/logo.jpg" alt="Caliphate International Schools logo" />
             <span>Caliphate<br />International Schools</span>
@@ -96,7 +96,7 @@ export function PublicLayout() {
       <main className="flex-1"><Outlet /></main>
 
       <footer className="pub-footer">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <div className="pub-foot-grid">
             <div>
               <div className="pub-foot-brand">

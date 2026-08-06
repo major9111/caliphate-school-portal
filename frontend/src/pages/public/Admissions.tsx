@@ -89,7 +89,7 @@ export default function PublicAdmissions() {
       </section>
 
       <section className="pub-section-pad pub-timeline-section">
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead light eyebrow="How It Works" title="A simple, four-step path to enrollment." />
           <div ref={timelineRef} className="pub-tl">
             {steps.map((s) => (
@@ -105,7 +105,7 @@ export default function PublicAdmissions() {
       </section>
 
       <section className="pub-section-pad" style={{ background: 'var(--pub-paper)' }}>
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           <SectionHead eyebrow="Plan Ahead" title="Key dates for the 2026/2027 academic year." body="Provisional — exact dates will be confirmed in your offer letter." />
           <div className="pub-term-grid">
             {terms.map((t) => (

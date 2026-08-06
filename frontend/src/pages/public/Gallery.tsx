@@ -35,7 +35,7 @@ export function PublicGallery() {
       </section>
 
       <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
-        <div className="wrap max-w-[1240px] mx-auto px-4">
+        <div className="wrap max-w-[1360px] mx-auto px-4">
           {loading && (
             <div className="flex justify-center py-16" style={{ color: 'var(--pub-slate)' }}>
               <Loader2 className="h-8 w-8 animate-spin" />
