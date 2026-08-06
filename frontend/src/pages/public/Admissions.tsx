@@ -104,6 +104,22 @@ export default function PublicAdmissions() {
         </div>
       </section>
 
+      <section className="pub-section-pad" style={{ background: 'var(--pub-paper)' }}>
+        <div className="wrap max-w-[1240px] mx-auto px-4">
+          <SectionHead eyebrow="Plan Ahead" title="Key dates for the 2026/2027 academic year." body="Provisional — exact dates will be confirmed in your offer letter." />
+          <div className="pub-term-grid">
+            {terms.map((t) => (
+              <div key={t.tag} className="pub-term-card">
+                <span className="pub-term-tag">{t.tag}</span>
+                {t.dates.map(([lbl, val]) => (
+                  <div key={lbl} className="pub-term-row"><span className="pub-lbl">{lbl}</span><span className="pub-val">{val}</span></div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
         <div className="max-w-2xl mx-auto px-4">
           <div ref={formRef} className="pub-bento-card" style={{ minHeight: 0, padding: 32 }}>
@@ -151,10 +167,47 @@ export default function PublicAdmissions() {
           </div>
         </div>
       </section>
+
+      <section className="pub-section-pad">
+        <div className="max-w-2xl mx-auto px-4">
+          <SectionHead eyebrow="Common Questions" title="Frequently asked questions." />
+          <div>
+            {faqs.map((item) => <FaqItem key={item.q} q={item.q} a={item.a} />)}
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
 
+const terms = [
+  { tag: 'First Term', dates: [['Resumption', 'Mon, 8 Sept 2026'], ['Mid-Term Break', '19 – 23 Oct 2026'], ['Term Ends', 'Fri, 11 Dec 2026']] },
+  { tag: 'Second Term', dates: [['Resumption', 'Mon, 5 Jan 2027'], ['Mid-Term Break', '15 – 19 Feb 2027'], ['Term Ends', 'Fri, 26 Mar 2027']] },
+  { tag: 'Third Term', dates: [['Resumption', 'Mon, 12 Apr 2027'], ['WAEC/NECO Exams', 'May – Jun 2027'], ['Term Ends', 'Fri, 16 Jul 2027']] },
+]
+
+const faqs = [
+  { q: 'What ages does each section accept?', a: 'Nursery accepts children aged 3–5, Primary accepts ages 6–11, and Secondary accepts ages 12–17. Placement also depends on the entrance assessment.' },
+  { q: 'Is there an entrance assessment for every class?', a: 'Yes — all applicants beyond Nursery 1 sit a short, age-appropriate assessment in literacy and numeracy as part of the admissions process.' },
+  { q: 'Do you offer transportation or boarding?', a: 'Please contact our admissions office directly to discuss transportation arrangements and current availability for your area.' },
+  { q: 'When should I apply?', a: 'We accept applications throughout the year, but early application is encouraged as seats are limited and fill on a rolling basis ahead of each new session.' },
+  { q: 'How will I be notified of the outcome?', a: 'You will be contacted by phone and email within a few working days of your entrance assessment and interview.' },
+]
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className={`pub-faq-item${open ? ' pub-open' : ''}`}>
+      <button className="pub-faq-q" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+        {q}
+        <span className="pub-plus" />
+      </button>
+      <div className="pub-faq-a" style={{ maxHeight: open ? 200 : 0 }}>
+        <p>{a}</p>
+      </div>
+    </div>
+  )
+}
 function StarSvg({ color = '#1D4ED8' }: { color?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="12" height="12">

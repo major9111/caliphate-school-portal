@@ -15,6 +15,13 @@ const stages = [
   { num: 'STAGE 03', title: 'Secondary', desc: 'Ages 12–17. Exam-focused mastery preparing students for WAEC, NECO, and beyond.' },
 ]
 
+const faculty = [
+  { role: 'Head of Nursery', dept: 'Early Years', desc: 'Oversees foundational literacy, numeracy, and guided play for our youngest learners.' },
+  { role: 'Head of Primary', dept: 'Primary Section', desc: 'Coordinates the core curriculum and character formation across Primary 1–6.' },
+  { role: 'Head of Secondary', dept: 'Secondary Section', desc: 'Guides exam preparation and subject specialisation from JSS 1 to SSS 3.' },
+  { role: 'Head of Islamic Studies', dept: 'Deen & Tahfeez', desc: 'Leads daily Qur\u2019an, Arabic, and Islamic studies across all sections.' },
+]
+
 export function PublicAbout() {
   const heroRef = useHeroReveal()
   const cardsRef = useScrollStagger<HTMLDivElement>()
@@ -52,6 +59,22 @@ export function PublicAbout() {
                 <IconChip bg="rgba(29,78,216,.08)" color="var(--pub-sapphire)"><item.icon className="h-5 w-5" /></IconChip>
                 <h3>{item.title}</h3>
                 <p>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="pub-section-pad" style={{ background: 'var(--pub-paper-2)' }}>
+        <div className="wrap max-w-[1240px] mx-auto px-4">
+          <SectionHead center eyebrow="Our People" title="Guided by experienced section leaders." body="Each stage of school life is overseen by a dedicated coordinator who knows every student by name." />
+          <div className="pub-faculty-grid">
+            {faculty.map((item) => (
+              <div key={item.role} className="pub-faculty-card">
+                <div className="pub-faculty-photo"><Users className="h-8 w-8" /></div>
+                <h4>{item.role}</h4>
+                <p className="pub-faculty-role">{item.dept}</p>
+                <p className="pub-faculty-meta">{item.desc}</p>
               </div>
             ))}
           </div>
