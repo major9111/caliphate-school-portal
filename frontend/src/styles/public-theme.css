@@ -43,14 +43,14 @@
 .pub-eyebrow svg { flex-shrink: 0; }
 
 /* ---------- Signature: Islamic 8-point star ---------- */
-.pub-star-motif { transform-origin: 50% 50%; }
+.pub-star-motif { animation: pub-spin-slow 90s linear infinite; transform-origin: 50% 50%; }
 @keyframes pub-spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 /* ---------- Ambient blobs ---------- */
 .pub-blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .35; pointer-events: none; }
-.pub-blob-1 { width: 520px; height: 520px; background: var(--pub-sapphire); top: -160px; left: -120px; }
-.pub-blob-2 { width: 420px; height: 420px; background: var(--pub-gold); bottom: -140px; right: -100px; opacity: .22; }
-.pub-blob-3 { width: 340px; height: 340px; background: var(--pub-azure); top: 35%; right: 8%; opacity: .18; }
+.pub-blob-1 { width: 520px; height: 520px; background: var(--pub-sapphire); top: -160px; left: -120px; animation: pub-float1 22s ease-in-out infinite; }
+.pub-blob-2 { width: 420px; height: 420px; background: var(--pub-gold); bottom: -140px; right: -100px; opacity: .22; animation: pub-float2 26s ease-in-out infinite; }
+.pub-blob-3 { width: 340px; height: 340px; background: var(--pub-azure); top: 35%; right: 8%; opacity: .18; animation: pub-float1 30s ease-in-out infinite reverse; }
 @keyframes pub-float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,40px); } }
 @keyframes pub-float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-25px,-35px); } }
 .pub-geo-pattern {
@@ -106,7 +106,7 @@
 /* ---------- Hero ---------- */
 .pub-hero {
   background: radial-gradient(ellipse 120% 80% at 50% -10%, #16205e 0%, var(--pub-ink) 55%), var(--pub-ink);
-  overflow: hidden; padding: 64px 0 90px; color: #fff;
+  position: relative; overflow: hidden; padding: 64px 0 90px; color: #fff;
 }
 .pub-badge-pill {
   display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px 8px 8px;
@@ -227,7 +227,7 @@
 .pub-b1 .pub-geo-mini { position: absolute; right: -30px; top: -30px; opacity: .15; }
 
 /* ---------- Academic journey ---------- */
-.pub-academics { background: var(--pub-ink); color: #fff; overflow: hidden; }
+.pub-academics { background: var(--pub-ink); color: #fff; position: relative; overflow: hidden; }
 .pub-journey-row { display: grid; grid-template-columns: 1fr; gap: 20px; }
 @media (min-width: 900px) { .pub-journey-row { grid-template-columns: repeat(3,1fr); } }
 .pub-journey-card {
@@ -319,7 +319,7 @@
 .pub-term-row .pub-val { color: var(--pub-charcoal); font-weight: 600; text-align: right; }
 
 /* ---------- Visit Us ---------- */
-.pub-visit { background: var(--pub-ink); }
+.pub-visit { background: var(--pub-ink); position: relative; overflow: hidden; }
 .pub-visit-grid { display: grid; grid-template-columns: 1fr; gap: 22px; }
 @media (min-width: 900px) { .pub-visit-grid { grid-template-columns: 1.2fr .8fr; } }
 .pub-visit-map { border-radius: var(--pub-radius-lg); overflow: hidden; min-height: 340px; border: 1px solid rgba(255,255,255,.1); filter: grayscale(.15) contrast(1.05); }
